@@ -96,6 +96,12 @@ export const addFooterSection = (data: any) => api.post('/admin/footer/links/cre
 export const updateFooterSection = (sectionId: string, data: any) => api.put(`/admin/footer/links/update/${sectionId}`, data);
 export const deleteFooterSection = (sectionId: string) => api.delete(`/admin/footer/links/delete/${sectionId}`);
 
+// Tags
+export const getTags = () => api.get('/public/tags/list');
+export const createTag = (data: any) => api.post('/admin/tags/create', data);
+export const updateTag = (id: string, data: any) => api.put(`/admin/tags/update/${id}`, data);
+export const deleteTag = (id: string) => api.delete(`/admin/tags/delete/${id}`);
+
 // Upload APIs
 export const uploadLogo = (file: File, logoType?: string) => {
   const formData = new FormData();

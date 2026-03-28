@@ -33,7 +33,7 @@ interface Coupon {
 export default function StorePage() {
   const params = useParams();
   const domain = params?.domain as string;
-  const { siteConfig } = useDynamicTheme();
+  const { siteConfig, darkPalette } = useDynamicTheme();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   const primary = siteConfig?.theme?.primaryColor || '#7c3aed';
@@ -79,11 +79,11 @@ export default function StorePage() {
 
   if (loading) return (
     <div className="max-w-7xl mx-auto px-4 py-8 animate-pulse space-y-4">
-      <div className="h-32 bg-gray-200 rounded-xl" />
+      <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl" />
       <div className="flex gap-8">
-        <div className="w-64 h-96 bg-gray-200 rounded-xl flex-shrink-0" />
+        <div className="w-64 h-96 bg-gray-200 dark:bg-gray-700 rounded-xl flex-shrink-0" />
         <div className="flex-1 space-y-3">
-          {[1, 2, 3, 4].map(i => <div key={i} className="h-24 bg-gray-200 rounded-lg" />)}
+          {[1, 2, 3, 4].map(i => <div key={i} className="h-24 bg-gray-200 dark:bg-gray-700 rounded-lg" />)}
         </div>
       </div>
     </div>
@@ -91,8 +91,8 @@ export default function StorePage() {
 
   if (!store) return (
     <div className="max-w-7xl mx-auto px-4 py-16 text-center">
-      <p className="text-2xl font-bold text-gray-700">Store not found</p>
-      <p className="text-gray-500 mt-2">No store matched <strong>{domain}</strong></p>
+      <p className="text-2xl font-bold text-gray-700 dark:text-gray-300">Store not found</p>
+      <p className="text-gray-500 dark:text-gray-400 mt-2">No store matched <strong>{domain}</strong></p>
       <Link href="/view" className="mt-4 inline-block underline" style={{ color: primary }}>Browse all stores</Link>
     </div>
   );
@@ -119,11 +119,11 @@ export default function StorePage() {
   const sd = (store as any).sidebarData ?? {};
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'}`}>
+    <div className="min-h-screen" style={{ backgroundColor: isDark ? darkPalette.bg : (siteConfig?.theme?.backgroundColor || '#faf8ff'), color: isDark ? darkPalette.text : '#111827' }}>
       <div className="max-w-7xl mx-auto px-4 py-4">
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-1.5 text-sm text-gray-500 mb-4 flex-wrap">
+        <div className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 mb-4 flex-wrap">
           <Link href="/" className="hover:underline">Home</Link>
           <ChevronRight size={13} />
           <Link href="/view" className="hover:underline">All Stores</Link>
@@ -178,7 +178,7 @@ export default function StorePage() {
           {/* Coupon List + Content Sections */}
           <main className="flex-1 min-w-0 order-1 lg:order-2">
             {coupons.length === 0 ? (
-              <div className="text-center py-16 border border-gray-200 rounded-xl text-gray-500">
+              <div className="text-center py-16 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-500 dark:text-gray-400">
                 <p className="text-lg font-semibold">No coupons available right now</p>
                 <p className="text-sm mt-1">Check back soon for deals from {storeName}</p>
               </div>
@@ -222,18 +222,18 @@ export default function StorePage() {
         />
 
         {/* Bottom breadcrumb — above footer */}
-        <div className="mt-10 py-5 border-t border-gray-200 flex items-center gap-1.5 text-sm text-gray-500 flex-wrap justify-start">
-          <Link href="/" className="hover:underline text-gray-600">Home</Link>
+        <div className="mt-10 py-5 border-t border-gray-200 dark:border-gray-700 flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 flex-wrap justify-start">
+          <Link href="/" className="hover:underline text-gray-600 dark:text-gray-400">Home</Link>
           <ChevronRight size={13} className="text-gray-400" />
           {store.category && (
             <>
-              <Link href={`/view?category=${encodeURIComponent(store.category)}`} className="hover:underline text-gray-600">
+              <Link href={`/view?category=${encodeURIComponent(store.category)}`} className="hover:underline text-gray-600 dark:text-gray-400">
                 {store.category}
               </Link>
               <ChevronRight size={13} className="text-gray-400" />
             </>
           )}
-          <span className="font-semibold text-gray-800">{storeName}</span>
+          <span className="font-semibold text-gray-800 dark:text-gray-200">{storeName}</span>
         </div>
 
       </div>

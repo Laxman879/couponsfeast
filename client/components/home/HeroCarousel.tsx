@@ -137,7 +137,7 @@ export default function HeroCarousel({ banners = [] }: HeroCarouselProps) {
           {slides.map((_: any, i: number) => (
             <button key={i} onClick={() => goTo(i + 1)}
               className={`rounded-full transition-all duration-300 cursor-pointer ${
-                i === realIndex ? 'w-3 h-3 bg-black' : 'w-2.5 h-2.5 bg-gray-400 hover:bg-gray-500'
+                i === realIndex ? 'w-3 h-3 bg-black dark:bg-white' : 'w-2.5 h-2.5 bg-gray-400 dark:bg-gray-500 hover:bg-gray-500'
               }`}
               aria-label={`Go to slide ${i + 1}`} />
           ))}

@@ -59,12 +59,12 @@ export default function CashBackSection() {
   return (
     <>
       <section className="mb-16 md:mb-20 px-4 md:px-6 max-w-7xl mx-auto">
-        <div className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-1">cha-ching</div>
+        <div className="text-sm font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1">cha-ching</div>
         <div className="mb-6 flex flex-wrap items-baseline justify-between lg:mb-8 gap-2">
           <h2 className="text-xl font-bold capitalize leading-tight md:leading-normal">
-            <span className="text-gray-900">Cash Back at Stores We Love</span>
+            <span className="text-gray-900 dark:text-gray-100">Cash Back at Stores We Love</span>
           </h2>
-          <a href="/cashback" className="text-xs font-semibold uppercase tracking-widest underline underline-offset-4 hover:text-primary transition-colors text-gray-800">
+          <a href="/cashback" className="text-xs font-semibold uppercase tracking-widest underline underline-offset-4 hover:text-primary transition-colors text-gray-800 dark:text-gray-200">
             All Cash Back
           </a>
         </div>
@@ -85,7 +85,7 @@ export default function CashBackSection() {
                   <div className="w-full h-full flex items-center justify-center text-xs font-bold text-gray-400">{store.name?.charAt(0)}</div>
                 )}
               </div>
-              <div className="mx-auto max-w-28 text-center text-xs leading-tight group-hover:underline group-hover:underline-offset-4 lg:text-sm text-gray-900">
+              <div className="mx-auto max-w-28 text-center text-xs leading-tight group-hover:underline group-hover:underline-offset-4 lg:text-sm text-gray-900 dark:text-gray-100">
                 <Zap className="-mr-1 mb-1 inline-block h-4 w-4 text-yellow-400 group-hover:animate-bounce" fill="currentColor" />
                 <strong className="lg:mr-1">{store.cashBack}</strong> Cash&nbsp;Back
               </div>

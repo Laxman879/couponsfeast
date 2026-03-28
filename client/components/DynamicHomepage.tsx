@@ -24,11 +24,11 @@ interface Section { order: number; type: string; title?: string; image?: string;
 export default function DynamicHomepage() {
   const [sections, setSections] = useState<Section[]>([]);
   const [loading, setLoading] = useState(true);
-  const { siteConfig } = useDynamicTheme();
+  const { siteConfig, darkPalette } = useDynamicTheme();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
-  const pageBg = isDark ? '#111827' : (siteConfig?.theme?.backgroundColor || '#ffffff');
-  const textColor = isDark ? '#f9fafb' : (siteConfig?.theme?.textColor || '#111827');
+  const pageBg = isDark ? darkPalette.bg : (siteConfig?.theme?.backgroundColor || '#faf8ff');
+  const textColor = isDark ? darkPalette.text : (siteConfig?.theme?.textColor || '#111827');
 
   const fetchPage = async () => {
     try {

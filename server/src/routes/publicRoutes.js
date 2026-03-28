@@ -12,6 +12,7 @@ import dealRoutes from "./public/deals/deal.routes.js";
 import blogRoutes from "./public/blog/blog.routes.js";
 import promoBannerRoutes from "./public/promo-banners/promoBanner.routes.js";
 import popularLinkRoutes from "./public/popular-links/popularLink.routes.js";
+import tagRoutes from "./public/tags/tag.routes.js";
 import { trackGA4APIMiddleware } from "../middleware/ga4Analytics.js";
 
 const router = express.Router();
@@ -61,5 +62,8 @@ router.use("/promo-banners", promoBannerRoutes);
 
 // POPULAR LINKS PUBLIC APIs (1 endpoint)
 router.use("/popular-links", popularLinkRoutes);
+
+// TAGS PUBLIC APIs (1 endpoint)
+router.use("/tags", tagRoutes);
 
 export default router;

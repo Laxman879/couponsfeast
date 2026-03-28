@@ -7,7 +7,7 @@
 [data-theme="purple"] {
   --color-primary:   124 58 237;
   --color-secondary: 147 51 234;
-  --color-bg:        255 255 255;
+  --color-bg:        250 248 255;
   --color-text:      17 24 39;
   --color-accent:    245 158 11;
   --color-success:   16 185 129;
@@ -20,7 +20,7 @@
 [data-theme="blue"] {
   --color-primary:   37 99 235;
   --color-secondary: 29 78 216;
-  --color-bg:        255 255 255;
+  --color-bg:        248 250 255;
   --color-text:      17 24 39;
   --color-accent:    56 189 248;
   --color-success:   16 185 129;
@@ -31,7 +31,7 @@
 [data-theme="green"] {
   --color-primary:   22 163 74;
   --color-secondary: 21 128 61;
-  --color-bg:        255 255 255;
+  --color-bg:        248 253 249;
   --color-text:      17 24 39;
   --color-accent:    132 204 22;
   --color-success:   16 185 129;
@@ -42,7 +42,7 @@
 [data-theme="orange"] {
   --color-primary:   234 88 12;
   --color-secondary: 194 65 12;
-  --color-bg:        255 255 255;
+  --color-bg:        255 251 248;
   --color-text:      17 24 39;
   --color-accent:    251 191 36;
   --color-success:   16 185 129;
@@ -53,7 +53,7 @@
 [data-theme="red"] {
   --color-primary:   220 38 38;
   --color-secondary: 185 28 28;
-  --color-bg:        255 255 255;
+  --color-bg:        255 249 249;
   --color-text:      17 24 39;
   --color-accent:    251 146 60;
   --color-success:   16 185 129;
@@ -64,7 +64,7 @@
 [data-theme="rose"] {
   --color-primary:   225 29 72;
   --color-secondary: 190 18 60;
-  --color-bg:        255 255 255;
+  --color-bg:        255 249 251;
   --color-text:      17 24 39;
   --color-accent:    251 113 133;
   --color-success:   16 185 129;
@@ -75,7 +75,7 @@
 [data-theme="teal"] {
   --color-primary:   13 148 136;
   --color-secondary: 15 118 110;
-  --color-bg:        255 255 255;
+  --color-bg:        247 253 252;
   --color-text:      17 24 39;
   --color-accent:    45 212 191;
   --color-success:   16 185 129;
@@ -93,6 +93,128 @@
   --color-error:     248 113 113;
   --color-warning:   251 191 36;
 }
+
+/* ── Dark mode override (user toggle) — per-theme dark palettes ── */
+/* Each theme tints the dark mode grays to match its color identity */
+
+html.dark,
+html.dark[data-theme="purple"] {
+  --color-bg:        15 10 36;
+  --color-text:      243 237 255;
+  --color-primary:   139 92 246;
+  --color-secondary: 167 139 250;
+  --dark-card-bg:    #1e1535;
+  --tw-dark-bg:      15 10 36;
+  --tw-dark-card:    30 21 53;
+  --tw-dark-surface: 40 30 68;
+  --tw-dark-text:    243 237 255;
+  --tw-dark-muted:   180 170 210;
+  --tw-dark-border:  55 42 85;
+}
+html.dark[data-theme="blue"] {
+  --color-bg:        10 18 40;
+  --color-text:      224 237 255;
+  --color-primary:   59 130 246;
+  --color-secondary: 37 99 235;
+  --dark-card-bg:    #0f1a33;
+  --tw-dark-bg:      10 18 40;
+  --tw-dark-card:    15 26 51;
+  --tw-dark-surface: 22 38 70;
+  --tw-dark-text:    224 237 255;
+  --tw-dark-muted:   140 170 220;
+  --tw-dark-border:  30 50 90;
+}
+html.dark[data-theme="green"] {
+  --color-bg:        8 28 16;
+  --color-text:      220 252 231;
+  --color-primary:   34 197 94;
+  --color-secondary: 22 163 74;
+  --dark-card-bg:    #0d2818;
+  --tw-dark-bg:      8 28 16;
+  --tw-dark-card:    13 40 24;
+  --tw-dark-surface: 20 55 35;
+  --tw-dark-text:    220 252 231;
+  --tw-dark-muted:   140 210 165;
+  --tw-dark-border:  25 65 40;
+}
+html.dark[data-theme="orange"] {
+  --color-bg:        30 16 8;
+  --color-text:      255 237 220;
+  --color-primary:   249 115 22;
+  --color-secondary: 234 88 12;
+  --dark-card-bg:    #2a1a0a;
+  --tw-dark-bg:      30 16 8;
+  --tw-dark-card:    42 26 10;
+  --tw-dark-surface: 58 38 18;
+  --tw-dark-text:    255 237 220;
+  --tw-dark-muted:   210 170 130;
+  --tw-dark-border:  70 48 25;
+}
+html.dark[data-theme="red"] {
+  --color-bg:        32 10 10;
+  --color-text:      254 226 226;
+  --color-primary:   239 68 68;
+  --color-secondary: 220 38 38;
+  --dark-card-bg:    #2a0f0f;
+  --tw-dark-bg:      32 10 10;
+  --tw-dark-card:    42 15 15;
+  --tw-dark-surface: 58 22 22;
+  --tw-dark-text:    254 226 226;
+  --tw-dark-muted:   210 140 140;
+  --tw-dark-border:  70 30 30;
+}
+html.dark[data-theme="rose"] {
+  --color-bg:        32 8 18;
+  --color-text:      255 228 237;
+  --color-primary:   244 63 94;
+  --color-secondary: 225 29 72;
+  --dark-card-bg:    #2a0c16;
+  --tw-dark-bg:      32 8 18;
+  --tw-dark-card:    42 12 22;
+  --tw-dark-surface: 58 20 35;
+  --tw-dark-text:    255 228 237;
+  --tw-dark-muted:   210 140 170;
+  --tw-dark-border:  70 28 45;
+}
+html.dark[data-theme="teal"] {
+  --color-bg:        6 28 26;
+  --color-text:      204 251 241;
+  --color-primary:   20 184 166;
+  --color-secondary: 13 148 136;
+  --dark-card-bg:    #0a2622;
+  --tw-dark-bg:      6 28 26;
+  --tw-dark-card:    10 38 34;
+  --tw-dark-surface: 18 52 48;
+  --tw-dark-text:    204 251 241;
+  --tw-dark-muted:   120 200 185;
+  --tw-dark-border:  22 65 58;
+}
+html.dark[data-theme="dark"] {
+  --color-bg:        17 24 39;
+  --color-text:      249 250 251;
+  --color-primary:   139 92 246;
+  --color-secondary: 167 139 250;
+  --dark-card-bg:    #1f2937;
+  --tw-dark-bg:      17 24 39;
+  --tw-dark-card:    31 41 55;
+  --tw-dark-surface: 55 65 81;
+  --tw-dark-text:    249 250 251;
+  --tw-dark-muted:   156 163 175;
+  --tw-dark-border:  75 85 99;
+}
+
+/* ── Override Tailwind dark: classes to use theme variables ── */
+html.dark .dark\:bg-gray-800  { background-color: rgb(var(--tw-dark-card)) !important; }
+html.dark .dark\:bg-gray-700  { background-color: rgb(var(--tw-dark-surface)) !important; }
+html.dark .dark\:bg-gray-900  { background-color: rgb(var(--tw-dark-bg)) !important; }
+html.dark .dark\:text-gray-100 { color: rgb(var(--tw-dark-text)) !important; }
+html.dark .dark\:text-gray-200 { color: rgb(var(--tw-dark-text) / 0.85) !important; }
+html.dark .dark\:text-gray-300 { color: rgb(var(--tw-dark-muted)) !important; }
+html.dark .dark\:text-gray-400 { color: rgb(var(--tw-dark-muted) / 0.75) !important; }
+html.dark .dark\:text-white    { color: rgb(var(--tw-dark-text)) !important; }
+html.dark .dark\:border-gray-600 { border-color: rgb(var(--tw-dark-border)) !important; }
+html.dark .dark\:border-gray-700 { border-color: rgb(var(--tw-dark-border) / 0.7) !important; }
+html.dark .dark\:divide-gray-700 > :not([hidden]) ~ :not([hidden]) { border-color: rgb(var(--tw-dark-border) / 0.7) !important; }
 
 * {
   box-sizing: border-box !important;

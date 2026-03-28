@@ -14,12 +14,15 @@ interface SectionHeaderProps {
 export default function SectionHeader({
   title = 'THE REAL DEAL',
   subtitle = 'by',
-  subtitleBold = 'RetailMeNot',
+  subtitleBold = 'CouponsFeast',
   href = '/',
   dotColor = 'hsl(168, 55%, 38%)',
-  titleColor = 'hsl(220, 60%, 25%)',
-  subtitleColor = 'hsl(168, 55%, 38%)',
+  titleColor,
+  subtitleColor,
 }: SectionHeaderProps) {
+  const resolvedTitleColor = titleColor || undefined;
+  const resolvedSubtitleColor = subtitleColor || undefined;
+
   return (
     <div className="flex flex-col items-center py-8">
       <Link href={href} className="flex flex-col items-center gap-1 group">
@@ -38,15 +41,15 @@ export default function SectionHeader({
             </svg>
           </div>
           <h1
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black italic tracking-tight"
-            style={{ fontFamily: "'Georgia', serif", color: titleColor }}
+            className="text-2xl sm:text-3xl mt-10 sm:mt-14 md:mt-16 lg:mt-20 md:text-4xl lg:text-5xl font-black italic tracking-tight text-gray-900 dark:text-white"
+            style={{ fontFamily: "'Georgia', serif", ...(resolvedTitleColor ? { color: resolvedTitleColor } : {}) }}
           >
             {title}
           </h1>
         </div>
         <span
-          className="text-sm tracking-wide"
-          style={{ fontFamily: "'Georgia', serif", fontStyle: 'italic', color: subtitleColor }}
+          className="text-sm tracking-wide text-gray-700 dark:text-gray-200"
+          style={{ fontFamily: "'Georgia', serif", fontStyle: 'italic', ...(resolvedSubtitleColor ? { color: resolvedSubtitleColor } : {}) }}
         >
           {subtitle} <span className="font-semibold">{subtitleBold}</span>
         </span>

@@ -1,4 +1,5 @@
 'use client';
+import { useTheme } from '@/components/ThemeProvider';
 
 export interface BannerData {
   _id?: string;
@@ -6,6 +7,7 @@ export interface BannerData {
   label?: string;
   cta?: string;
   image?: string;
+  secondaryImage?: string;
   bgColor?: string;
   textPanelBg?: string;
   textPanelMargin?: number;
@@ -24,6 +26,7 @@ export interface BannerData {
   limitedTime?: boolean;
   expiringToday?: boolean;
   exclusive?: boolean;
+  imagePosition?: string;
   isActive: boolean;
 }
 
@@ -42,8 +45,11 @@ export function BannerRenderer({ banner, onCtaClick }: { banner: any; onCtaClick
   const cta = banner.cta || banner.buttonText || 'Shop Now';
   const link = banner.buttonLink || '#';
   const bg = banner.bgColor || '#ffffff';
-  const panelBg = banner.textPanelBg || '#ffffff';
-  const light = isLightColor(panelBg);
+  const panelBgRaw = banner.textPanelBg || '#ffffff';
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  const panelBg = isDark ? 'var(--dark-card-bg, #1f2937)' : panelBgRaw;
+  const light = isDark ? false : isLightColor(panelBgRaw);
 
   const handleClick = (e: React.MouseEvent) => {
     if (onCtaClick) {

@@ -21,7 +21,7 @@ const fallbackSidebar = [
 export default function BlogSection() {
   const [featured, setFeatured] = useState(fallbackFeatured);
   const [sidebar, setSidebar] = useState(fallbackSidebar);
-  const [siteName, setSiteName] = useState('RetailMeNot');
+  const [siteName, setSiteName] = useState('CouponsFeast');
 
   useEffect(() => {
     getSiteConfig().then(res => {

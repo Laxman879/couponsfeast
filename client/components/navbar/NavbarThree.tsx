@@ -15,7 +15,7 @@ interface NavbarThreeProps {
 export default function NavbarThree({ navLinks, config }: NavbarThreeProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
-  const { siteConfig } = useDynamicTheme();
+  const { siteConfig, darkPalette } = useDynamicTheme();
 
   const isDark = theme === 'dark';
   const primary = siteConfig?.theme?.primaryColor || '#7c3aed';
@@ -30,12 +30,12 @@ export default function NavbarThree({ navLinks, config }: NavbarThreeProps) {
   const bannerHighlight = config?.bannerHighlight || 'Offer Ends Soon!';
   const showBanner = config?.showBanner ?? true;
 
-  const navBg = isDark ? '#1f2937' : '#ffffff';
-  const navText = isDark ? '#f9fafb' : '#111827';
-  const navBorder = isDark ? '#374151' : '#e5e7eb';
+  const navBg = isDark ? darkPalette.cardBg : '#faf8ff';
+  const navText = isDark ? darkPalette.text : '#111827';
+  const navBorder = isDark ? darkPalette.cardBg : '#e5e7eb';
   const linkHover = isDark ? 'hover:text-gray-300' : 'hover:text-gray-500';
-  const mobileBg = isDark ? '#111827' : '#ffffff';
-  const ctaBg = isDark ? 'transparent' : '#ffffff';
+  const mobileBg = isDark ? darkPalette.bg : '#faf8ff';
+  const ctaBg = isDark ? 'transparent' : '#faf8ff';
   const ctaBorder = isDark ? 'rgba(255,255,255,0.3)' : '#d1d5db';
 
   return (

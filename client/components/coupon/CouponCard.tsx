@@ -91,7 +91,7 @@ export default function CouponCard({ coupon }: { coupon: Coupon }) {
 
   return (
     <>
-      <div style={{ border: '1px solid #ddd' }} className={`rounded-xl overflow-hidden ${isCashBack ? 'bg-primary/5' : 'bg-white'}`}>
+      <div style={{ border: '1px solid #ddd' }} className={`rounded-xl overflow-hidden ${isCashBack ? 'bg-primary/5' : 'bg-white dark:bg-gray-800'}`}>
         {/* Mobile: stack | Desktop: row */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4">
 
@@ -109,17 +109,17 @@ export default function CouponCard({ coupon }: { coupon: Coupon }) {
                   <span className="w-2 h-2 rounded-full bg-primary inline-block" /> Online Cash Back
                 </span>
               )}
-              <span className="inline-block bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mb-1">
+              <span className="inline-block bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs px-2 py-0.5 rounded mb-1">
                 {labelText}
               </span>
-              <h3 className="font-bold text-base sm:text-lg md:text-xl text-gray-900 leading-snug mb-2">{coupon.title}</h3>
+              <h3 className="font-bold text-base sm:text-lg md:text-xl text-gray-900 dark:text-gray-100 leading-snug mb-2">{coupon.title}</h3>
               <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                 {!!coupon.interestedUsers && (
-                  <span className="bg-gray-100 text-gray-600 text-[10px] sm:text-xs px-2 py-0.5 sm:py-1 rounded-full">
+                  <span className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-[10px] sm:text-xs px-2 py-0.5 sm:py-1 rounded-full">
                     {coupon.interestedUsers} interested
                   </span>
                 )}
-                {coupon.limitedTime && <span className="bg-gray-100 text-gray-600 text-[10px] sm:text-xs px-2 py-0.5 rounded-full">Limited time</span>}
+                {coupon.limitedTime && <span className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-[10px] sm:text-xs px-2 py-0.5 rounded-full">Limited time</span>}
                 {coupon.expiringToday && <span className="bg-red-100 text-red-500 text-[10px] sm:text-xs px-2 py-0.5 rounded-full animate-pulse">Expiring today</span>}
                 {coupon.exclusive && <span className="bg-primary/10 text-primary text-[10px] sm:text-xs px-2 py-0.5 rounded-full">Exclusive</span>}
               </div>
@@ -130,7 +130,7 @@ export default function CouponCard({ coupon }: { coupon: Coupon }) {
           <div className="flex items-center px-3 pb-3 sm:px-5 sm:py-4 flex-shrink-0">
             <button
               onClick={handleActivate}
-              className="bg-gray-100 hover:bg-gray-200 text-primary font-bold text-xs sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 rounded-full transition-colors w-full sm:w-auto sm:min-w-[110px] text-center"
+              className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-primary font-bold text-xs sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 rounded-full transition-colors w-full sm:w-auto sm:min-w-[110px] text-center"
             >
               {coupon.code ? 'Reveal Code' : isCashBack ? 'Get Reward' : 'Get Deal'}
             </button>
@@ -138,15 +138,15 @@ export default function CouponCard({ coupon }: { coupon: Coupon }) {
         </div>
 
         {coupon.details && (
-          <div className="border-t border-gray-100 px-3 sm:px-5 py-2 flex justify-end">
-            <button onClick={() => setShowDetails(!showDetails)} className="text-xs text-gray-500 hover:text-gray-800 flex items-center gap-1">
+          <div className="border-t border-gray-100 dark:border-gray-700 px-3 sm:px-5 py-2 flex justify-end">
+            <button onClick={() => setShowDetails(!showDetails)} className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 flex items-center gap-1">
               {showDetails ? 'Hide Details' : 'See Details'}
               {showDetails ? <Minus className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
             </button>
           </div>
         )}
         {showDetails && coupon.details && (
-          <div className="px-3 sm:px-5 pb-3 text-xs text-gray-500 leading-relaxed">{coupon.details}</div>
+          <div className="px-3 sm:px-5 pb-3 text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{coupon.details}</div>
         )}
       </div>
 

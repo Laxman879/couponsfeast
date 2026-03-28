@@ -41,9 +41,9 @@ interface SidebarProps {
 
 function Section({ title, children }: { title?: string; children: React.ReactNode }) {
   return (
-    <div className="py-5 border-b border-gray-200">
+    <div className="py-5 border-b border-gray-200 dark:border-gray-700">
       {title && (
-        <h3 className="text-sm font-bold uppercase tracking-wider text-gray-800 mb-3">{title}</h3>
+        <h3 className="text-sm font-bold uppercase tracking-wider text-gray-800 dark:text-gray-200 mb-3">{title}</h3>
       )}
       {children}
     </div>
@@ -99,13 +99,13 @@ export default function Sidebar({
 
       {/* Commission Note */}
       {commissionNote && (
-        <p className="text-xs text-gray-500 mb-4 leading-relaxed">{commissionNote}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 leading-relaxed">{commissionNote}</p>
       )}
 
       {/* Today's Top Offers + Stats */}
       <Section title={`Today's Top ${storeName} Offers:`}>
         {topOffers.length > 0 && (
-          <ul className="text-sm text-gray-700 space-y-1.5 mb-3">
+          <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-1.5 mb-3">
             {topOffers.map((offer, i) => (
               <li key={i} className="flex items-start gap-1">
                 <span className="mt-0.5 text-gray-400">•</span>
@@ -117,8 +117,8 @@ export default function Sidebar({
         <div className="space-y-2">
           {stats.map(s => (
             <div key={s.label} className="flex justify-between text-sm">
-              <span className="text-gray-500">{s.label}</span>
-              <span className="font-semibold text-gray-800">{s.value}</span>
+              <span className="text-gray-500 dark:text-gray-400">{s.label}</span>
+              <span className="font-semibold text-gray-800 dark:text-gray-200">{s.value}</span>
             </div>
           ))}
         </div>
@@ -137,14 +137,14 @@ export default function Sidebar({
               }
             </div>
             <div>
-              <p className="text-base font-semibold text-gray-900">{authorName}</p>
+              <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{authorName}</p>
               {authorRole && <p className="text-sm mt-0.5" style={{ color: primaryColor }}>{authorRole}</p>}
             </div>
           </div>
           {authorBio && (
-            <p className="text-sm text-gray-500 mt-2 leading-relaxed">{authorBio}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">{authorBio}</p>
           )}
-          <a href={authorBioUrl} className="text-sm underline text-gray-700 mt-2 inline-block hover:text-gray-900">
+          <a href={authorBioUrl} className="text-sm underline text-gray-700 dark:text-gray-300 mt-2 inline-block hover:text-gray-900 dark:hover:text-gray-100">
             See Bio
           </a>
         </Section>
@@ -160,7 +160,7 @@ export default function Sidebar({
                   className="w-full h-24 object-cover group-hover:opacity-90 transition-opacity" />
               </div>
             )}
-            <p className="text-sm font-semibold text-gray-900 group-hover:underline">{featuredArticleTitle}</p>
+            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:underline">{featuredArticleTitle}</p>
           </a>
           {featuredArticleDesc && (
             <p className="text-sm text-gray-500 mt-1 leading-relaxed">{featuredArticleDesc}</p>
@@ -174,7 +174,7 @@ export default function Sidebar({
       {/* Why Trust Us */}
       {trustText && (
         <Section title="Why Trust Us?">
-          <p className="text-sm text-gray-500 leading-relaxed">{trustText}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{trustText}</p>
           {lastVerified && (
             <p className="text-sm text-gray-500 mt-1">
               Our team last verified offers for {storeName} deals on {lastVerified}.
@@ -188,7 +188,7 @@ export default function Sidebar({
 
       {/* How to Use */}
       <Section title={`How To Use ${storeName} Coupons?`}>
-        <ol className="text-sm text-gray-500 space-y-2.5 list-decimal list-inside leading-relaxed">
+        <ol className="text-sm text-gray-500 dark:text-gray-400 space-y-2.5 list-decimal list-inside leading-relaxed">
           {steps.map((step, i) => <li key={i}>{step}</li>)}
         </ol>
       </Section>

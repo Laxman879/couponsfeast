@@ -8,7 +8,7 @@ const fallbackCards = [
     id: 1, href: "#", theme: "white",
     logo: "https://www.retailmenot.com/imagery/merchants/070XWzV7N2uxDgr4I0s13A1.fit_limit.quality_80.size_40x40.v1764008602.png.webp",
     logoWidth: 40, logoHeight: 40, logoAlt: "Myprotein",
-    title: "RetailMeNot Exclusive! Extra 10% Off All Creatine", cta: "Reveal Code",
+    title: "CouponsFeast Exclusive! Extra 10% Off All Creatine", cta: "Reveal Code",
     image: "https://www.retailmenot.com/imagery/homepage-feature-cards/01kkex4xvnz94nwsfgahh41h4q-image.fit_limit.quality_80.size_160x170.v1773248083.webp",
     code: 'CREATINE10', storeUrl: '#', storeName: 'Myprotein', discount: '10% Off',
   },
@@ -22,10 +22,10 @@ const fallbackCards = [
   },
   {
     id: 3, href: "/cashback", theme: "purple",
-    logo: null, logoAlt: "RetailMeNot",
-    title: "Guaranteed Cash Back from 4,000+ Brands", cta: "Shop RetailMeNot",
+    logo: null, logoAlt: "CouponsFeast",
+    title: "Guaranteed Cash Back from 4,000+ Brands", cta: "Shop CouponsFeast",
     image: "https://www.retailmenot.com/imagery/homepage-feature-cards/01kk9s71sgrffp151xmrahh9fj-image.fit_limit.quality_80.size_160x170.v1773076186.png.webp",
-    code: '', storeUrl: '/cashback', storeName: 'RetailMeNot', discount: '',
+    code: '', storeUrl: '/cashback', storeName: 'CouponsFeast', discount: '',
   },
 ];
 
@@ -47,7 +47,7 @@ function FeatureCard({ card, onClick }: { card: any; onClick: () => void }) {
         flex h-[170px] w-full min-w-[320px] flex-shrink-0 justify-between rounded-xl
         shadow-lg transition-shadow duration-300 ease-out hover:shadow-xl
         lg:w-0 lg:flex-1 lg:min-w-0 cursor-pointer
-        ${isPurple ? "bg-primary/10" : "bg-white"}
+        ${isPurple ? "bg-primary/10" : "bg-white dark:bg-gray-800"}
       `}
     >
       <div className="flex flex-col pl-5 pr-4 justify-start overflow-hidden">
@@ -60,10 +60,10 @@ function FeatureCard({ card, onClick }: { card: any; onClick: () => void }) {
         ) : (
           <DefaultLogo name={card.logoAlt || card.storeName} isPurple={isPurple} />
         )}
-        <p className={`my-3 text-sm font-semibold leading-tight line-clamp-3 ${isPurple ? "text-primary" : "text-gray-900"}`}>
+        <p className={`my-3 text-sm font-semibold leading-tight line-clamp-3 ${isPurple ? "text-primary" : "text-gray-900 dark:text-gray-100"}`}>
           {card.title}
         </p>
-        <p className={`text-xs uppercase tracking-widest underline underline-offset-4 font-bold ${isPurple ? "text-primary" : "text-gray-800"}`}>
+        <p className={`text-xs uppercase tracking-widest underline underline-offset-4 font-bold ${isPurple ? "text-primary" : "text-gray-800 dark:text-gray-200"}`}>
           {card.cta || (card.code ? 'Reveal Code' : 'Shop Now')}
         </p>
       </div>
@@ -135,7 +135,7 @@ export default function FeaturedCoupons({ title, limit = 3 }: { title?: string; 
 
   return (
     <section className="mt-10 mb-16 md:mt-14 md:mb-20 max-w-7xl mx-auto px-4 sm:px-6">
-      <h1 className="mb-4 text-xl font-bold capitalize leading-tight md:leading-normal">
+      <h1 className="mb-4 text-xl font-bold capitalize leading-tight md:leading-normal dark:text-gray-100">
         {title || "The Best Coupons, Promo Codes & Cash Back Offers"}
       </h1>
 

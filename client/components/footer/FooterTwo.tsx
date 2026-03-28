@@ -5,14 +5,14 @@ import { useTheme } from '@/components/ThemeProvider';
 interface FooterTwoProps { config: any; }
 
 export default function FooterTwo({ config }: FooterTwoProps) {
-  const { siteConfig } = useDynamicTheme();
+  const { siteConfig, darkPalette } = useDynamicTheme();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  const primary   = isDark ? '#1f2937' : (config?.bgColor || siteConfig?.theme?.primaryColor || '#7c3aed');
-  const textMain  = isDark ? '#f9fafb' : (config?.textColor || '#ffffff');
-  const textMuted = isDark ? '#9ca3af' : 'rgba(255,255,255,0.7)';
-  const border    = isDark ? '#374151' : 'rgba(107,114,128,0.3)';
+  const primary   = isDark ? darkPalette.cardBg : (config?.bgColor || siteConfig?.theme?.primaryColor || '#7c3aed');
+  const textMain  = isDark ? darkPalette.text : (config?.textColor || '#ffffff');
+  const textMuted = isDark ? (darkPalette.text + 'b3') : 'rgba(255,255,255,0.7)';
+  const border    = isDark ? darkPalette.cardBg : 'rgba(107,114,128,0.3)';
   const siteName  = siteConfig?.siteName || 'CouponsFeast';
   const logoUrl   = siteConfig?.logos?.footer;
 

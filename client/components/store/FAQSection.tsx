@@ -25,9 +25,9 @@ export default function FAQSection({ heading = 'Frequently Asked Questions', ite
   ];
 
   return (
-    <div className="py-10 border-t border-gray-200">
-      <h2 className="text-3xl font-bold text-gray-900 mb-8">{heading}</h2>
-      <div className="divide-y divide-gray-200">
+    <div className="py-10 border-t border-gray-200 dark:border-gray-700">
+      <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">{heading}</h2>
+      <div className="divide-y divide-gray-200 dark:divide-gray-700">
         {displayItems.map((faq, index) => {
           const isOpen = openIndex === index;
           return (
@@ -36,14 +36,14 @@ export default function FAQSection({ heading = 'Frequently Asked Questions', ite
                 onClick={() => setOpenIndex(isOpen ? null : index)}
                 className="w-full flex items-center justify-between py-4 text-left group"
               >
-                <span className="text-base font-medium text-gray-900 pr-4">{faq.question}</span>
+                <span className="text-base font-medium text-gray-900 dark:text-gray-100 pr-4">{faq.question}</span>
                 {isOpen
-                  ? <Minus className="w-4 h-4 flex-shrink-0 text-gray-400 group-hover:text-gray-700 transition-colors" />
-                  : <Plus className="w-4 h-4 flex-shrink-0 text-gray-400 group-hover:text-gray-700 transition-colors" />
+                  ? <Minus className="w-4 h-4 flex-shrink-0 text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors" />
+                  : <Plus className="w-4 h-4 flex-shrink-0 text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors" />
                 }
               </button>
               {isOpen && faq.answer && (
-                <p className="pb-4 text-[15px] text-gray-500 leading-relaxed pr-8">{faq.answer}</p>
+                <p className="pb-4 text-[15px] text-gray-500 dark:text-gray-400 leading-relaxed pr-8">{faq.answer}</p>
               )}
             </div>
           );

@@ -54,7 +54,7 @@ export default function PromoCard() {
   return (
     <>
       <section className="mb-16 md:mb-20 px-4 md:px-6 max-w-7xl mx-auto">
-        <div className="w-full bg-white rounded-lg overflow-hidden shadow-md flex flex-col md:flex-row">
+        <div className="w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md flex flex-col md:flex-row">
           <div className="relative md:w-[60%] min-h-[250px] sm:min-h-[350px] md:min-h-[400px]">
             <img
               src={data.image}
@@ -70,9 +70,9 @@ export default function PromoCard() {
             </button>
           </div>
           <div className="flex flex-col justify-center px-6 py-8 sm:px-10 md:px-12 lg:px-16 md:w-[40%]">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 leading-tight mb-3">{data.title}</h2>
-            <p className="text-gray-500 text-base sm:text-lg mb-5 leading-relaxed">{data.description}</p>
-            <a href={data.ctaLink} className="text-gray-900 font-extrabold text-sm sm:text-base tracking-wide underline underline-offset-4 decoration-2 hover:opacity-70 transition-opacity uppercase">{data.ctaText}</a>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 dark:text-gray-100 leading-tight mb-3">{data.title}</h2>
+            <p className="text-gray-500 dark:text-gray-400 text-base sm:text-lg mb-5 leading-relaxed">{data.description}</p>
+            <a href={data.ctaLink} className="text-gray-900 dark:text-gray-100 font-extrabold text-sm sm:text-base tracking-wide underline underline-offset-4 decoration-2 hover:opacity-70 transition-opacity uppercase">{data.ctaText}</a>
           </div>
         </div>
       </section>

@@ -6,25 +6,26 @@ import {
   TextField, MenuItem, Drawer, IconButton, Switch, FormControlLabel
 } from '@mui/material';
 import AdminShell from '@/components/admin/AdminShell';
-import { getCoupons, createCoupon, updateCoupon, deleteCoupon, getStores } from '@/services/api';
+import { getCoupons, createCoupon, updateCoupon, deleteCoupon, getStores, getTags } from '@/services/api';
 import toast from 'react-hot-toast';
 import { Add, Edit, Delete, LocalOffer, Store, CalendarToday, Percent, Close } from '@mui/icons-material';
 import { formatDate } from '@/utils/dateUtils';
 import ImageUploadField from '@/components/admin/ImageUploadField';
 
-const defaultForm = { title: '', code: '', description: '', discount: '', store: '', expiryDate: '', type: 'code', labelType: 'Code', interestedUsers: 0, limitedTime: false, expiringToday: false, addedBy: '', exclusive: false, details: '', isFeatured: false, featuredImage: '', affiliateUrl: '', customLogo: '' };
+const defaultForm = { title: '', code: '', description: '', discount: '', store: '', expiryDate: '', type: 'code', labelType: 'Code', interestedUsers: 0, limitedTime: false, expiringToday: false, addedBy: '', exclusive: false, details: '', isFeatured: false, featuredImage: '', affiliateUrl: '', customLogo: '', tags: [] as string[] };
 const inputSx = { '& .MuiInputBase-root': { minHeight: 48 } };
 
 export default function AdminCoupons() {
   const [coupons, setCoupons] = useState<any[]>([]);
   const [stores, setStores] = useState<any[]>([]);
+  const [availableTags, setAvailableTags] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [couponToDelete, setCouponToDelete] = useState<any>(null);
   const [formData, setFormData] = useState({ ...defaultForm });
   const [editId, setEditId] = useState<string | null>(null);
 
-  useEffect(() => { fetchCoupons(); fetchStores(); }, []);
+  useEffect(() => { fetchCoupons(); fetchStores(); fetchTags(); }, []);
 
   const fetchCoupons = async () => {
     try { const res = await getCoupons(); setCoupons(res.data?.data ?? res.data ?? []); }
@@ -33,6 +34,10 @@ export default function AdminCoupons() {
   const fetchStores = async () => {
     try { const res = await getStores(); setStores(res.data?.data ?? res.data ?? []); }
     catch (error) { console.error('Error fetching stores:', error); }
+  };
+  const fetchTags = async () => {
+    try { const res = await getTags(); setAvailableTags(res.data?.data ?? res.data ?? []); }
+    catch (error) { console.error('Error fetching tags:', error); }
   };
 
   const closeDrawer = () => { setOpen(false); setEditId(null); setFormData({ ...defaultForm }); };
@@ -46,7 +51,7 @@ export default function AdminCoupons() {
   };
 
   const handleEdit = (coupon: any) => {
-    setFormData({ ...defaultForm, ...coupon, store: coupon.store?._id || '', expiryDate: coupon.expiryDate ? coupon.expiryDate.split('T')[0] : '' });
+    setFormData({ ...defaultForm, ...coupon, store: coupon.store?._id || '', expiryDate: coupon.expiryDate ? coupon.expiryDate.split('T')[0] : '', tags: coupon.tags || [] });
     setEditId(coupon._id); setOpen(true);
   };
 
@@ -152,6 +157,14 @@ export default function AdminCoupons() {
               </TextField>
             </div>
             <TextField fullWidth label="Expiry Date" type="date" value={formData.expiryDate} onChange={e => ff('expiryDate', e.target.value)} variant="outlined" InputLabelProps={{ shrink: true }} sx={inputSx} />
+
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider pt-2">Tags</p>
+            <TextField select fullWidth label="Tags" value={formData.tags} onChange={e => ff('tags', typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value)} variant="outlined" SelectProps={{ multiple: true, renderValue: (selected: any) => (
+              <div className="flex flex-wrap gap-1">{(selected as string[]).map(t => <Chip key={t} label={t} size="small" onDelete={() => ff('tags', formData.tags.filter((tag: string) => tag !== t))} onMouseDown={e => e.stopPropagation()} style={{ background: 'rgba(168,85,247,0.08)', color: '#a855f7', fontSize: 11 }} />)}</div>
+            )}} sx={inputSx} helperText="Select tags from the predefined list">
+              {availableTags.map(t => <MenuItem key={t._id} value={t.name} style={{ fontWeight: formData.tags.includes(t.name) ? 700 : 400 }}>{t.name}</MenuItem>)}
+              {availableTags.length === 0 && <MenuItem disabled>No tags available — create them in Tags page</MenuItem>}
+            </TextField>
 
             <p className="text-xs font-bold text-gray-500 uppercase tracking-wider pt-2">Type & Labels</p>
             <div className="grid grid-cols-2 gap-4">

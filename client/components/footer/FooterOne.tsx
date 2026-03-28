@@ -18,12 +18,12 @@ const getSocialIcon = (iconName: string) => {
 };
 
 export default function FooterOne({ config }: FooterOneProps) {
-  const { siteConfig } = useDynamicTheme();
+  const { siteConfig, darkPalette } = useDynamicTheme();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  const primary   = isDark ? '#1f2937' : (config?.bgColor || siteConfig?.theme?.primaryColor || '#7c3aed');
-  const secondary = isDark ? '#111827' : (siteConfig?.theme?.secondaryColor || '#9333ea');
+  const primary   = isDark ? darkPalette.cardBg : (config?.bgColor || siteConfig?.theme?.primaryColor || '#7c3aed');
+  const secondary = isDark ? darkPalette.bg : (siteConfig?.theme?.secondaryColor || '#9333ea');
   const accent    = (siteConfig?.theme as any)?.accentColor || '#f59e0b';
   const linkColor = config?.textColor || '#ffffff';
 

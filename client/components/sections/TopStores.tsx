@@ -8,13 +8,13 @@ import StoreCard from '@/components/store/StoreCard';
 export default function TopStores({ title = 'Shop at Top Stores', limit = 6 }: { title?: string; limit?: number }) {
   const [stores, setStores] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const { siteConfig } = useDynamicTheme();
+  const { siteConfig, darkPalette } = useDynamicTheme();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   const primary = siteConfig?.theme?.primaryColor || '#7c3aed';
-  const sectionBg = isDark ? '#1f2937' : '#ffffff';
-  const titleColor = isDark ? '#f9fafb' : '#111827';
-  const skeletonBg = isDark ? '#374151' : '#e5e7eb';
+  const sectionBg = isDark ? darkPalette.cardBg : '#ffffff';
+  const titleColor = isDark ? darkPalette.text : '#111827';
+  const skeletonBg = isDark ? darkPalette.cardBg : '#e5e7eb';
 
   useEffect(() => {
     getStores()

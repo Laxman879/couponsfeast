@@ -20,6 +20,7 @@ import dealRoutes from "./admin/deals/deal.routes.js";
 import blogRoutes from "./admin/blog/blog.routes.js";
 import promoBannerRoutes from "./admin/promo-banners/promoBanner.routes.js";
 import popularLinkRoutes from "./admin/popular-links/popularLink.routes.js";
+import tagRoutes from "./admin/tags/tag.routes.js";
 import { trackGA4APIMiddleware } from "../middleware/ga4Analytics.js";
 
 const router = express.Router();
@@ -93,6 +94,9 @@ router.use("/promo-banners", promoBannerRoutes);
 
 // POPULAR LINKS MANAGEMENT APIs (4 endpoints)
 router.use("/popular-links", popularLinkRoutes);
+
+// TAG MANAGEMENT APIs (4 endpoints)
+router.use("/tags", tagRoutes);
 
 router.get("/system/health", (req, res) => {
   res.json({

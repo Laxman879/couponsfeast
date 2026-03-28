@@ -5,16 +5,16 @@ import { useTheme } from '@/components/ThemeProvider';
 interface FooterThreeProps { config: any; }
 
 export default function FooterThree({ config }: FooterThreeProps) {
-  const { siteConfig } = useDynamicTheme();
+  const { siteConfig, darkPalette } = useDynamicTheme();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  const primary  = isDark ? '#1f2937' : (config?.bgColor || siteConfig?.theme?.primaryColor || '#7c3aed');
-  const textMain = isDark ? '#d1d5db' : (config?.textColor || '#ffffff');
-  const textHead = isDark ? '#f9fafb' : '#1f2937';
-  const border   = isDark ? '#374151' : '#d1d5db';
-  const inputBg  = isDark ? '#374151' : '#ffffff';
-  const btnBg    = isDark ? '#6d28d9' : '#111827';
+  const primary  = isDark ? darkPalette.cardBg : (config?.bgColor || siteConfig?.theme?.primaryColor || '#7c3aed');
+  const textMain = isDark ? darkPalette.text : (config?.textColor || '#ffffff');
+  const textHead = isDark ? darkPalette.text : '#1f2937';
+  const border   = isDark ? darkPalette.cardBg : '#d1d5db';
+  const inputBg  = isDark ? darkPalette.cardBg : '#ffffff';
+  const btnBg    = isDark ? siteConfig?.theme?.primaryColor || '#6d28d9' : '#111827';
   const siteName = siteConfig?.siteName || 'CouponsFeast';
   const logoUrl  = siteConfig?.logos?.footer;
   const accent   = siteConfig?.theme?.primaryColor || '#7c3aed';

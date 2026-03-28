@@ -44,15 +44,15 @@ export default function TopDealsCarousel() {
       <div className="">
         <div className="flex justify-between items-center mb-5">
           <div className="flex items-center gap-3">
-            <div className="w-14 h-14 bg-black text-white rounded-full flex items-center justify-center text-xs">
+            <div className="w-14 h-14 bg-black dark:bg-gray-700 text-white rounded-full flex items-center justify-center text-xs">
               amazon
             </div>
             <div>
-              <h2 className="text-lg font-bold">Today&apos;s Top Deals</h2>
-              <p className="text-xs text-gray-500 uppercase">Presented by Amazon</p>
+              <h2 className="text-lg font-bold dark:text-gray-100">Today&apos;s Top Deals</h2>
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Presented by Amazon</p>
             </div>
           </div>
-          <button className="border border-gray-300 px-4 py-2 rounded-full text-sm">
+          <button className="border border-gray-300 dark:border-gray-600 px-4 py-2 rounded-full text-sm dark:text-gray-200">
             View more deals
           </button>
         </div>
@@ -60,7 +60,7 @@ export default function TopDealsCarousel() {
         <div className="relative">
           <button
             onClick={() => scroll('left')}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow p-2 rounded-full"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-700 shadow p-2 rounded-full dark:text-gray-200"
           >
             <IoIosArrowBack />
           </button>
@@ -74,7 +74,7 @@ export default function TopDealsCarousel() {
           </div>
           <button
             onClick={() => scroll('right')}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow p-2 rounded-full"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-700 shadow p-2 rounded-full dark:text-gray-200"
           >
             <IoIosArrowForward />
           </button>
@@ -84,7 +84,7 @@ export default function TopDealsCarousel() {
           {deals.map((_, index) => (
             <div
               key={index}
-              className={`h-1 w-8 rounded-full ${active === index ? 'bg-black' : 'bg-gray-300'}`}
+              className={`h-1 w-8 rounded-full ${active === index ? 'bg-black dark:bg-white' : 'bg-gray-300 dark:bg-gray-600'}`}
             />
           ))}
         </div>
@@ -93,8 +93,8 @@ export default function TopDealsCarousel() {
       {/* Grid Section - Same UI as DealsSection */}
       <div className="py-10">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-800">Top Deals</h2>
-          <button className="text-xs tracking-wider uppercase text-gray-600 border-b border-gray-400 hover:text-black transition-colors">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">Top Deals</h2>
+          <button className="text-xs tracking-wider uppercase text-gray-600 dark:text-gray-400 border-b border-gray-400 dark:border-gray-500 hover:text-black dark:hover:text-white transition-colors">
             All Top Deals
           </button>
         </div>
@@ -102,7 +102,7 @@ export default function TopDealsCarousel() {
           {deals.map((item, i) => (
             <div
               key={item._id || item.id || `grid-${i}`}
-              className="relative flex h-full cursor-pointer overflow-hidden bg-white rounded-xl border border-gray-400 flex-col"
+              className="relative flex h-full cursor-pointer overflow-hidden bg-white dark:bg-gray-800 rounded-xl border border-gray-400 dark:border-gray-600 flex-col"
               onClick={() => {
                 if (item.link) window.open(item.link, '_blank', 'noopener,noreferrer');
                 setModalDeal(item);
@@ -117,19 +117,19 @@ export default function TopDealsCarousel() {
                 />
               </div>
               {item.discount && (
-                <span className="absolute left-2 top-2 flex rounded border border-gray-200 bg-white px-2 py-1 text-xs font-bold">
+                <span className="absolute left-2 top-2 flex rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1 text-xs font-bold dark:text-gray-200">
                   {item.discount}
                 </span>
               )}
               <div className="relative flex h-full flex-col justify-between px-3 py-2">
                 <div>
                   {item.brand && (
-                    <h3 className="text-xs font-bold uppercase tracking-wide mt-1">{item.brand}</h3>
+                    <h3 className="text-xs font-bold uppercase tracking-wide mt-1 dark:text-gray-200">{item.brand}</h3>
                   )}
-                  <p className="my-2 line-clamp-2 text-sm leading-5">{item.title}</p>
+                  <p className="my-2 line-clamp-2 text-sm leading-5 dark:text-gray-300">{item.title}</p>
                 </div>
                 {item.type && (
-                  <p className="mt-2 self-start rounded-full bg-gray-100 px-4 py-1.5 text-xs font-bold">
+                  <p className="mt-2 self-start rounded-full bg-gray-100 dark:bg-gray-700 px-4 py-1.5 text-xs font-bold dark:text-gray-200">
                     {item.type === 'coupon' ? 'Coupon code' : 'Cash Back'}
                   </p>
                 )}

@@ -23,6 +23,8 @@ const bannerSchema = new mongoose.Schema({
   limitedTime: { type: Boolean, default: false },
   expiringToday: { type: Boolean, default: false },
   exclusive: { type: Boolean, default: false },
+  secondaryImage: String,
+  imagePosition: { type: String, enum: ['center', 'left', 'right', 'top', 'bottom'], default: 'right' },
   isActive: { type: Boolean, default: true }
 }, { timestamps: true });
 

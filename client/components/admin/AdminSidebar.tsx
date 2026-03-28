@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import {
   LayoutDashboard, Store, Tag, Image, Settings, FileText,
   ChevronLeft, ChevronRight, Zap, LogOut, Bell, Menu, X, LayoutGrid, Flame,
-  BookOpen, Megaphone, Link2,
+  BookOpen, Megaphone, Link2, Hash,
 } from 'lucide-react';
 
 const navItems = [
@@ -17,6 +17,7 @@ const navItems = [
   { href: '/admin/promo-banners',  label: 'Promo Banners',   icon: Megaphone,       badge: null },
   { href: '/admin/popular-links',  label: 'Popular Links',   icon: Link2,           badge: null },
   { href: '/admin/categories',     label: 'Categories',      icon: LayoutGrid,      badge: null },
+  { href: '/admin/tags',            label: 'Tags',             icon: Hash,            badge: null },
   { href: '/admin/banners',        label: 'Banners',         icon: Image,           badge: null },
   { href: '/admin/pages',          label: 'Pages',           icon: FileText,        badge: null },
   { href: '/admin/cms',            label: 'CMS & Config',    icon: Settings,        badge: null },

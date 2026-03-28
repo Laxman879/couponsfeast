@@ -3,14 +3,23 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { getCategories, getStores } from '@/services/api';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
+import { useTheme } from '@/components/ThemeProvider';
 
 interface Category { _id: string; name: string; slug: string; color: string; }
 interface Store    { _id: string; storeName: string; slug: string; logo?: string; websiteUrl?: string; category?: string; }
 
 export default function StoresDropdown({ onClose }: { onClose: () => void }) {
   const router = useRouter();
-  const { siteConfig } = useDynamicTheme();
+  const { siteConfig, darkPalette } = useDynamicTheme();
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
   const primary = siteConfig?.theme?.primaryColor || '#7c3aed';
+
+  const dropBg    = isDark ? darkPalette.cardBg : '#ffffff';
+  const textColor = isDark ? darkPalette.text : '#374151';
+  const mutedText = isDark ? (darkPalette.text + 'aa') : '#374151';
+  const skelBg    = isDark ? darkPalette.cardBg : '#f3f4f6';
+
   const [categories, setCategories] = useState<Category[]>([]);
   const [allStores,  setAllStores]  = useState<Store[]>([]);
   const [loading,    setLoading]    = useState(true);
@@ -20,9 +29,7 @@ export default function StoresDropdown({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     const load = async () => {
       try {
-        const [catRes, storeRes] = await Promise.all([
-          getCategories(), getStores()
-        ]);
+        const [catRes, storeRes] = await Promise.all([getCategories(), getStores()]);
         const cats   = catRes.data?.data   ?? catRes.data   ?? [];
         const stores = storeRes.data?.data ?? storeRes.data ?? [];
         const catList: Category[] = Array.isArray(cats) ? cats : [];
@@ -42,9 +49,7 @@ export default function StoresDropdown({ onClose }: { onClose: () => void }) {
           { _id: '2', storeName: 'Flipkart',slug: 'flipkart',websiteUrl: 'https://flipkart.com',category: 'Popular' },
           { _id: '3', storeName: 'Myntra',  slug: 'myntra',  websiteUrl: 'https://myntra.com',  category: 'Fashion' },
         ]);
-      } finally {
-        setLoading(false);
-      }
+      } finally { setLoading(false); }
     };
     load();
     const onStorage = (e: StorageEvent) => { if (e.key === 'cms-updated') load(); };
@@ -52,14 +57,12 @@ export default function StoresDropdown({ onClose }: { onClose: () => void }) {
     return () => window.removeEventListener('storage', onStorage);
   }, []);
 
-  // Stores for active category
   const categoryStores = activeCat
     ? allStores.filter(s =>
         s.category?.toLowerCase() === activeCat.name.toLowerCase() ||
         s.category?.toLowerCase() === activeCat.slug.toLowerCase()
       )
     : [];
-
   const displayStores = categoryStores.length > 0 ? categoryStores : allStores.slice(0, 10);
 
   const handleStoreClick = (store: Store) => {
@@ -70,48 +73,38 @@ export default function StoresDropdown({ onClose }: { onClose: () => void }) {
     router.push(`/view/${domain}`);
   };
 
-  const handleMouseEnter = () => {
-    if (leaveTimer.current) clearTimeout(leaveTimer.current);
-  };
-
-  const handleMouseLeave = () => {
-    leaveTimer.current = setTimeout(onClose, 150);
-  };
+  const handleMouseEnter = () => { if (leaveTimer.current) clearTimeout(leaveTimer.current); };
+  const handleMouseLeave = () => { leaveTimer.current = setTimeout(onClose, 150); };
 
   if (loading) return (
-    <div
-      className="absolute top-full left-0 mt-0 bg-white shadow-lg z-50 flex"
-      style={{ width: 384 }}
-    >
-      <div className="w-36  p-3 space-y-2">
-        {[1,2,3,4,5].map(i => <div key={i} className="h-6 rounded bg-gray-100 animate-pulse" />)}
+    <div className="absolute top-full left-0 mt-0 shadow-lg z-50 flex" style={{ width: 384, backgroundColor: dropBg }}>
+      <div className="w-36 p-3 space-y-2">
+        {[1,2,3,4,5].map(i => <div key={i} className="h-6 rounded animate-pulse" style={{ backgroundColor: skelBg }} />)}
       </div>
       <div className="flex-1 p-3 space-y-2">
-        {[1,2,3,4,5].map(i => <div key={i} className="h-6 rounded bg-gray-100 animate-pulse" />)}
+        {[1,2,3,4,5].map(i => <div key={i} className="h-6 rounded animate-pulse" style={{ backgroundColor: skelBg }} />)}
       </div>
     </div>
   );
 
   return (
     <div
-      className="absolute top-full left-0 mt-0 bg-white shadow-lg z-50"
-      style={{ width: 384 }}
+      className="absolute top-full left-0 mt-0 shadow-lg z-50"
+      style={{ width: 384, backgroundColor: dropBg }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <div className="flex" style={{ minHeight: 280 }}>
-
-        {/* ── Left: Category list ── */}
-        <div className="flex-shrink-0  pt-4 pb-2" style={{ width: 144 }}>
+        <div className="flex-shrink-0 pt-4 pb-2" style={{ width: 144 }}>
           {categories.map(cat => {
             const isActive = activeCat?._id === cat._id;
             return (
               <button
                 key={cat._id}
-                className="flex w-full cursor-pointer flex-row py-2 px-3 text-left text-sm hover:text-black transition-colors bg-transparent border-none outline-none"
+                className="flex w-full cursor-pointer flex-row py-2 px-3 text-left text-sm transition-colors bg-transparent border-none outline-none"
                 style={{
                   borderRight: isActive ? `4px solid ${primary}` : '4px solid transparent',
-                  color: isActive ? primary : '#374151',
+                  color: isActive ? primary : mutedText,
                   fontWeight: isActive ? 700 : 400,
                 }}
                 onMouseEnter={() => setActiveCat(cat)}
@@ -121,8 +114,6 @@ export default function StoresDropdown({ onClose }: { onClose: () => void }) {
               </button>
             );
           })}
-
-          {/* All Categories */}
           <button
             onClick={() => { onClose(); router.push('/category'); }}
             className="block w-full text-left px-3 pb-6 pt-2 text-sm font-semibold hover:underline mt-1 bg-transparent border-none outline-none cursor-pointer"
@@ -132,25 +123,22 @@ export default function StoresDropdown({ onClose }: { onClose: () => void }) {
           </button>
         </div>
 
-        {/* ── Right: Stores for active category ── */}
         <div className="flex-1 pt-2 pb-2 px-2 overflow-y-auto" style={{ maxHeight: 360 }}>
-          <ul className="grid grid-cols-2">
+          <ul className="grid grid-cols-2 list-none p-0 m-0">
             {displayStores.slice(0, 10).map(store => (
-              <li key={store._id} className="mt-2 py-1 px-2">
+              <li key={store._id} className="mt-2 py-1 px-2 list-none">
                 <button
                   onClick={() => handleStoreClick(store)}
                   className="text-sm text-left w-full hover:underline transition-colors bg-transparent border-none outline-none cursor-pointer"
-                  style={{ color: '#374151', textDecorationColor: primary }}
+                  style={{ color: mutedText, textDecorationColor: primary }}
                   onMouseEnter={e => (e.currentTarget.style.color = primary)}
-                  onMouseLeave={e => (e.currentTarget.style.color = '#374151')}
+                  onMouseLeave={e => (e.currentTarget.style.color = mutedText)}
                 >
                   {store.storeName}
                 </button>
               </li>
             ))}
-
-            {/* All Stores */}
-            <li className="mt-2 py-1 px-2 col-span-2">
+            <li className="mt-2 py-1 px-2 col-span-2 list-none">
               <button
                 onClick={() => { onClose(); router.push('/view'); }}
                 className="text-sm font-semibold hover:underline transition-colors bg-transparent border-none outline-none cursor-pointer"

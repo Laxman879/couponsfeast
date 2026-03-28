@@ -17,16 +17,16 @@ interface StoreCardProps {
 }
 
 const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
-  const { siteConfig } = useDynamicTheme();
+  const { siteConfig, darkPalette } = useDynamicTheme();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   const primary = siteConfig?.theme?.primaryColor || '#7c3aed';
   const name = store.storeName || store.name || 'Store';
-  const cardBg = isDark ? '#1f2937' : '#ffffff';
-  const cardBorder = isDark ? '#374151' : '#f3f4f6';
-  const nameColor = isDark ? '#f3f4f6' : '#1f2937';
-  const descColor = isDark ? '#9ca3af' : '#6b7280';
-  const logoBg = isDark ? '#374151' : '#f9fafb';
+  const cardBg = isDark ? darkPalette.cardBg : '#ffffff';
+  const cardBorder = isDark ? darkPalette.cardBg : '#f3f4f6';
+  const nameColor = isDark ? darkPalette.text : '#1f2937';
+  const descColor = isDark ? (darkPalette.text + 'aa') : '#6b7280';
+  const logoBg = isDark ? darkPalette.cardBg : '#f9fafb';
 
   return (
     <Link href={`/store/${store.slug}`} className="no-underline block group">

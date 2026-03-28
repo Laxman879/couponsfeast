@@ -33,12 +33,12 @@ export default function PromoCodeInfo({
        { title: `4. How to use a ${storeName} coupon`, body: `Copy the code, add items to your cart, and paste the code at checkout in the discount field. Your savings will be applied automatically.` }];
 
   return (
-    <div className="py-10 border-t border-gray-200">
-      <div style={{ border: '1px solid #ddd' }} className="rounded-xl p-6 md:p-8 bg-white">
+    <div className="py-10 border-t border-gray-200 dark:border-gray-700">
+      <div style={{ border: '1px solid #ddd' }} className="rounded-xl p-6 md:p-8 bg-white dark:bg-gray-800">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left column */}
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-gray-900 mb-1">
+          <p className="text-xs font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100 mb-1">
             WHAT TO EXPECT FROM
           </p>
           <h2 className="text-3xl md:text-4xl font-bold leading-tight mb-6" style={{ color: primaryColor }}>
@@ -46,8 +46,8 @@ export default function PromoCodeInfo({
           </h2>
           {left.map((s, i) => (
             <div key={i} className="mb-5">
-              {s.title && <h3 className="text-base font-bold text-gray-900 mb-2">{s.title}</h3>}
-              {s.body && <p className="text-[15px] text-gray-500 leading-relaxed">{s.body}</p>}
+              {s.title && <h3 className="text-base font-bold text-gray-900 dark:text-gray-100 mb-2">{s.title}</h3>}
+              {s.body && <p className="text-[15px] text-gray-500 dark:text-gray-400 leading-relaxed">{s.body}</p>}
             </div>
           ))}
         </div>
@@ -70,8 +70,8 @@ export default function PromoCodeInfo({
 
           {right.map((s, i) => (
             <div key={i} className="mb-5">
-              {s.title && <h3 className="text-base font-bold text-gray-900 mb-2">{s.title}</h3>}
-              {s.body && <p className="text-[15px] text-gray-500 leading-relaxed">{s.body}</p>}
+              {s.title && <h3 className="text-base font-bold text-gray-900 dark:text-gray-100 mb-2">{s.title}</h3>}
+              {s.body && <p className="text-[15px] text-gray-500 dark:text-gray-400 leading-relaxed">{s.body}</p>}
             </div>
           ))}
         </div>

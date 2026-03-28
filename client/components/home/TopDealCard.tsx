@@ -60,17 +60,17 @@ export default function TopDealCard({ item }: { item: TopDeal }) {
 
   return (
     <>
-      <div className="min-w-[260px] bg-white rounded-xl border border-gray-200 flex p-3 gap-3 shadow-sm">
-        <div className="w-24 h-24 bg-gray-100 rounded-lg flex items-center justify-center">
+      <div className="min-w-[260px] bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-600 flex p-3 gap-3 shadow-sm">
+        <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
           <img src={item.image} alt="" className="h-16 object-contain" />
         </div>
         <div className="flex flex-col justify-between flex-1">
           <div>
-            <span className="text-xs font-semibold bg-gray-100 px-2 py-1 rounded-md">🔥 {item.discount}</span>
-            <p className="text-sm mt-2 text-gray-800 line-clamp-2">{item.title}</p>
+            <span className="text-xs font-semibold bg-gray-100 dark:bg-gray-700 dark:text-gray-200 px-2 py-1 rounded-md">🔥 {item.discount}</span>
+            <p className="text-sm mt-2 text-gray-800 dark:text-gray-200 line-clamp-2">{item.title}</p>
           </div>
           <button onClick={handleClick}
-            className="bg-gray-100 text-xs font-semibold px-3 py-2 rounded-full w-fit text-center hover:bg-gray-200 transition-colors cursor-pointer">
+            className="bg-gray-100 dark:bg-gray-700 dark:text-gray-200 text-xs font-semibold px-3 py-2 rounded-full w-fit text-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer">
             Check price
           </button>
         </div>

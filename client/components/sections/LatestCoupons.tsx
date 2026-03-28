@@ -8,13 +8,13 @@ import CouponCard from '@/components/coupon/CouponCard';
 export default function LatestCoupons({ title = 'Latest Coupons', limit = 8 }: { title?: string; limit?: number }) {
   const [coupons, setCoupons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const { siteConfig } = useDynamicTheme();
+  const { siteConfig, darkPalette } = useDynamicTheme();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   const primary = siteConfig?.theme?.primaryColor || '#7c3aed';
-  const sectionBg = isDark ? '#111827' : '#f9fafb';
-  const titleColor = isDark ? '#f9fafb' : '#111827';
-  const skeletonBg = isDark ? '#374151' : '#e5e7eb';
+  const sectionBg = isDark ? darkPalette.bg : '#f9fafb';
+  const titleColor = isDark ? darkPalette.text : '#111827';
+  const skeletonBg = isDark ? darkPalette.cardBg : '#e5e7eb';
 
   useEffect(() => {
     getCoupons({ limit, sort: 'createdAt', order: 'desc' })

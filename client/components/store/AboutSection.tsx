@@ -12,13 +12,13 @@ export default function AboutSection({ storeName, heading, paragraphs = [], prim
   ];
 
   return (
-    <div className="py-10 border-t border-gray-200">
-      <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 mb-4">
+    <div className="py-10 border-t border-gray-200 dark:border-gray-700">
+      <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100 mb-4">
         {heading || `About ${storeName}`}
       </h3>
       <div className="space-y-4">
         {displayParagraphs.map((p, i) => (
-          <p key={i} className="text-[15px] text-gray-500 leading-relaxed">{p}</p>
+          <p key={i} className="text-[15px] text-gray-500 dark:text-gray-400 leading-relaxed">{p}</p>
         ))}
       </div>
     </div>

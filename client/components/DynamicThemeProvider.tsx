@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { getSiteConfig } from '@/services/api';
+import { useTheme } from '@/components/ThemeProvider';
 
 interface SiteTheme {
   primaryColor: string;
@@ -43,26 +44,40 @@ interface DynamicThemeContextType {
   siteConfig: SiteConfigData | null;
   loading: boolean;
   refreshConfig: () => void;
+  darkPalette: { bg: string; text: string; cardBg: string };
 }
 
 const DynamicThemeContext = createContext<DynamicThemeContextType>({
   siteConfig: null,
   loading: true,
-  refreshConfig: () => {}
+  refreshConfig: () => {},
+  darkPalette: { bg: '#111827', text: '#f9fafb', cardBg: '#1f2937' },
 });
 
 export const useDynamicTheme = () => useContext(DynamicThemeContext);
 
 // Theme palette map — mirrors globals.css
 const THEME_PALETTES: Record<string, { primary: string; secondary: string; bg: string; text: string }> = {
-  purple: { primary: '#7c3aed', secondary: '#9333ea', bg: '#ffffff', text: '#111827' },
-  blue:   { primary: '#2563eb', secondary: '#1d4ed8', bg: '#ffffff', text: '#111827' },
-  green:  { primary: '#16a34a', secondary: '#15803d', bg: '#ffffff', text: '#111827' },
-  orange: { primary: '#ea580c', secondary: '#c2410c', bg: '#ffffff', text: '#111827' },
-  red:    { primary: '#dc2626', secondary: '#b91c1c', bg: '#ffffff', text: '#111827' },
-  rose:   { primary: '#e11d48', secondary: '#be123c', bg: '#ffffff', text: '#111827' },
-  teal:   { primary: '#0d9488', secondary: '#0f766e', bg: '#ffffff', text: '#111827' },
+  purple: { primary: '#7c3aed', secondary: '#9333ea', bg: '#faf8ff', text: '#111827' },
+  blue:   { primary: '#2563eb', secondary: '#1d4ed8', bg: '#f8faff', text: '#111827' },
+  green:  { primary: '#16a34a', secondary: '#15803d', bg: '#f8fdf9', text: '#111827' },
+  orange: { primary: '#ea580c', secondary: '#c2410c', bg: '#fffbf8', text: '#111827' },
+  red:    { primary: '#dc2626', secondary: '#b91c1c', bg: '#fff9f9', text: '#111827' },
+  rose:   { primary: '#e11d48', secondary: '#be123c', bg: '#fff9fb', text: '#111827' },
+  teal:   { primary: '#0d9488', secondary: '#0f766e', bg: '#f7fdfc', text: '#111827' },
   dark:   { primary: '#8b5cf6', secondary: '#a78bfa', bg: '#111827', text: '#f9fafb' },
+};
+
+// Dark palettes per theme — auto-applied when user toggles dark mode
+const DARK_PALETTES: Record<string, { bg: string; text: string; cardBg: string }> = {
+  purple: { bg: '#0f0a24', text: '#f3edff', cardBg: '#1e1535' },
+  blue:   { bg: '#0a1228', text: '#e0edff', cardBg: '#0f1a33' },
+  green:  { bg: '#081c10', text: '#dcfce7', cardBg: '#0d2818' },
+  orange: { bg: '#1e1008', text: '#ffeddc', cardBg: '#2a1a0a' },
+  red:    { bg: '#200a0a', text: '#fee2e2', cardBg: '#2a0f0f' },
+  rose:   { bg: '#200812', text: '#ffe4ed', cardBg: '#2a0c16' },
+  teal:   { bg: '#061c1a', text: '#ccfbf1', cardBg: '#0a2622' },
+  dark:   { bg: '#111827', text: '#f9fafb', cardBg: '#1f2937' },
 };
 
 export default function DynamicThemeProvider({ children }: { children: React.ReactNode }) {
@@ -81,7 +96,7 @@ export default function DynamicThemeProvider({ children }: { children: React.Rea
         theme: {
           primaryColor: '#7c3aed',
           secondaryColor: '#9333ea',
-          backgroundColor: '#ffffff',
+          backgroundColor: '#faf8ff',
           textColor: '#111827'
         },
         fonts: {
@@ -147,9 +162,21 @@ export default function DynamicThemeProvider({ children }: { children: React.Rea
     if (!siteConfig) return;
     const themeName = (siteConfig as any).themeName || 'purple';
     document.documentElement.setAttribute('data-theme', themeName);
-    // fonts still need setProperty
     document.documentElement.style.setProperty('--heading-font', siteConfig.fonts?.heading || 'Roboto');
     document.documentElement.style.setProperty('--body-font',    siteConfig.fonts?.body    || 'Roboto');
+
+    // Set favicon from config
+    const faviconUrl = (siteConfig as any).logos?.favicon;
+    if (faviconUrl) {
+      const href = faviconUrl.startsWith('/uploads/') ? `http://localhost:5000${faviconUrl}` : faviconUrl;
+      let link = document.querySelector('link[rel="icon"]') as HTMLLinkElement;
+      if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
+      link.href = href;
+    }
+
+    // Set page title from config
+    const metaTitle = (siteConfig as any).seo?.metaTitle || (siteConfig as any).siteName;
+    if (metaTitle) document.title = metaTitle;
   }, [siteConfig]);
 
   if (loading) {
@@ -172,26 +199,41 @@ export default function DynamicThemeProvider({ children }: { children: React.Rea
     }
   } : null;
 
+  const resolvedDarkPalette = DARK_PALETTES[(siteConfig as any)?.themeName || 'purple'] || DARK_PALETTES.purple;
+
   return (
     <DynamicThemeContext.Provider 
       value={{ 
         siteConfig: resolvedConfig, 
         loading, 
-        refreshConfig: fetchSiteConfig 
+        refreshConfig: fetchSiteConfig,
+        darkPalette: resolvedDarkPalette,
       }}
     >
       <ThemeProvider theme={muiTheme}>
-        <div 
-          style={{
-            backgroundColor: resolvedConfig?.theme?.backgroundColor || '#ffffff',
-            color: resolvedConfig?.theme?.textColor || '#111827',
-            fontFamily: siteConfig?.fonts?.body || 'Roboto',
-            minHeight: '100vh'
-          }}
-        >
+        <DynamicThemeWrapper siteConfig={resolvedConfig} fontFamily={siteConfig?.fonts?.body || 'Roboto'}>
           {children}
-        </div>
+        </DynamicThemeWrapper>
       </ThemeProvider>
     </DynamicThemeContext.Provider>
+  );
+}
+
+function DynamicThemeWrapper({ children, siteConfig, fontFamily }: { children: React.ReactNode; siteConfig: any; fontFamily: string }) {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  const themeName = (siteConfig as any)?.themeName || 'purple';
+  const darkPalette = DARK_PALETTES[themeName] || DARK_PALETTES.purple;
+  const bg = isDark ? darkPalette.bg : (siteConfig?.theme?.backgroundColor || '#faf8ff');
+  const color = isDark ? darkPalette.text : (siteConfig?.theme?.textColor || '#111827');
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--dark-card-bg', darkPalette.cardBg);
+  }, [darkPalette.cardBg]);
+
+  return (
+    <div style={{ backgroundColor: bg, color, fontFamily, minHeight: '100vh' }}>
+      {children}
+    </div>
   );
 }

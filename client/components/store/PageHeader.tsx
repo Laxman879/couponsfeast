@@ -41,10 +41,10 @@ export default function PageHeader({
 
       {/* Text */}
       <div>
-        <h1 className="text-xl md:text-2xl font-bold text-gray-900 leading-tight">
+        <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 leading-tight">
           {storeName} Coupons &amp; Promo Codes
         </h1>
-        <p className="text-xs text-gray-500 uppercase tracking-wide mt-0.5">
+        <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mt-0.5">
           {verifiedOffers} VERIFIED OFFERS ON {date}
         </p>
       </div>

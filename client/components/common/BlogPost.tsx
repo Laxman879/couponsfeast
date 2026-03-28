@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import SectionHeader from '@/components/common/SectionHeader';
+import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 
 export interface BlogPostData {
   category: string;
@@ -22,10 +23,13 @@ export default function BlogPost({
   backHref = '/',
   backLabel = 'Back to Home',
 }: BlogPostProps) {
+  const { siteConfig } = useDynamicTheme();
+  const siteName = siteConfig?.siteName || 'CouponsFeast';
+
   if (!post) {
     return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center gap-4">
-        <p className="text-gray-500 text-lg">Blog post not found.</p>
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col items-center justify-center gap-4">
+        <p className="text-gray-500 dark:text-gray-400 text-lg">Blog post not found.</p>
         <Link href={backHref} className="text-primary font-semibold hover:underline">
           ← {backLabel}
         </Link>
@@ -34,13 +38,13 @@ export default function BlogPost({
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <SectionHeader />
+        <SectionHeader subtitleBold={siteName} />
 
         <Link
           href={backHref}
-          className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-primary transition-colors mb-6"
+          className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-primary transition-colors mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           {backLabel}
@@ -55,26 +59,26 @@ export default function BlogPost({
             <span className="text-xs font-bold tracking-widest uppercase text-primary">
               {post.category}
             </span>
-            <h1 className="text-3xl md:text-4xl font-black text-gray-900 leading-tight">
+            <h1 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-gray-100 leading-tight">
               {post.title}
             </h1>
-            <p className="text-lg text-gray-500 font-medium">
+            <p className="text-lg text-gray-500 dark:text-gray-400 font-medium">
               {post.subtitle}
             </p>
           </div>
 
-          <div className="h-px bg-gray-200" />
+          <div className="h-px bg-gray-200 dark:bg-gray-700" />
 
           <div className="flex flex-col gap-5">
             {post.content.map((paragraph, idx) => (
-              <p key={idx} className="text-base text-gray-700 leading-relaxed">
+              <p key={idx} className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">
                 {paragraph}
               </p>
             ))}
           </div>
 
-          <div className="mt-8 p-6 bg-gray-50 rounded-2xl text-center">
-            <p className="text-sm font-semibold text-gray-900 mb-2">
+          <div className="mt-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-2xl text-center">
+            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
               Enjoyed this article?
             </p>
             <Link href={backHref} className="text-primary font-bold hover:underline text-sm">

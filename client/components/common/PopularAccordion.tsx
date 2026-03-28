@@ -36,13 +36,13 @@ function AccordionSection({ title, items, defaultOpen = false }: {
   );
 
   return (
-    <div className={`border ${open ? 'border-gray-200' : 'border-primary'} rounded-sm`}>
+    <div className={`border ${open ? 'border-gray-200 dark:border-gray-600' : 'border-primary'} rounded-sm`}>
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-4 py-3 text-left group cursor-pointer"
       >
-        <span className="text-sm font-black tracking-widest uppercase text-gray-900">{title}</span>
-        <span className="text-gray-900">
+        <span className="text-sm font-black tracking-widest uppercase text-gray-900 dark:text-gray-100">{title}</span>
+        <span className="text-gray-900 dark:text-gray-100">
           {open ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
         </span>
       </button>
@@ -53,7 +53,7 @@ function AccordionSection({ title, items, defaultOpen = false }: {
               <div key={ci} className="flex flex-col">
                 {col.map((item) => (
                   <a key={item.name} href={item.href}
-                    className="text-sm text-gray-600 hover:text-gray-900 hover:font-semibold py-1 leading-snug transition-colors">
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:font-semibold py-1 leading-snug transition-colors">
                     {item.name}
                   </a>
                 ))}

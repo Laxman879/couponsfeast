@@ -21,6 +21,7 @@ interface Banner {
   storeUrl?: string;
   textPanelBg?: string;
   textPanelMargin?: number;
+  secondaryImage?: string;
   couponCode?: string;
   description?: string;
   discount?: string;
@@ -34,6 +35,7 @@ interface Banner {
   limitedTime?: boolean;
   expiringToday?: boolean;
   exclusive?: boolean;
+  imagePosition?: string;
   isActive: boolean;
 }
 
@@ -41,9 +43,11 @@ const emptyForm: Banner = {
   title: '', label: '', cta: 'SHOP NOW', image: '',
   bgColor: '#4a1d96', buttonLink: '/stores', storeUrl: '', couponCode: '',
   textPanelBg: '#ffffff', textPanelMargin: 100,
+  secondaryImage: '',
   description: '', discount: '', store: '', expiryDate: '', type: 'code',
   labelType: 'Code', interestedUsers: 0, addedBy: '', details: '',
   limitedTime: false, expiringToday: false, exclusive: false, isActive: true,
+  imagePosition: 'right',
 };
 
 export default function BannerManagement() {
@@ -238,6 +242,17 @@ export default function BannerManagement() {
               <TextField label="Text Panel BG" value={formData.textPanelBg} onChange={(e) => set({ textPanelBg: e.target.value })} fullWidth placeholder="#ffffff"
                 helperText="White bg = black text, dark bg = white text"
                 InputProps={{ sx: { height: 48 }, startAdornment: <span className="inline-block w-5 h-5 rounded mr-2 flex-shrink-0 border border-slate-200" style={{ backgroundColor: formData.textPanelBg || '#ffffff' }} /> }} />
+              <TextField label="Image Position" value={formData.imagePosition || 'right'} onChange={(e) => set({ imagePosition: e.target.value })} fullWidth select
+                helperText="Where the image focuses"
+                SelectProps={{ native: true, sx: { height: 48, color: '#000' } }}>
+                <option value="right">Right</option>
+                <option value="center">Center</option>
+                <option value="left">Left</option>
+                <option value="top">Top</option>
+                <option value="bottom">Bottom</option>
+              </TextField>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
               <TextField label="Text Panel Margin Left (px)" type="number" value={formData.textPanelMargin ?? 100} onChange={(e) => set({ textPanelMargin: Number(e.target.value) })} fullWidth placeholder="100"
                 helperText="Distance from left edge in pixels"
                 InputProps={{ sx: { height: 48 } }} />
@@ -289,22 +304,36 @@ export default function BannerManagement() {
               </div>
             </div>
 
-            {/* Banner Image */}
+            {/* Banner Images */}
             <div className="rounded-xl border border-slate-200 p-5">
-              <p className="text-sm font-semibold text-slate-700 mb-3">Banner Image</p>
-              <div className="flex gap-3 items-end">
-                <TextField label="Image URL" value={formData.image} onChange={(e) => set({ image: e.target.value })} fullWidth placeholder="https://..."
-                  InputProps={{ sx: { height: 48 } }} />
-                <Button variant="outlined" onClick={triggerUpload} disabled={uploading}
-                  startIcon={uploading ? <CircularProgress size={16} /> : <CloudUpload />}
-                  style={{ minWidth: 110, height: 48, textTransform: 'none', borderRadius: 10 }}>
-                  Upload
-                </Button>
+              <p className="text-sm font-semibold text-slate-700 mb-3">Banner Images</p>
+              <div className="flex flex-col gap-4">
+                <div>
+                  <p className="text-xs text-slate-500 mb-1">Right Image (main hero shot)</p>
+                  <div className="flex gap-3 items-end">
+                    <TextField label="Right Image URL" value={formData.image} onChange={(e) => set({ image: e.target.value })} fullWidth placeholder="https://..."
+                      InputProps={{ sx: { height: 48 } }} />
+                    <Button variant="outlined" onClick={triggerUpload} disabled={uploading}
+                      startIcon={uploading ? <CircularProgress size={16} /> : <CloudUpload />}
+                      style={{ minWidth: 110, height: 48, textTransform: 'none', borderRadius: 10 }}>
+                      Upload
+                    </Button>
+                  </div>
+                  {formData.image && (
+                    <img src={formData.image} alt="preview" className="mt-2 h-20 rounded-lg object-cover border border-slate-100"
+                      onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                  )}
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500 mb-1">Left Image (shown next to text panel on desktop, hidden on mobile)</p>
+                  <TextField label="Left Image URL" value={formData.secondaryImage} onChange={(e) => set({ secondaryImage: e.target.value })} fullWidth placeholder="https://... (optional)"
+                    InputProps={{ sx: { height: 48 } }} />
+                  {formData.secondaryImage && (
+                    <img src={formData.secondaryImage} alt="preview" className="mt-2 h-20 rounded-lg object-cover border border-slate-100"
+                      onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                  )}
+                </div>
               </div>
-              {formData.image && (
-                <img src={formData.image} alt="preview" className="mt-3 h-24 rounded-lg object-cover border border-slate-100"
-                  onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-              )}
             </div>
 
             {/* Live preview */}

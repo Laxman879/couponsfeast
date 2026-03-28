@@ -18,21 +18,21 @@ export default function StoreInfo({ storeName, heading, subheading, sales = [] }
   ];
 
   return (
-    <div className="py-10 border-t border-gray-200">
-      <h2 className="text-3xl font-bold text-gray-900 mb-6">
+    <div className="py-10 border-t border-gray-200 dark:border-gray-700">
+      <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6">
         {heading || `${storeName} Store Info`}
       </h2>
 
-      <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 mb-4">
+      <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100 mb-4">
         {subheading || `What are the best ${storeName} sales and seasonal discounts?`}
       </h3>
 
       <ul className="space-y-4">
         {displaySales.map((sale, i) => (
           <li key={i} className="flex items-start gap-2">
-            <span className="mt-1.5 w-1.5 h-1.5 bg-gray-900 rounded-full flex-shrink-0" />
-            <p className="text-[15px] text-gray-500 leading-relaxed">
-              <strong className="text-gray-900">{sale.title} –</strong> {sale.desc}
+            <span className="mt-1.5 w-1.5 h-1.5 bg-gray-900 dark:bg-gray-100 rounded-full flex-shrink-0" />
+            <p className="text-[15px] text-gray-500 dark:text-gray-400 leading-relaxed">
+              <strong className="text-gray-900 dark:text-gray-100">{sale.title} –</strong> {sale.desc}
             </p>
           </li>
         ))}

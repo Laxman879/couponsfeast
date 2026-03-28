@@ -26,7 +26,7 @@ export default function NavbarTwo({ navLinks, config }: NavbarTwoProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
-  const { siteConfig } = useDynamicTheme();
+  const { siteConfig, darkPalette } = useDynamicTheme();
 
   const isDark = theme === 'dark';
   const navStyle = config?.style || 'solid';
@@ -37,7 +37,7 @@ export default function NavbarTwo({ navLinks, config }: NavbarTwoProps) {
   const isSticky = config?.sticky ?? true;
 
   const getNavBg = () => {
-    if (isDark) return '#1f2937';
+    if (isDark) return darkPalette.cardBg;
     if (navBgOverride) return navBgOverride;
     switch (navStyle) {
       case 'gradient': return `linear-gradient(90deg, ${siteConfig?.theme?.primaryColor || '#7c3aed'}, ${siteConfig?.theme?.secondaryColor || '#9333ea'})`;
@@ -49,8 +49,8 @@ export default function NavbarTwo({ navLinks, config }: NavbarTwoProps) {
   };
 
   const navBg = getNavBg();
-  const navText = isDark ? '#f9fafb' : (navTextOverride || (navStyle === 'white' ? '#111827' : '#ffffff'));
-  const mobileBg = isDark ? '#111827' : (siteConfig?.theme?.secondaryColor || '#9333ea');
+  const navText = isDark ? darkPalette.text : (navTextOverride || (navStyle === 'white' ? '#111827' : '#ffffff'));
+  const mobileBg = isDark ? darkPalette.bg : (siteConfig?.theme?.secondaryColor || '#9333ea');
   const primary = siteConfig?.theme?.primaryColor || '#7c3aed';
 
   // Load stores and categories once

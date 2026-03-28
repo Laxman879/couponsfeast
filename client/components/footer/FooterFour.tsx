@@ -5,15 +5,15 @@ import { useTheme } from '@/components/ThemeProvider';
 interface FooterFourProps { config: any; }
 
 export default function FooterFour({ config }: FooterFourProps) {
-  const { siteConfig } = useDynamicTheme();
+  const { siteConfig, darkPalette } = useDynamicTheme();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  const bg        = config?.bgColor || (isDark ? '#09090b' : '#18181b');
+  const bg        = config?.bgColor || (isDark ? darkPalette.bg : '#18181b');
   const textMain  = config?.textColor || '#d4d4d8';
   const textHead  = '#ffffff';
   const textMuted = '#71717a';
-  const border    = isDark ? '#27272a' : '#3f3f46';
+  const border    = isDark ? darkPalette.cardBg : '#3f3f46';
   const iconBg    = '#27272a';
   const iconBorder = '#3f3f46';
   const siteName  = siteConfig?.siteName || 'CouponsFeast';

@@ -13,10 +13,16 @@ export default function StoresPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const { siteConfig } = useDynamicTheme();
+  const { siteConfig, darkPalette } = useDynamicTheme();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   const primary = siteConfig?.theme?.primaryColor || '#7c3aed';
+
+  const pageBg = isDark ? darkPalette.bg : (siteConfig?.theme?.backgroundColor || '#faf8ff');
+  const cardBg = isDark ? darkPalette.cardBg : '#ffffff';
+  const textMain = isDark ? darkPalette.text : '#111827';
+  const textMuted = isDark ? (darkPalette.text + 'aa') : '#6b7280';
+  const borderCol = isDark ? darkPalette.cardBg : '#e5e7eb';
 
   useEffect(() => {
     Promise.all([getStores(), getCategories()])
@@ -50,54 +56,52 @@ export default function StoresPage() {
   const serverUrl = 'http://localhost:5000';
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
+    <div className="min-h-screen" style={{ backgroundColor: pageBg, color: textMain }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold mb-2">All Stores</h1>
-          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+          <p className="text-sm" style={{ color: textMuted }}>
             Browse {stores.length} stores and find the best coupons & deals
           </p>
         </div>
 
-        {/* Search + Category Filter */}
         <div className="flex flex-col sm:flex-row gap-3 mb-8">
-          <div className={`flex items-center flex-1 rounded-full px-4 py-2.5 border ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-            <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+          <div className="flex items-center flex-1 rounded-full px-4 py-2.5 border" style={{ backgroundColor: cardBg, borderColor: borderCol }}>
+            <Search className="w-4 h-4 flex-shrink-0" style={{ color: textMuted }} />
             <input
               type="text" placeholder="Search stores..."
               value={search} onChange={(e) => setSearch(e.target.value)}
-              className={`bg-transparent border-none outline-none text-sm ml-2 w-full ${isDark ? 'text-gray-100 placeholder-gray-500' : 'text-gray-900 placeholder-gray-400'}`}
+              className="bg-transparent border-none outline-none text-sm ml-2 w-full"
+              style={{ color: textMain }}
             />
           </div>
           <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
             <button
               onClick={() => setActiveCategory('all')}
-              className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-colors border-none cursor-pointer ${activeCategory === 'all' ? 'text-white' : isDark ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-600'}`}
-              style={activeCategory === 'all' ? { backgroundColor: primary } : {}}
+              className="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-colors border-none cursor-pointer"
+              style={activeCategory === 'all' ? { backgroundColor: primary, color: '#fff' } : { backgroundColor: cardBg, color: textMuted }}
             >All</button>
             {categories.map(cat => (
               <button
                 key={cat._id}
                 onClick={() => setActiveCategory(cat.name)}
-                className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-colors border-none cursor-pointer ${activeCategory === cat.name ? 'text-white' : isDark ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-600'}`}
-                style={activeCategory === cat.name ? { backgroundColor: primary } : {}}
+                className="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-colors border-none cursor-pointer"
+                style={activeCategory === cat.name ? { backgroundColor: primary, color: '#fff' } : { backgroundColor: cardBg, color: textMuted }}
               >{cat.name}</button>
             ))}
           </div>
         </div>
 
-        {/* Stores Grid */}
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
             {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className={`h-32 rounded-xl animate-pulse ${isDark ? 'bg-gray-800' : 'bg-gray-200'}`} />
+              <div key={i} className="h-32 rounded-xl animate-pulse" style={{ backgroundColor: cardBg }} />
             ))}
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-lg font-semibold">No stores found</p>
-            <p className={`text-sm mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+            <p className="text-sm mt-1" style={{ color: textMuted }}>
               {search ? `No results for "${search}"` : 'No stores in this category'}
             </p>
           </div>
@@ -110,7 +114,8 @@ export default function StoresPage() {
                 <div
                   key={store._id}
                   onClick={() => goToStore(store)}
-                  className={`flex flex-col items-center justify-center p-4 rounded-xl border cursor-pointer transition-all hover:shadow-lg ${isDark ? 'bg-gray-800 border-gray-700 hover:border-gray-600' : 'bg-white border-gray-200 hover:border-gray-300'}`}
+                  className="flex flex-col items-center justify-center p-4 rounded-xl border cursor-pointer transition-all hover:shadow-lg"
+                  style={{ backgroundColor: cardBg, borderColor: borderCol }}
                 >
                   <div className="w-16 h-16 rounded-xl overflow-hidden flex items-center justify-center mb-3" style={{ backgroundColor: `${primary}10` }}>
                     {logo ? (
@@ -121,7 +126,7 @@ export default function StoresPage() {
                   </div>
                   <p className="text-sm font-semibold text-center line-clamp-1">{store.storeName}</p>
                   {store.category && (
-                    <p className={`text-[10px] mt-0.5 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>{store.category}</p>
+                    <p className="text-[10px] mt-0.5" style={{ color: textMuted }}>{store.category}</p>
                   )}
                 </div>
               );

@@ -49,7 +49,7 @@ function DealCard({ item, onActivate }: { item: any; onActivate: (item: any) => 
     <div
       onClick={handleClick}
       style={{ border: '1px solid #e5e7eb' }}
-      className="relative flex h-full cursor-pointer overflow-hidden bg-white rounded-xl border border-gray-400 flex-col hover:shadow-lg transition-shadow"
+      className="relative flex h-full cursor-pointer overflow-hidden bg-white dark:bg-gray-800 rounded-xl border border-gray-400 dark:border-gray-600 flex-col hover:shadow-lg transition-shadow"
     >
       <div className="aspect-video w-full overflow-hidden">
         <img src={item.logo} alt={`${item.brand} ${item.title}`} className="h-full w-full object-cover" loading="lazy" />
@@ -61,11 +61,11 @@ function DealCard({ item, onActivate }: { item: any; onActivate: (item: any) => 
       )}
       <div className="relative flex h-full flex-col justify-between px-3 py-2">
         <div>
-          <h3 className="text-xs font-bold uppercase tracking-wide mt-1">{item.brand}</h3>
-          <p className="my-2 line-clamp-2 text-sm leading-5">{item.title}</p>
+          <h3 className="text-xs font-bold uppercase tracking-wide mt-1 dark:text-gray-200">{item.brand}</h3>
+          <p className="my-2 line-clamp-2 text-sm leading-5 dark:text-gray-300">{item.title}</p>
         </div>
         {item.type && (
-          <p className="mt-2 self-start rounded-full bg-gray-100 px-4 py-1.5 text-xs font-bold">
+          <p className="mt-2 self-start rounded-full bg-gray-100 dark:bg-gray-700 px-4 py-1.5 text-xs font-bold dark:text-gray-200">
             {item.type === 'coupon' ? 'Coupon code' : 'Cash Back'}
           </p>
         )}
@@ -92,8 +92,8 @@ export default function DealsSection() {
     <section className="mb-16 md:mb-20 px-4 md:px-6 max-w-7xl mx-auto">
       <div className="py-10 ">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-800">March Madness Deals</h2>
-          <button className="text-xs tracking-wider uppercase text-gray-600 border-b border-gray-400 hover:text-black transition-colors">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">March Madness Deals</h2>
+          <button className="text-xs tracking-wider uppercase text-gray-600 dark:text-gray-400 border-b border-gray-400 dark:border-gray-500 hover:text-black dark:hover:text-white transition-colors">
             All March Madness Deals
           </button>
         </div>

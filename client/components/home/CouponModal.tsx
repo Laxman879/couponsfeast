@@ -28,19 +28,19 @@ export default function CouponModal({
   storeUrl
 }: CouponModalProps) {
   const [copied, setCopied] = useState(false);
-  const { siteConfig } = useDynamicTheme();
+  const { siteConfig, darkPalette } = useDynamicTheme();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   const primary = siteConfig?.theme?.primaryColor || '#7c3aed';
   const accent = (siteConfig?.theme as any)?.accentColor || '#f59e0b';
-  const modalBg = isDark ? '#1f2937' : '#ffffff';
-  const textColor = isDark ? '#f9fafb' : '#111827';
-  const subText = isDark ? '#9ca3af' : '#6b7280';
-  const borderColor = isDark ? '#374151' : '#e5e7eb';
-  const cashbackBg = isDark ? '#1e3a5f' : '#dbeafe';
-  const cashbackText = isDark ? '#93c5fd' : '#1e40af';
-  const inputBg = isDark ? '#374151' : '#ffffff';
-  const inputText = isDark ? '#f9fafb' : '#111827';
+  const modalBg = isDark ? darkPalette.cardBg : '#ffffff';
+  const textColor = isDark ? darkPalette.text : '#111827';
+  const subText = isDark ? (darkPalette.text + 'aa') : '#6b7280';
+  const borderColor = isDark ? darkPalette.cardBg : '#e5e7eb';
+  const cashbackBg = isDark ? darkPalette.bg : '#dbeafe';
+  const cashbackText = isDark ? darkPalette.text : '#1e40af';
+  const inputBg = isDark ? darkPalette.cardBg : '#ffffff';
+  const inputText = isDark ? darkPalette.text : '#111827';
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(couponCode);
