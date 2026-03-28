@@ -5,6 +5,7 @@ import { Search } from 'lucide-react';
 import { getStores, getCategories } from '@/services/api';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
+import FAQSection from '@/components/store/FAQSection';
 
 export default function StoresPage() {
   const [stores, setStores] = useState<any[]>([]);
@@ -133,6 +134,8 @@ export default function StoresPage() {
             })}
           </div>
         )}
+
+        <FAQSection heading="Stores - Frequently Asked Questions" pageType="stores" />
       </div>
     </div>
   );

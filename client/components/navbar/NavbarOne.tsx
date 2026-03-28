@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { MenuIcon, XIcon, ChevronDown, Sun, Moon } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
+import StoresDropdown from '@/components/layout/StoresDropdown';
 
 interface NavLink { name: string; url: string; hasDropdown?: boolean; }
 
@@ -54,17 +55,14 @@ export default function NavbarOne({ navLinks, config }: NavbarOneProps) {
           {navLinks.map((link) => link.hasDropdown ? (
             <div key={link.name} className="group relative"
               onMouseEnter={() => setOpenDropdown(link.name)}
-              onMouseLeave={() => setOpenDropdown(null)}
+              onMouseLeave={() => setTimeout(() => setOpenDropdown(null), 150)}
             >
-              <div className={`flex cursor-pointer items-center gap-1 ${hoverText}`}>
+              <div className={`flex cursor-pointer items-center gap-1 ${hoverText}`}
+                onClick={() => setOpenDropdown(openDropdown === link.name ? null : link.name)}>
                 {link.name}
                 <ChevronDown className={`mt-px size-4 transition-transform duration-200 ${openDropdown === link.name ? 'rotate-180' : ''}`} />
               </div>
-              <div className={`absolute top-6 left-0 z-40 w-56 rounded-md border ${dropdownBg} p-2 shadow-lg transition-all duration-200 ${openDropdown === link.name ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-2 opacity-0'}`}>
-                <Link href={link.url} className={`block rounded-md px-3 py-2 text-sm ${dropdownHover} ${textColor} no-underline`}>
-                  View All {link.name}
-                </Link>
-              </div>
+              {openDropdown === link.name && <StoresDropdown onClose={() => setOpenDropdown(null)} />}
             </div>
           ) : (
             <Link key={link.name} href={link.url} className={`transition ${hoverText} no-underline ${textColor}`}>

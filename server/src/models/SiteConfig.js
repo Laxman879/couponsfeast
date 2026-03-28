@@ -146,6 +146,7 @@ const siteConfigSchema = new mongoose.Schema({
   // Global FAQs
   faqs: {
     heading: { type: String, default: 'Frequently Asked Questions' },
+    showOn: { type: String, default: 'both', enum: ['home', 'store', 'both'] },
     items: { type: [{ question: String, answer: String }], default: [] }
   }
 }, { timestamps: true });

@@ -30,6 +30,7 @@ import { getSiteConfig, updateSiteConfig } from '@/services/api';
 import LogoUploader from './LogoUploader';
 import ColorPicker from './ColorPicker';
 import { updateFavicon, updatePageTitle, updateMetaTags } from '@/utils/faviconUtils';
+import { Palette, Navigation, ArrowDownCircle, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function SiteConfigAdmin() {
@@ -353,7 +354,7 @@ export default function SiteConfigAdmin() {
       {/* Theme Selector */}
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">🎨 Theme</Typography>
+          <Typography variant="h6"><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}><Palette size={18} /> Theme</span></Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Alert severity="info" sx={{ mb: 3 }}>
@@ -361,14 +362,14 @@ export default function SiteConfigAdmin() {
           </Alert>
           <Grid container spacing={2}>
             {[
-              { name: 'purple', label: '🟣 Purple',  colors: ['#7c3aed','#9333ea','#f59e0b'] },
-              { name: 'blue',   label: '🔵 Blue',    colors: ['#2563eb','#1d4ed8','#38bdf8'] },
-              { name: 'green',  label: '🟢 Green',   colors: ['#16a34a','#15803d','#84cc16'] },
-              { name: 'orange', label: '🟠 Orange',  colors: ['#ea580c','#c2410c','#fbbf24'] },
-              { name: 'red',    label: '🔴 Red',     colors: ['#dc2626','#b91c1c','#fb923c'] },
-              { name: 'rose',   label: '🌸 Rose',    colors: ['#e11d48','#be123c','#fb7185'] },
-              { name: 'teal',   label: '🩵 Teal',    colors: ['#0d9488','#0f766e','#2dd4bf'] },
-              { name: 'dark',   label: '🌑 Dark',    colors: ['#8b5cf6','#a78bfa','#fbbf24'] },
+              { name: 'purple', label: 'Purple',  colors: ['#7c3aed','#9333ea','#f59e0b'] },
+              { name: 'blue',   label: 'Blue',    colors: ['#2563eb','#1d4ed8','#38bdf8'] },
+              { name: 'green',  label: 'Green',   colors: ['#16a34a','#15803d','#84cc16'] },
+              { name: 'orange', label: 'Orange',  colors: ['#ea580c','#c2410c','#fbbf24'] },
+              { name: 'red',    label: 'Red',     colors: ['#dc2626','#b91c1c','#fb923c'] },
+              { name: 'rose',   label: 'Rose',    colors: ['#e11d48','#be123c','#fb7185'] },
+              { name: 'teal',   label: 'Teal',    colors: ['#0d9488','#0f766e','#2dd4bf'] },
+              { name: 'dark',   label: 'Dark',    colors: ['#8b5cf6','#a78bfa','#fbbf24'] },
             ].map((t) => {
               const selected = (config.themeName || 'purple') === t.name;
               return (
@@ -395,8 +396,11 @@ export default function SiteConfigAdmin() {
                       {t.colors.map((c) => <Box key={c} sx={{ flex: 1, backgroundColor: c }} />)}
                     </Box>
                     <Box sx={{ p: 1.5, textAlign: 'center', bgcolor: '#f9fafb' }}>
-                      <Typography variant="caption" fontWeight="bold" display="block">{t.label}</Typography>
-                      {selected && <Typography variant="caption" color="success.main" fontWeight="bold">✓ Active</Typography>}
+                      <Typography variant="caption" fontWeight="bold" display="block">
+                      <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', backgroundColor: t.colors[0], marginRight: 4, verticalAlign: 'middle' }} />
+                      {t.label}
+                    </Typography>
+                      {selected && <Typography variant="caption" color="success.main" fontWeight="bold">Active</Typography>}
                     </Box>
                   </Box>
                 </Grid>
@@ -666,7 +670,7 @@ export default function SiteConfigAdmin() {
       {/* ── Navbar Customization ── */}
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">🔝 Navbar Customization</Typography>
+          <Typography variant="h6"><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}><Navigation size={18} /> Navbar Customization</span></Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Alert severity="info" sx={{ mb: 3 }}>
@@ -851,7 +855,7 @@ export default function SiteConfigAdmin() {
       {/* ── Footer Customization ── */}
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">🔻 Footer Customization</Typography>
+          <Typography variant="h6"><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}><ArrowDownCircle size={18} /> Footer Customization</span></Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Alert severity="info" sx={{ mb: 3 }}>
@@ -1039,7 +1043,7 @@ export default function SiteConfigAdmin() {
       {/* ── Footer Content ── */}
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">📝 Footer Content (Columns & Links)</Typography>
+          <Typography variant="h6"><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}><FileText size={18} /> Footer Content (Columns & Links)</span></Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Alert severity="info" sx={{ mb: 3 }}>

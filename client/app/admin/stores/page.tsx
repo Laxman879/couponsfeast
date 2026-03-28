@@ -22,7 +22,8 @@ const defaultForm = {
     trustText: '', lastVerified: '', howToSteps: [] as string[], commissionNote: '',
     featuredArticleImage: '', featuredArticleTitle: '', featuredArticleDesc: '', featuredArticleAuthor: '', featuredArticleUrl: '',
     storeAddress: '', storeRating: 5, storeRatingCount: 0, inStoreCoupons: 0
-  }
+  },
+  faqs: { heading: '', items: [] as { question: string; answer: string }[] }
 };
 
 export default function AdminStores() {
@@ -32,6 +33,7 @@ export default function AdminStores() {
   const [storeToDelete, setStoreToDelete] = useState<any>(null);
   const [formData, setFormData] = useState({ ...defaultForm });
   const [editId, setEditId] = useState<string | null>(null);
+  const [slugManual, setSlugManual] = useState(false);
 
   useEffect(() => { fetchStores(); }, []);
 
@@ -40,7 +42,7 @@ export default function AdminStores() {
     catch (error) { console.error('Error fetching stores:', error); }
   };
 
-  const closeDrawer = () => { setOpen(false); setEditId(null); setFormData({ ...defaultForm }); };
+  const closeDrawer = () => { setOpen(false); setEditId(null); setFormData({ ...defaultForm }); setSlugManual(false); };
 
   const handleSubmit = async () => {
     try {
@@ -58,8 +60,9 @@ export default function AdminStores() {
       storeInfo: { ...defaultForm.storeInfo, ...(store.storeInfo || {}) },
       aboutSection: { ...defaultForm.aboutSection, ...(store.aboutSection || {}) },
       sidebarData: { ...defaultForm.sidebarData, ...(store.sidebarData || {}) },
+      faqs: { ...defaultForm.faqs, ...(store.faqs || {}) },
     });
-    setEditId(store._id); setOpen(true);
+    setEditId(store._id); setSlugManual(false); setOpen(true);
   };
 
   const confirmDelete = async () => {
@@ -75,6 +78,8 @@ export default function AdminStores() {
   const fi = (field: string, val: any) => setFormData(p => ({ ...p, storeInfo: { ...p.storeInfo, [field]: val } }));
   const fa = (field: string, val: any) => setFormData(p => ({ ...p, aboutSection: { ...p.aboutSection, [field]: val } }));
   const fs = (field: string, val: any) => setFormData(p => ({ ...p, sidebarData: { ...p.sidebarData, [field]: val } }));
+
+  const ff = (field: string, val: any) => setFormData(p => ({ ...p, faqs: { ...p.faqs, [field]: val } }));
 
   const inputSx = { '& .MuiInputBase-root': { minHeight: 48 } };
   const accStyle = { background: 'rgba(99,102,241,0.03)', border: '1px solid rgba(99,102,241,0.1)', borderRadius: '12px !important', '&:before': { display: 'none' }, mb: 1.5 };
@@ -152,9 +157,9 @@ export default function AdminStores() {
             {/* Basic Info */}
             <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Basic Information</p>
             <TextField fullWidth label="Store Name *" placeholder="e.g., Amazon, Target" value={formData.storeName}
-              onChange={(e) => { const v = e.target.value; setFormData(p => ({ ...p, storeName: v, slug: p.slug || v.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') })); }} required variant="outlined"
+              onChange={(e) => { const v = e.target.value; setFormData(p => ({ ...p, storeName: v, ...(!slugManual ? { slug: v.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') } : {}) })); }} required variant="outlined"
               sx={{ '& .MuiInputBase-root': { height: 48 } }} />
-            <TextField fullWidth label="Slug" placeholder="Auto-generated" value={formData.slug} onChange={(e) => f('slug', e.target.value)} helperText="URL-friendly name" variant="outlined"
+            <TextField fullWidth label="Slug" placeholder="Auto-generated" value={formData.slug} onChange={(e) => { setSlugManual(true); f('slug', e.target.value); }} helperText="URL-friendly name" variant="outlined"
               sx={{ '& .MuiInputBase-root': { height: 48 } }} />
             <ImageUploadField label="Logo" value={formData.logo} onChange={(url) => f('logo', url)} uploadType="logo" />
             <TextField fullWidth label="Website URL" placeholder="https://www.store.com" value={formData.websiteUrl} onChange={(e) => f('websiteUrl', e.target.value)} variant="outlined"
@@ -244,6 +249,32 @@ export default function AdminStores() {
                     <Button size="small" onClick={() => fa('paragraphs', formData.aboutSection.paragraphs.filter((_, idx) => idx !== i))} style={{ color: '#ef4444', minWidth: 0, marginTop: 8 }}>✕</Button>
                   </div>
                 ))}
+              </AccordionDetails>
+            </Accordion>
+
+            {/* Store FAQs */}
+            <Accordion disableGutters elevation={0} sx={accStyle}>
+              <AccordionSummary expandIcon={<ExpandMore />}>{accTitle('Store FAQs', '#8b5cf6')}</AccordionSummary>
+              <AccordionDetails className="space-y-4 pt-2">
+                <p className="text-xs text-gray-400">Optional: Add FAQs specific to this store. If empty, global FAQs with the store name auto-filled will be shown instead.</p>
+                <TextField fullWidth label="FAQ Section Heading" placeholder="e.g., Amazon Frequently Asked Questions" value={formData.faqs.heading} onChange={e => ff('heading', e.target.value)} variant="outlined" sx={inputSx} />
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-bold text-gray-600">Questions</p>
+                  <Button size="small" onClick={() => ff('items', [...formData.faqs.items, { question: '', answer: '' }])} style={{ color: '#8b5cf6', textTransform: 'none', fontSize: 12 }}>+ Add FAQ</Button>
+                </div>
+                {formData.faqs.items.map((item, i) => (
+                  <div key={i} className="border rounded-lg p-3 bg-gray-50">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-xs font-bold text-gray-500">FAQ {i + 1}</span>
+                      <Button size="small" onClick={() => ff('items', formData.faqs.items.filter((_, idx) => idx !== i))} style={{ color: '#ef4444', minWidth: 0, fontSize: 12 }}>Remove</Button>
+                    </div>
+                    <TextField fullWidth label="Question" value={item.question} onChange={e => { const arr = [...formData.faqs.items]; arr[i] = { ...arr[i], question: e.target.value }; ff('items', arr); }} variant="outlined" sx={inputSx} />
+                    <TextField fullWidth label="Answer" value={item.answer} onChange={e => { const arr = [...formData.faqs.items]; arr[i] = { ...arr[i], answer: e.target.value }; ff('items', arr); }} variant="outlined" multiline rows={3} style={{ marginTop: 10 }} />
+                  </div>
+                ))}
+                {formData.faqs.items.length === 0 && (
+                  <p className="text-xs text-gray-400 text-center py-4">No store FAQs yet. Global FAQs will be shown instead.</p>
+                )}
               </AccordionDetails>
             </Accordion>
 

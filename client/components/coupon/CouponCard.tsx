@@ -51,9 +51,9 @@ export default function CouponCard({ coupon }: { coupon: Coupon }) {
   const isNumeric = /^\d+(\.\d+)?$/.test(numericValue);
 
   const handleActivate = () => {
-    if (coupon._id) trackClick(coupon._id).catch(() => {});
     if (storeUrl) window.open(storeUrl, '_blank', 'noopener,noreferrer');
     setShowModal(true);
+    if (coupon._id) trackClick(coupon._id).catch(() => {});
   };
 
   const renderDiscount = () => {

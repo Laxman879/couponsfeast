@@ -20,19 +20,22 @@ export const getSiteConfig = async (req, res) => {
 
 export const updateSiteConfig = async (req, res) => {
   try {
-    console.log('=== SITE CONFIG UPDATE ===');
-    console.log('Request body:', JSON.stringify(req.body, null, 2));
-    
     let config = await SiteConfig.findOne();
     if (!config) {
       config = await SiteConfig.create(req.body);
     } else {
-      config = await SiteConfig.findOneAndUpdate({}, req.body, { new: true });
+      // Deep merge to prevent wiping nested fields
+      const update = {};
+      for (const [key, value] of Object.entries(req.body)) {
+        if (value && typeof value === 'object' && !Array.isArray(value)) {
+          const existing = config[key]?.toObject?.() || config[key] || {};
+          update[key] = { ...existing, ...value };
+        } else {
+          update[key] = value;
+        }
+      }
+      config = await SiteConfig.findOneAndUpdate({}, { $set: update }, { new: true });
     }
-    
-    console.log('Updated config:', JSON.stringify(config, null, 2));
-    console.log('========================');
-    
     res.json(config);
   } catch (error) {
     console.error('Site config update error:', error);
@@ -44,15 +47,17 @@ export const updateSiteConfig = async (req, res) => {
 export const getNavigation = async (req, res) => {
   try {
     let nav = await Navigation.findOne();
+    const defaultMenu = [
+      { name: "Home", url: "/" },
+      { name: "Stores", url: "/stores" },
+      { name: "Categories", url: "/categories" },
+      { name: "Trending", url: "/trending" }
+    ];
     if (!nav) {
-      nav = await Navigation.create({
-        menu: [
-          { name: "Home", url: "/" },
-          { name: "Stores", url: "/stores" },
-          { name: "Categories", url: "/categories" },
-          { name: "Trending", url: "/trending" }
-        ]
-      });
+      nav = await Navigation.create({ menu: defaultMenu });
+    } else if (!nav.menu || nav.menu.length === 0) {
+      nav.menu = defaultMenu;
+      await Navigation.findOneAndUpdate({}, { $set: { menu: defaultMenu } });
     }
     // Fix /home -> / in existing DB data
     nav.menu = nav.menu.map(item => ({
@@ -71,7 +76,12 @@ export const updateNavigation = async (req, res) => {
     if (!nav) {
       nav = await Navigation.create(req.body);
     } else {
-      nav = await Navigation.findOneAndUpdate({}, req.body, { new: true });
+      const update = {};
+      if (req.body.menu && req.body.menu.length > 0) update.menu = req.body.menu;
+      if (req.body.theme) update.theme = { ...nav.theme?.toObject?.() || nav.theme || {}, ...req.body.theme };
+      if (Object.keys(update).length > 0) {
+        nav = await Navigation.findOneAndUpdate({}, { $set: update }, { new: true });
+      }
     }
     res.json(nav);
   } catch (error) {

@@ -16,33 +16,43 @@ export default function Navbar() {
   const navbarConfig = siteConfig?.navbar || {};
   const layout = navbarConfig.layout || 'navbar2';
 
-  useEffect(() => {
-    const fetchNavData = async () => {
-      try {
-        const res = await getNavigation();
-        const links = res.data.menu.map((link: NavLink) => ({
-          ...link,
-          // normalize /home → /
-          url: link.url === '/home' ? '/' : link.url,
-          hasDropdown: link.name.toLowerCase().includes('store'),
-        }));
-        setNavLinks(links);
-      } catch {
+  const fetchNavData = async () => {
+    try {
+      const res = await getNavigation();
+      const menu = res.data?.menu || [];
+      if (menu.length === 0) {
         setNavLinks([
           { name: 'Home', url: '/' },
           { name: 'Stores', url: '/stores', hasDropdown: true },
           { name: 'Categories', url: '/categories' },
         ]);
-      } finally {
-        setLoading(false);
+        return;
       }
-    };
+      const links = menu.map((link: any) => ({
+        ...link,
+        url: link.url === '/home' ? '/' : link.url,
+        hasDropdown: link.name.toLowerCase().includes('store'),
+      }));
+      setNavLinks(links);
+    } catch {
+      setNavLinks([
+        { name: 'Home', url: '/' },
+        { name: 'Stores', url: '/stores', hasDropdown: true },
+        { name: 'Categories', url: '/categories' },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchNavData();
     const interval = setInterval(fetchNavData, 30000);
     const onStorage = (e: StorageEvent) => { if (e.key === 'cms-updated') fetchNavData(); };
+    const onCustom = () => fetchNavData();
     window.addEventListener('storage', onStorage);
-    return () => { clearInterval(interval); window.removeEventListener('storage', onStorage); };
+    window.addEventListener('cms-updated', onCustom);
+    return () => { clearInterval(interval); window.removeEventListener('storage', onStorage); window.removeEventListener('cms-updated', onCustom); };
   }, []);
 
   if (loading) return (

@@ -42,7 +42,7 @@ export default function StorePage() {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [similarStores, setSimilarStores] = useState<Store[]>([]);
   const [popularStores, setPopularStores] = useState<Store[]>([]);
-  const [faqs, setFaqs] = useState<{ heading: string; items: any[] }>({ heading: '', items: [] });
+  const [faqs, setFaqs] = useState<{ heading: string; showOn: string; items: any[] }>({ heading: '', showOn: 'both', items: [] });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export default function StorePage() {
         ]);
         const stores: Store[] = storeRes.data?.data ?? storeRes.data ?? [];
         const allCoupons: Coupon[] = couponRes.data?.data ?? couponRes.data ?? [];
-        setFaqs({ heading: cfgRes.data?.faqs?.heading || '', items: cfgRes.data?.faqs?.items || [] });
+        setFaqs({ heading: cfgRes.data?.faqs?.heading || '', showOn: cfgRes.data?.faqs?.showOn || 'both', items: cfgRes.data?.faqs?.items || [] });
 
         const matched = stores.find((s: Store) =>
           s.websiteUrl?.replace(/https?:\/\/(www\.)?/, '').replace(/\/$/, '') === domain ||
@@ -63,7 +63,9 @@ export default function StorePage() {
         setStore(matched || null);
 
         if (matched) {
-          setCoupons(allCoupons.filter(c => c.store?._id === matched._id || c.store === matched._id));
+          const storeCoupons = allCoupons.filter(c => c.store?._id === matched._id || c.store === matched._id);
+          storeCoupons.sort((a, b) => (a.type === 'cashback' ? -1 : 0) - (b.type === 'cashback' ? -1 : 0));
+          setCoupons(storeCoupons);
           const similar = stores.filter((s: Store) =>
             s._id !== matched._id &&
             s.category?.toLowerCase() === matched.category?.toLowerCase()
@@ -212,11 +214,23 @@ export default function StorePage() {
               />
             </div>
 
-            <FAQSection
-              heading={faqs.heading || `${storeName} Frequently Asked Questions`}
-              items={faqs.items}
-              primaryColor={primary}
-            />
+            {(faqs.showOn === 'store' || faqs.showOn === 'both') && (
+              <FAQSection
+                heading={
+                  (store as any).faqs?.items?.filter((f: any) => f.question?.trim()).length > 0
+                    ? ((store as any).faqs.heading || `${storeName} Frequently Asked Questions`)
+                    : (faqs.heading || `{storeName} Frequently Asked Questions`)
+                }
+                items={
+                  (store as any).faqs?.items?.filter((f: any) => f.question?.trim()).length > 0
+                    ? (store as any).faqs.items
+                    : faqs.items
+                }
+                primaryColor={primary}
+                storeName={storeName}
+                pageType="store"
+              />
+            )}
           </main>
         </div>
 

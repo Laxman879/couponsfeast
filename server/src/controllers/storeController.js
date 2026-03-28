@@ -12,7 +12,7 @@ export const getStores = async (req, res) => {
     if (search) filter.storeName = { $regex: search, $options: 'i' };
     if (category) filter.category = { $regex: category, $options: 'i' };
 
-    const sortObj = sortBy ? { [sortBy]: order === 'desc' ? -1 : 1 } : {};
+    const sortObj = sortBy ? { [sortBy]: order === 'desc' ? -1 : 1 } : { updatedAt: -1 };
 
     let query = Store.find(filter).sort(sortObj);
 
@@ -110,6 +110,9 @@ export const createStore = async (req, res) => {
   const clientId = getClientId(req);
   
   try {
+    const existing = await Store.findOne({ slug: req.body.slug });
+    if (existing) return res.status(409).json({ error: 'Store already exists with this slug' });
+
     const store = await Store.create(req.body);
     
     // Track store creation
@@ -138,6 +141,11 @@ export const updateStore = async (req, res) => {
   const clientId = getClientId(req);
   
   try {
+    if (req.body.slug) {
+      const existing = await Store.findOne({ slug: req.body.slug, _id: { $ne: req.params.id } });
+      if (existing) return res.status(409).json({ error: 'Store already exists with this slug' });
+    }
+
     const store = await Store.findByIdAndUpdate(req.params.id, req.body, { new: true });
     
     if (!store) {

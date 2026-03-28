@@ -13,6 +13,7 @@ interface StoreCardProps {
     logo?: string;
     description?: string;
     category?: string;
+    websiteUrl?: string;
   };
 }
 
@@ -28,8 +29,12 @@ const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
   const descColor = isDark ? (darkPalette.text + 'aa') : '#6b7280';
   const logoBg = isDark ? darkPalette.cardBg : '#f9fafb';
 
+  const domain = store.websiteUrl
+    ? store.websiteUrl.replace(/https?:\/\/(www\.)?/, '').replace(/\/$/, '')
+    : `${store.slug}.com`;
+
   return (
-    <Link href={`/store/${store.slug}`} className="no-underline block group">
+    <Link href={`/view/${domain}`} className="no-underline block group">
       <div className="rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-4 flex flex-col items-center text-center h-full"
         style={{ backgroundColor: cardBg, border: `1px solid ${cardBorder}` }}>
         <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-3 overflow-hidden" style={{ backgroundColor: logoBg }}>

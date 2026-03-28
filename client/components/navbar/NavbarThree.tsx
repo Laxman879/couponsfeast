@@ -1,9 +1,10 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, Sun, Moon } from 'lucide-react';
+import { Menu, X, Sun, Moon, ChevronDown } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
+import StoresDropdown from '@/components/layout/StoresDropdown';
 
 interface NavLink { name: string; url: string; hasDropdown?: boolean; }
 
@@ -14,6 +15,7 @@ interface NavbarThreeProps {
 
 export default function NavbarThree({ navLinks, config }: NavbarThreeProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [storesDropdownOpen, setStoresDropdownOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const { siteConfig, darkPalette } = useDynamicTheme();
 
@@ -71,7 +73,22 @@ export default function NavbarThree({ navLinks, config }: NavbarThreeProps) {
 
         {/* Desktop Links */}
         <ul className="hidden md:flex items-center space-x-8 md:pl-16">
-          {navLinks.map((link) => (
+          {navLinks.map((link) => link.hasDropdown ? (
+            <li key={link.name} className="list-none relative"
+              onMouseEnter={() => setStoresDropdownOpen(true)}
+              onMouseLeave={() => setTimeout(() => setStoresDropdownOpen(false), 150)}
+            >
+              <button
+                className={`transition font-medium flex items-center gap-1 bg-transparent border-none outline-none cursor-pointer ${linkHover}`}
+                style={{ color: navText }}
+                onClick={() => setStoresDropdownOpen(!storesDropdownOpen)}
+              >
+                {link.name}
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${storesDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {storesDropdownOpen && <StoresDropdown onClose={() => setStoresDropdownOpen(false)} />}
+            </li>
+          ) : (
             <li key={link.name} className="list-none">
               <Link
                 href={link.url}

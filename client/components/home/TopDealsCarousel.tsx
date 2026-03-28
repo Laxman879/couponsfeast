@@ -11,18 +11,19 @@ export default function TopDealsCarousel() {
   const [active, setActive] = useState(0);
   const [deals, setDeals] = useState<TopDeal[]>(fallbackTopDeals);
 
+  const [allDeals, setAllDeals] = useState<TopDeal[]>([]);
+
   useEffect(() => {
     getDeals({ limit: 10 })
       .then((res) => {
         const data = res.data?.data ?? res.data ?? [];
-        const featured = (Array.isArray(data) ? data : []).filter(
-          (d: any) => d.isActive && d.isFeatured
-        );
-        const active =
-          featured.length > 0
-            ? featured
-            : (Array.isArray(data) ? data : []).filter((d: any) => d.isActive);
-        if (active.length > 0) setDeals(active.map(mapDealToTopDeal));
+        const activeDeals = (Array.isArray(data) ? data : []).filter((d: any) => d.isActive);
+        const featured = activeDeals.filter((d: any) => d.isFeatured);
+        const nonFeatured = activeDeals.filter((d: any) => !d.isFeatured);
+        if (featured.length > 0) setDeals(featured.map(mapDealToTopDeal));
+        else if (activeDeals.length > 0) setDeals(activeDeals.map(mapDealToTopDeal));
+        if (nonFeatured.length > 0) setAllDeals(nonFeatured.map(mapDealToTopDeal));
+        else if (activeDeals.length > 0) setAllDeals(activeDeals.map(mapDealToTopDeal));
       })
       .catch(() => {});
   }, []);
@@ -99,7 +100,7 @@ export default function TopDealsCarousel() {
           </button>
         </div>
         <div className="grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
-          {deals.map((item, i) => (
+          {allDeals.map((item, i) => (
             <div
               key={item._id || item.id || `grid-${i}`}
               className="relative flex h-full cursor-pointer overflow-hidden bg-white dark:bg-gray-800 rounded-xl border border-gray-400 dark:border-gray-600 flex-col"

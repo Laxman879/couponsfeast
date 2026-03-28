@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { getPage } from '@/services/api';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
 import HeroBanner from '@/components/sections/HeroBanner';
@@ -18,11 +17,14 @@ import BlogSection from '@/components/sections/BlogSection';
 import PromoBanner from '@/components/common/PromoBanner';
 import StickyPromoBanner from '@/components/common/StickyPromoBanner';
 import PopularAccordion from '@/components/common/PopularAccordion';
+import FAQSection from '@/components/store/FAQSection';
+import { getPage, getSiteConfig } from '@/services/api';
 
 interface Section { order: number; type: string; title?: string; image?: string; limit?: number; }
 
 export default function DynamicHomepage() {
   const [sections, setSections] = useState<Section[]>([]);
+  const [faqs, setFaqs] = useState<{ heading: string; showOn: string; items: any[] }>({ heading: '', showOn: 'both', items: [] });
   const [loading, setLoading] = useState(true);
   const { siteConfig, darkPalette } = useDynamicTheme();
   const { theme } = useTheme();
@@ -32,9 +34,10 @@ export default function DynamicHomepage() {
 
   const fetchPage = async () => {
     try {
-      const res = await getPage('home');
+      const [res, cfgRes] = await Promise.all([getPage('home'), getSiteConfig()]);
       const data = res.data?.data ?? res.data;
       setSections((data?.sections || []).sort((a: Section, b: Section) => a.order - b.order));
+      setFaqs({ heading: cfgRes.data?.faqs?.heading || '', showOn: cfgRes.data?.faqs?.showOn || 'both', items: cfgRes.data?.faqs?.items || [] });
     } catch {
       setSections([]);
     } finally {
@@ -92,6 +95,15 @@ export default function DynamicHomepage() {
               <BlogSection />
               <TopDealsCarousel />
               <PopularAccordion />
+              {(faqs.showOn === 'home' || faqs.showOn === 'both') && (
+                <div className="max-w-7xl mx-auto px-4 md:px-6">
+                  <FAQSection
+                    heading={faqs.items.filter((f: any) => f.question?.trim()).length > 0 ? faqs.heading : 'Frequently Asked Questions'}
+                    items={faqs.items.filter((f: any) => f.question?.trim())}
+                    pageType="home"
+                  />
+                </div>
+              )}
             </>
           )}
           {section.type === 'heroBanner' && <StickyPromoBanner />}

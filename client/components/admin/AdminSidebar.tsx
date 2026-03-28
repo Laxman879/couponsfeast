@@ -37,7 +37,7 @@ function SidebarInner({
   return (
     <aside
       className={`
-        flex flex-col self-stretch relative transition-all duration-300 ease-in-out
+        flex flex-col h-screen relative transition-all duration-300 ease-in-out
         ${isMobile ? 'w-64' : collapsed ? 'w-[72px]' : 'w-60'}
         bg-white border-r border-slate-200
       `}
@@ -64,7 +64,7 @@ function SidebarInner({
       </div>
 
       {/* ── Nav ── */}
-      <nav className="flex-1 flex flex-col px-3 py-4 gap-1 overflow-y-auto">
+      <nav className="flex-1 flex flex-col px-3 py-4 gap-1 overflow-y-auto scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
         {!narrow && (
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 mb-2">
             Main Menu

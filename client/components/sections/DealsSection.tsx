@@ -82,7 +82,7 @@ export default function DealsSection() {
     getDeals({ limit: 10 })
       .then((res) => {
         const data = res.data?.data ?? res.data ?? [];
-        const active = (Array.isArray(data) ? data : []).filter((d: any) => d.isActive);
+        const active = (Array.isArray(data) ? data : []).filter((d: any) => d.isActive && !d.isFeatured);
         if (active.length > 0) setDeals(active.map(mapDealToCard));
       })
       .catch(() => {});

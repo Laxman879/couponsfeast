@@ -26,6 +26,7 @@ import { getNavigation, updateNavigation, getPage, updatePage, getCategories, cr
 import SiteConfigAdmin from '@/components/admin/SiteConfigAdmin';
 import AdminShell from '@/components/admin/AdminShell';
 import toast from 'react-hot-toast';
+import { HelpCircle, Home, Store as StoreIcon, Globe, CheckCircle, XCircle } from 'lucide-react';
 
 export default function CMSAdmin() {
   const [navigation, setNavigation] = useState<any>({ menu: [], theme: {} });
@@ -35,6 +36,7 @@ export default function CMSAdmin() {
   const [footerLinks, setFooterLinks] = useState<any[]>([]);
   const [pages, setPages] = useState<any[]>([]);
   const [faqHeading, setFaqHeading] = useState('Frequently Asked Questions');
+  const [faqShowOn, setFaqShowOn] = useState('both');
   const [faqItems, setFaqItems] = useState<{ question: string; answer: string }[]>([]);
   const [pageEditorOpen, setPageEditorOpen] = useState(false);
   const [editingPage, setEditingPage] = useState<any>(null);
@@ -96,6 +98,7 @@ export default function CMSAdmin() {
       setFooterLinks(footerLinksRes.data.data);
       setPages(pagesRes.data || []);
       setFaqHeading(cfgRes.data?.faqs?.heading || 'Frequently Asked Questions');
+      setFaqShowOn(cfgRes.data?.faqs?.showOn || 'both');
       setFaqItems(cfgRes.data?.faqs?.items || []);
     } catch (error) {
       console.error('Error fetching CMS data:', error);
@@ -106,12 +109,13 @@ export default function CMSAdmin() {
     const loadingToast = toast.loading('Updating navigation...');
     try {
       await updateNavigation(navigation);
-      // Trigger navbar refresh
+      // Trigger navbar refresh (both event types for all listeners)
       localStorage.setItem('cms-updated', Date.now().toString());
       window.dispatchEvent(new StorageEvent('storage', {
         key: 'cms-updated',
         newValue: Date.now().toString()
       }));
+      window.dispatchEvent(new CustomEvent('cms-updated'));
       toast.success('Navigation updated successfully!', { id: loadingToast });
     } catch (error) {
       toast.error('Error updating navigation. Please try again.', { id: loadingToast });
@@ -683,7 +687,7 @@ export default function CMSAdmin() {
                   </Grid>
                   <Grid item xs={2}>
                     <Typography variant="body2" color={category.hasNavLink ? 'success.main' : 'text.secondary'}>
-                      {category.hasNavLink ? `✅ ${category.navLocation || 'navbar'}` : '❌ No Nav Link'}
+                      {category.hasNavLink ? <><CheckCircle size={13} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} />{category.navLocation || 'navbar'}</> : <><XCircle size={13} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} />No Nav Link</>}
                     </Typography>
                   </Grid>
                   <Grid item xs={2}>
@@ -803,7 +807,7 @@ export default function CMSAdmin() {
                   </Grid>
                   <Grid item xs={2}>
                     <Typography variant="body2" color={store.hasNavLink ? 'success.main' : 'text.secondary'}>
-                      {store.hasNavLink ? `✅ ${store.navLocation || 'navbar'}` : '❌ No Nav Link'}
+                      {store.hasNavLink ? <><CheckCircle size={13} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} />{store.navLocation || 'navbar'}</> : <><XCircle size={13} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} />No Nav Link</>}
                     </Typography>
                   </Grid>
                   <Grid item xs={2}>
@@ -956,7 +960,7 @@ export default function CMSAdmin() {
                         color={page.isActive ? 'success.main' : 'error.main'}
                         sx={{ fontWeight: 'medium' }}
                       >
-                        {page.isActive ? '✅ Active' : '❌ Inactive'}
+                        {page.isActive ? <><CheckCircle size={13} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} />Active</> : <><XCircle size={13} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} />Inactive</>}
                       </Typography>
                     </Grid>
                     <Grid item xs={12} md={3}>
@@ -1399,7 +1403,7 @@ export default function CMSAdmin() {
                           </Grid>
                           <Grid item xs={2}>
                             <Typography variant="body2" color={link.isActive ? 'success.main' : 'error.main'}>
-                              {link.isActive ? '✅ Active' : '❌ Inactive'}
+                              {link.isActive ? <><CheckCircle size={13} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} />Active</> : <><XCircle size={13} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} />Inactive</>}
                             </Typography>
                           </Grid>
                           <Grid item xs={2} sx={{ display: 'flex', gap: 1 }}>
@@ -1427,41 +1431,107 @@ export default function CMSAdmin() {
           <Typography variant="h6">Global FAQ Section</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            These FAQs appear on all store pages. Add questions and answers that apply site-wide.
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Manage FAQs that appear on your site. Use the "Show On" dropdown to control where they display.
+          </Typography>
+          <Typography variant="body2" sx={{ mb: 3, p: 1.5, borderRadius: 2, background: '#f0f4ff', color: '#4338ca', fontSize: 13 }}>
+            Tip: Use <code style={{ background: '#e0e7ff', padding: '1px 6px', borderRadius: 4, fontWeight: 600 }}>{'{storeName}'}</code> in questions and answers — it will be automatically replaced with the actual store name on each store page.
           </Typography>
 
-          <TextField fullWidth label="Section Heading" value={faqHeading}
-            onChange={e => setFaqHeading(e.target.value)}
-            size="small" sx={{ mb: 3 }} placeholder="Frequently Asked Questions" />
+          {/* Heading + Show On */}
+          <Card variant="outlined" sx={{ p: 3, mb: 3, borderRadius: 3, border: '1px solid #e5e7eb' }}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={7}>
+                <TextField
+                  fullWidth
+                  label="Section Heading"
+                  value={faqHeading}
+                  onChange={e => setFaqHeading(e.target.value)}
+                  placeholder="Frequently Asked Questions"
+                  InputProps={{ sx: { height: 48, borderRadius: 2 } }}
+                />
+              </Grid>
+              <Grid item xs={12} md={5}>
+                <FormControl fullWidth>
+                  <InputLabel>Show On</InputLabel>
+                  <Select
+                    value={faqShowOn}
+                    label="Show On"
+                    onChange={(e) => setFaqShowOn(e.target.value)}
+                    sx={{ height: 48, borderRadius: 2 }}
+                    renderValue={(val) => (
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        {val === 'both' && <><Globe size={15} /> Both (Home + Store Pages)</>}
+                        {val === 'home' && <><Home size={15} /> Home Page Only</>}
+                        {val === 'store' && <><StoreIcon size={15} /> Store Pages Only</>}
+                      </span>
+                    )}
+                  >
+                    <MenuItem value="both">
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Globe size={15} /> Both (Home + Store Pages)</span>
+                    </MenuItem>
+                    <MenuItem value="home">
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Home size={15} /> Home Page Only</span>
+                    </MenuItem>
+                    <MenuItem value="store">
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><StoreIcon size={15} /> Store Pages Only</span>
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+          </Card>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxHeight: 480, overflowY: 'auto', paddingRight: 4 }}>
+          {/* FAQ Items */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxHeight: 520, overflowY: 'auto', paddingRight: 4 }}>
             {faqItems.map((item, i) => (
-              <Card key={i} variant="outlined" sx={{ p: 2, background: '#f9fafb' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, textTransform: 'uppercase', color: '#6b7280' }}>FAQ {i + 1}</Typography>
-                  <Button size="small" color="error" onClick={() => setFaqItems(f => f.filter((_, idx) => idx !== i))} sx={{ minWidth: 0 }}>Remove</Button>
+              <Card key={i} variant="outlined" sx={{ borderRadius: 3, border: '1px solid #e5e7eb', overflow: 'visible' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px 0', }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <HelpCircle size={14} color="#6366f1" />
+                    <Typography variant="caption" sx={{ fontWeight: 700, color: '#6366f1', letterSpacing: 0.5 }}>FAQ {i + 1}</Typography>
+                  </div>
+                  <Button size="small" color="error" onClick={() => setFaqItems(f => f.filter((_, idx) => idx !== i))}
+                    sx={{ minWidth: 0, fontSize: 12, textTransform: 'none' }}>Remove</Button>
                 </div>
-                <TextField fullWidth label="Question" value={item.question} size="small"
-                  onChange={e => setFaqItems(f => { const n = [...f]; n[i] = { ...n[i], question: e.target.value }; return n; })}
-                  sx={{ mb: 1 }} />
-                <TextField fullWidth label="Answer" value={item.answer} size="small" multiline rows={2}
-                  onChange={e => setFaqItems(f => { const n = [...f]; n[i] = { ...n[i], answer: e.target.value }; return n; })} />
+                <div style={{ padding: '12px 16px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <TextField
+                    fullWidth
+                    label="Question"
+                    value={item.question}
+                    onChange={e => setFaqItems(f => { const n = [...f]; n[i] = { ...n[i], question: e.target.value }; return n; })}
+                    InputProps={{ sx: { height: 44, borderRadius: 2 } }}
+                  />
+                  <TextField
+                    fullWidth
+                    label="Answer"
+                    value={item.answer}
+                    onChange={e => setFaqItems(f => { const n = [...f]; n[i] = { ...n[i], answer: e.target.value }; return n; })}
+                    multiline
+                    rows={3}
+                    InputProps={{ sx: { borderRadius: 2 } }}
+                  />
+                </div>
               </Card>
             ))}
             {faqItems.length === 0 && (
-              <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 3 }}>No FAQs yet — click "+ Add FAQ" below</Typography>
+              <div style={{ textAlign: 'center', padding: '40px 0', color: '#9ca3af' }}>
+                <HelpCircle size={32} style={{ margin: '0 auto 8px', opacity: 0.4 }} />
+                <Typography variant="body2" color="text.secondary">No FAQs yet — click "+ Add FAQ" below</Typography>
+              </div>
             )}
           </div>
 
-          <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>
-            <Button variant="outlined" onClick={() => setFaqItems(f => [...f, { question: '', answer: '' }])}>+ Add FAQ</Button>
+          {/* Actions */}
+          <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
+            <Button variant="outlined" onClick={() => setFaqItems(f => [...f, { question: '', answer: '' }])}
+              sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600 }}>+ Add FAQ</Button>
             <Button variant="contained" onClick={async () => {
               try {
-                await updateSiteConfig({ faqs: { heading: faqHeading, items: faqItems } });
+                await updateSiteConfig({ faqs: { heading: faqHeading, showOn: faqShowOn, items: faqItems } });
                 toast.success('FAQs saved!');
               } catch { toast.error('Failed to save FAQs'); }
-            }}>Save FAQs</Button>
+            }} sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600 }}>Save FAQs</Button>
           </div>
         </AccordionDetails>
       </Accordion>

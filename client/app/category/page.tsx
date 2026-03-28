@@ -5,6 +5,7 @@ import { getCategories, getCoupons } from '@/services/api';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
 import { Tag, ChevronRight, Search } from 'lucide-react';
+import FAQSection from '@/components/store/FAQSection';
 
 interface Category {
   _id: string;
@@ -210,6 +211,8 @@ export default function CategoriesPage() {
             })}
           </div>
         )}
+
+        <FAQSection heading="Categories - Frequently Asked Questions" pageType="category" />
       </div>
     </div>
   );

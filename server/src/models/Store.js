@@ -42,6 +42,10 @@ const storeSchema = new mongoose.Schema(
       storeRatingCount:     { type: Number, default: 0 },
       inStoreCoupons:       { type: Number, default: 0 },
       commissionNote:       { type: String, default: '' }
+    },
+    faqs: {
+      heading: { type: String, default: '' },
+      items: { type: [{ question: String, answer: String }], default: [] }
     }
   },
   { timestamps: true }

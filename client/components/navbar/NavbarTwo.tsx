@@ -59,10 +59,18 @@ export default function NavbarTwo({ navLinks, config }: NavbarTwoProps) {
   const dropHover = isDark ? darkPalette.bg : '#f9fafb';
   const dropBorder = isDark ? darkPalette.cardBg : '#f3f4f6';
 
-  // Load stores and categories once
+  // Load stores and categories, refresh on CMS updates
   useEffect(() => {
-    getStores().then(res => setAllStores(res.data?.data ?? res.data ?? [])).catch(() => {});
-    getCategories().then(res => setMobileCategories(res.data?.data ?? res.data ?? [])).catch(() => {});
+    const load = () => {
+      getStores().then(res => setAllStores(res.data?.data ?? res.data ?? [])).catch(() => {});
+      getCategories().then(res => setMobileCategories(res.data?.data ?? res.data ?? [])).catch(() => {});
+    };
+    load();
+    const onStorage = (e: StorageEvent) => { if (e.key === 'cms-updated') load(); };
+    const onCustom = () => load();
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('cms-updated', onCustom);
+    return () => { window.removeEventListener('storage', onStorage); window.removeEventListener('cms-updated', onCustom); };
   }, []);
 
   // Close search dropdown on outside click

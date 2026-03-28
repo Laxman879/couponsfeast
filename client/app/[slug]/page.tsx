@@ -217,8 +217,12 @@ function StoresSection({ section, primary, cardBg, textPrimary, textSecondary, b
       <div className="max-w-7xl mx-auto">
         {section.title && <h2 className="text-2xl font-bold mb-6" style={{ color: textPrimary }}>{section.title}</h2>}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {stores.map(store => (
-            <Link key={store._id} href={`/store/${store.slug}`} className="no-underline group">
+          {stores.map(store => {
+            const domain = store.websiteUrl
+              ? store.websiteUrl.replace(/https?:\/\/(www\.)?/, '').replace(/\/$/, '')
+              : `${store.slug}.com`;
+            return (
+            <Link key={store._id} href={`/view/${domain}`} className="no-underline group">
               <div className="rounded-2xl p-4 flex flex-col items-center gap-2 hover:shadow-md transition-all hover:-translate-y-0.5"
                 style={{ background: cardBg, border: `1px solid ${borderColor}` }}>
                 {store.logo
@@ -228,7 +232,8 @@ function StoresSection({ section, primary, cardBg, textPrimary, textSecondary, b
                 <p className="text-xs font-semibold text-center truncate w-full" style={{ color: textPrimary }}>{store.storeName}</p>
               </div>
             </Link>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

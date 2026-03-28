@@ -53,8 +53,10 @@ export default function StoresDropdown({ onClose }: { onClose: () => void }) {
     };
     load();
     const onStorage = (e: StorageEvent) => { if (e.key === 'cms-updated') load(); };
+    const onCustom = () => load();
     window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
+    window.addEventListener('cms-updated', onCustom);
+    return () => { window.removeEventListener('storage', onStorage); window.removeEventListener('cms-updated', onCustom); };
   }, []);
 
   const categoryStores = activeCat
