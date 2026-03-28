@@ -1,0 +1,20 @@
+{
+  "name": "couponsfeast",
+  "version": "1.0.0",
+  "description": "CouponsFeast API Testing Suite",
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "test:api": "cypress run --spec 'cypress/e2e/**/*.cy.js'",
+    "test:api:headless": "cypress run --headless --spec 'cypress/e2e/**/*.cy.js'",
+    "test:public": "cypress run --spec 'cypress/e2e/public/*.cy.js'",
+    "test:admin": "cypress run --spec 'cypress/e2e/admin/*.cy.js'",
+    "test:backend": "cypress run --spec 'cypress/e2e/backend/*.cy.js'",
+    "test:legacy": "cypress run --spec 'cypress/e2e/legacy/*.cy.js'",
+    "test:smoke": "cypress run --spec 'cypress/e2e/public/public-apis.cy.js' --grep 'should get all active'",
+    "test:critical": "cypress run --grep 'should get all|should create|should reveal'"
+  },
+  "devDependencies": {
+    "cypress": "^15.12.0"
+  }
+}

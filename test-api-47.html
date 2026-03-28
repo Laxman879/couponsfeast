@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API 47: Site Config Update Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .info { background: #d1ecf1; border-color: #bee5eb; }
+        button { margin: 5px; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        pre { white-space: pre-wrap; max-height: 400px; overflow-y: auto; }
+        .url { font-family: monospace; background: #f8f9fa; padding: 5px; }
+        input, textarea { width: 100%; padding: 8px; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>🔧 API 47: Update Site Config Test</h1>
+    
+    <div class="test-section info">
+        <h2>Step 1: Get Current Site Config</h2>
+        <p>First, let's see the current site configuration:</p>
+        <button onclick="getCurrentConfig()">Get Current Config</button>
+        <div id="current-config"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Step 2: Update Site Config</h2>
+        <p><strong>API Endpoint:</strong> <span class="url">PUT /api/admin/pages/site-config/update</span></p>
+        
+        <label>Site Name:</label>
+        <input type="text" id="siteName" value="CouponsFeast Updated">
+        
+        <label>Site Description:</label>
+        <textarea id="siteDescription" rows="3">Updated via Postman</textarea>
+        
+        <label>Contact Email:</label>
+        <input type="email" id="contactEmail" value="admin@couponsfeast.com">
+        
+        <button onclick="updateSiteConfig()">Update Site Config</button>
+        <div id="update-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Step 3: Verify Update</h2>
+        <p>Check if the update was successful:</p>
+        <button onclick="verifyUpdate()">Verify Update</button>
+        <div id="verify-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔍 Postman Instructions</h2>
+        <div class="info">
+            <h3>Exact Postman Setup:</h3>
+            <p><strong>Method:</strong> PUT</p>
+            <p><strong>URL:</strong> <code>http://localhost:5000/api/admin/pages/site-config/update</code></p>
+            <p><strong>Headers:</strong> Content-Type: application/json</p>
+            <p><strong>Body (raw JSON):</strong></p>
+            <pre id="postman-body">{
+  "siteName": "CouponsFeast Updated",
+  "siteDescription": "Updated via Postman",
+  "contactEmail": "admin@couponsfeast.com"
+}</pre>
+        </div>
+    </div>
+
+    <script>
+        async function getCurrentConfig() {
+            const configDiv = document.getElementById('current-config');
+            configDiv.innerHTML = '<p>Loading current config...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/pages/site-config');
+                const data = await response.text();
+                
+                if (response.ok) {
+                    configDiv.innerHTML = `
+                        <div class="success">
+                            <h3>✅ Current Site Config</h3>
+                            <pre>${data}</pre>
+                        </div>
+                    `;
+                } else {
+                    configDiv.innerHTML = `
+                        <div class="error">
+                            <h3>❌ Failed to Get Config (${response.status})</h3>
+                            <pre>${data}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                configDiv.innerHTML = `
+                    <div class="error">
+                        <h3>❌ Connection Error</h3>
+                        <pre>${error.message}</pre>
+                    </div>
+                `;
+            }
+        }
+
+        async function updateSiteConfig() {
+            const resultDiv = document.getElementById('update-result');
+            resultDiv.innerHTML = '<p>Updating site config...</p>';
+            
+            const updateData = {
+                siteName: document.getElementById('siteName').value,
+                siteDescription: document.getElementById('siteDescription').value,
+                contactEmail: document.getElementById('contactEmail').value
+            };
+            
+            // Update Postman body display
+            document.getElementById('postman-body').textContent = JSON.stringify(updateData, null, 2);
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/pages/site-config/update', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+                
+                const data = await response.text();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h3>✅ Site Config Updated Successfully!</h3>
+                            <p><strong>Status:</strong> ${response.status}</p>
+                            <pre>${data}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <h3>❌ Update Failed (${response.status})</h3>
+                            <pre>${data}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h3>❌ Connection Error</h3>
+                        <pre>${error.message}</pre>
+                        <p><strong>Possible Issues:</strong></p>
+                        <ul>
+                            <li>Server not running on port 5000</li>
+                            <li>CORS issues</li>
+                            <li>Network connectivity</li>
+                        </ul>
+                    </div>
+                `;
+            }
+        }
+
+        async function verifyUpdate() {
+            const verifyDiv = document.getElementById('verify-result');
+            verifyDiv.innerHTML = '<p>Verifying update...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/pages/site-config');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const expectedName = document.getElementById('siteName').value;
+                    const expectedDesc = document.getElementById('siteDescription').value;
+                    const expectedEmail = document.getElementById('contactEmail').value;
+                    
+                    const nameMatch = data.siteName === expectedName;
+                    const descMatch = data.siteDescription === expectedDesc;
+                    const emailMatch = data.contactEmail === expectedEmail;
+                    
+                    const allMatch = nameMatch && descMatch && emailMatch;
+                    
+                    verifyDiv.innerHTML = `
+                        <div class="${allMatch ? 'success' : 'error'}">
+                            <h3>${allMatch ? '✅' : '❌'} Verification Results</h3>
+                            <p><strong>Site Name:</strong> ${nameMatch ? '✅' : '❌'} ${data.siteName}</p>
+                            <p><strong>Description:</strong> ${descMatch ? '✅' : '❌'} ${data.siteDescription}</p>
+                            <p><strong>Email:</strong> ${emailMatch ? '✅' : '❌'} ${data.contactEmail}</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    verifyDiv.innerHTML = `
+                        <div class="error">
+                            <h3>❌ Verification Failed</h3>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                verifyDiv.innerHTML = `
+                    <div class="error">
+                        <h3>❌ Verification Error</h3>
+                        <pre>${error.message}</pre>
+                    </div>
+                `;
+            }
+        }
+
+        // Auto-load current config on page load
+        window.onload = function() {
+            getCurrentConfig();
+        };
+    </script>
+</body>
+</html>

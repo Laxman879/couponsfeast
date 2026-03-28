@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Default (Purple) ── */
+:root,
+[data-theme="purple"] {
+  --color-primary:   124 58 237;
+  --color-secondary: 147 51 234;
+  --color-bg:        255 255 255;
+  --color-text:      17 24 39;
+  --color-accent:    245 158 11;
+  --color-success:   16 185 129;
+  --color-error:     239 68 68;
+  --color-warning:   245 158 11;
+  --heading-font: Roboto;
+  --body-font: Roboto;
+}
+
+[data-theme="blue"] {
+  --color-primary:   37 99 235;
+  --color-secondary: 29 78 216;
+  --color-bg:        255 255 255;
+  --color-text:      17 24 39;
+  --color-accent:    56 189 248;
+  --color-success:   16 185 129;
+  --color-error:     239 68 68;
+  --color-warning:   245 158 11;
+}
+
+[data-theme="green"] {
+  --color-primary:   22 163 74;
+  --color-secondary: 21 128 61;
+  --color-bg:        255 255 255;
+  --color-text:      17 24 39;
+  --color-accent:    132 204 22;
+  --color-success:   16 185 129;
+  --color-error:     239 68 68;
+  --color-warning:   245 158 11;
+}
+
+[data-theme="orange"] {
+  --color-primary:   234 88 12;
+  --color-secondary: 194 65 12;
+  --color-bg:        255 255 255;
+  --color-text:      17 24 39;
+  --color-accent:    251 191 36;
+  --color-success:   16 185 129;
+  --color-error:     239 68 68;
+  --color-warning:   245 158 11;
+}
+
+[data-theme="red"] {
+  --color-primary:   220 38 38;
+  --color-secondary: 185 28 28;
+  --color-bg:        255 255 255;
+  --color-text:      17 24 39;
+  --color-accent:    251 146 60;
+  --color-success:   16 185 129;
+  --color-error:     239 68 68;
+  --color-warning:   245 158 11;
+}
+
+[data-theme="rose"] {
+  --color-primary:   225 29 72;
+  --color-secondary: 190 18 60;
+  --color-bg:        255 255 255;
+  --color-text:      17 24 39;
+  --color-accent:    251 113 133;
+  --color-success:   16 185 129;
+  --color-error:     239 68 68;
+  --color-warning:   245 158 11;
+}
+
+[data-theme="teal"] {
+  --color-primary:   13 148 136;
+  --color-secondary: 15 118 110;
+  --color-bg:        255 255 255;
+  --color-text:      17 24 39;
+  --color-accent:    45 212 191;
+  --color-success:   16 185 129;
+  --color-error:     239 68 68;
+  --color-warning:   245 158 11;
+}
+
+[data-theme="dark"] {
+  --color-primary:   139 92 246;
+  --color-secondary: 167 139 250;
+  --color-bg:        17 24 39;
+  --color-text:      249 250 251;
+  --color-accent:    251 191 36;
+  --color-success:   52 211 153;
+  --color-error:     248 113 113;
+  --color-warning:   251 191 36;
+}
+
+* {
+  box-sizing: border-box !important;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* ── Force Roboto everywhere ── */
+html, body, * , *::before, *::after {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+/* ── Reset anchor defaults — no underline, inherit color ── */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ── Reset button defaults ── */
+button {
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* ── Scrollbar hide ── */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

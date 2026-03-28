@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Store Details API Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .info { background: #d1ecf1; border-color: #bee5eb; }
+        button { margin: 5px; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        pre { white-space: pre-wrap; max-height: 300px; overflow-y: auto; }
+        .store-item { margin: 10px 0; padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; }
+        .store-id { font-family: monospace; background: #e9ecef; padding: 2px 5px; }
+    </style>
+</head>
+<body>
+    <h1>🏪 Store Details API Test</h1>
+    
+    <div class="test-section info">
+        <h2>Step 1: Get All Stores</h2>
+        <p>First, let's get all stores to find valid IDs:</p>
+        <button onclick="getAllStores()">Get All Stores</button>
+        <div id="stores-list"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Step 2: Test Store Details</h2>
+        <p>Enter a store ID from the list above:</p>
+        <input type="text" id="store-id" placeholder="Enter Store ID" style="width: 300px; padding: 5px;">
+        <button onclick="getStoreDetails()">Get Store Details</button>
+        <div id="store-details"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Step 3: Create Test Store (if no stores exist)</h2>
+        <button onclick="createTestStore()">Create Test Store</button>
+        <div id="create-result"></div>
+    </div>
+
+    <script>
+        let availableStores = [];
+
+        async function getAllStores() {
+            const listDiv = document.getElementById('stores-list');
+            listDiv.innerHTML = '<p>Loading stores...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/stores/list');
+                const stores = await response.json();
+                
+                if (response.ok) {
+                    availableStores = stores;
+                    
+                    if (stores.length === 0) {
+                        listDiv.innerHTML = `
+                            <div class="info">
+                                <h3>ℹ️ No Stores Found</h3>
+                                <p>No stores exist in the database. Create a test store first.</p>
+                            </div>
+                        `;
+                    } else {
+                        let storesHtml = `
+                            <div class="success">
+                                <h3>✅ Found ${stores.length} Stores</h3>
+                        `;
+                        
+                        stores.forEach((store, index) => {
+                            storesHtml += `
+                                <div class="store-item">
+                                    <strong>${store.storeName || store.name || 'Unnamed Store'}</strong><br>
+                                    <strong>ID:</strong> <span class="store-id">${store._id}</span><br>
+                                    <strong>Slug:</strong> ${store.slug || 'No slug'}<br>
+                                    <button onclick="testStoreId('${store._id}')">Test This Store</button>
+                                </div>
+                            `;
+                        });
+                        
+                        storesHtml += '</div>';
+                        listDiv.innerHTML = storesHtml;
+                    }
+                } else {
+                    listDiv.innerHTML = `
+                        <div class="error">
+                            <h3>❌ Failed to Get Stores</h3>
+                            <pre>${JSON.stringify(stores, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                listDiv.innerHTML = `
+                    <div class="error">
+                        <h3>❌ Connection Error</h3>
+                        <pre>${error.message}</pre>
+                    </div>
+                `;
+            }
+        }
+
+        async function getStoreDetails() {
+            const storeId = document.getElementById('store-id').value.trim();
+            const detailsDiv = document.getElementById('store-details');
+            
+            if (!storeId) {
+                detailsDiv.innerHTML = '<div class="error">Please enter a store ID</div>';
+                return;
+            }
+            
+            detailsDiv.innerHTML = '<p>Loading store details...</p>';
+            
+            try {
+                const response = await fetch(`http://localhost:5000/api/admin/stores/details/${storeId}`);
+                const data = await response.text();
+                
+                if (response.ok) {
+                    detailsDiv.innerHTML = `
+                        <div class="success">
+                            <h3>✅ Store Details Retrieved</h3>
+                            <p><strong>URL:</strong> GET /api/admin/stores/details/${storeId}</p>
+                            <pre>${data}</pre>
+                        </div>
+                    `;
+                } else {
+                    detailsDiv.innerHTML = `
+                        <div class="error">
+                            <h3>❌ Store Not Found (${response.status})</h3>
+                            <p><strong>URL:</strong> GET /api/admin/stores/details/${storeId}</p>
+                            <pre>${data}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                detailsDiv.innerHTML = `
+                    <div class="error">
+                        <h3>❌ Connection Error</h3>
+                        <pre>${error.message}</pre>
+                    </div>
+                `;
+            }
+        }
+
+        async function testStoreId(storeId) {
+            document.getElementById('store-id').value = storeId;
+            await getStoreDetails();
+        }
+
+        async function createTestStore() {
+            const createDiv = document.getElementById('create-result');
+            createDiv.innerHTML = '<p>Creating test store...</p>';
+            
+            const testStore = {
+                storeName: 'Test Store',
+                slug: 'test-store-' + Date.now(),
+                description: 'A test store created for API testing',
+                website: 'https://teststore.com',
+                logo: 'https://via.placeholder.com/100x100?text=Test'
+            };
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/stores/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testStore)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    createDiv.innerHTML = `
+                        <div class="success">
+                            <h3>✅ Test Store Created</h3>
+                            <p><strong>Store ID:</strong> <span class="store-id">${data._id}</span></p>
+                            <p><strong>Store Name:</strong> ${data.storeName}</p>
+                            <button onclick="testStoreId('${data._id}')">Test This Store</button>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                    
+                    // Refresh the stores list
+                    await getAllStores();
+                } else {
+                    createDiv.innerHTML = `
+                        <div class="error">
+                            <h3>❌ Failed to Create Store</h3>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                createDiv.innerHTML = `
+                    <div class="error">
+                        <h3>❌ Connection Error</h3>
+                        <pre>${error.message}</pre>
+                    </div>
+                `;
+            }
+        }
+
+        // Auto-load stores on page load
+        window.onload = function() {
+            getAllStores();
+        };
+    </script>
+</body>
+</html>

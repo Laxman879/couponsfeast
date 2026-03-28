@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment files
+.env
+.env.local
+
+# Next.js
+client/.next/
+
+# Uploads
+server/uploads/
+
+# OS files
+Thumbs.db
+.DS_Store

@@ -1,0 +1,50 @@
+{
+  "name": "couponsfeast-client",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "test:e2e": "start-server-and-test dev http://localhost:3000 cypress:run",
+    "test:api": "cd .. && npm run test:api",
+    "test:public": "cd .. && npm run test:public",
+    "test:admin": "cd .. && npm run test:admin",
+    "test:backend": "cd .. && npm run test:backend",
+    "test:legacy": "cd .. && npm run test:legacy"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.15.0",
+    "@mui/material": "^5.15.0",
+    "@reduxjs/toolkit": "^2.0.1",
+    "axios": "^1.6.2",
+    "framer-motion": "^12.38.0",
+    "lucide-react": "^0.577.0",
+    "next": "^14.0.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.6.0",
+    "react-icons": "^5.6.0",
+    "react-redux": "^9.0.4",
+    "react-slick": "^0.31.0",
+    "slick-carousel": "^1.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "autoprefixer": "^10.4.16",
+    "cypress": "^15.11.0",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.0.4",
+    "postcss": "^8.4.32",
+    "start-server-and-test": "^2.1.5",
+    "tailwindcss": "^3.3.6",
+    "typescript": "^5.3.3"
+  }
+}

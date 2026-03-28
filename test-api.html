@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Test</h1>
+    <button onclick="testGet()">Test GET Site Config</button>
+    <button onclick="testPut()">Test PUT Site Config</button>
+    <div id="result"></div>
+
+    <script>
+        async function testGet() {
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/pages/site-config');
+                const data = await response.text();
+                document.getElementById('result').innerHTML = '<h3>GET Result:</h3><pre>' + data + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = '<h3>GET Error:</h3><pre>' + error.message + '</pre>';
+            }
+        }
+
+        async function testPut() {
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/pages/site-config/update', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        siteName: 'CouponsFeast Updated',
+                        siteDescription: 'Updated via HTML Test',
+                        contactEmail: 'admin@couponsfeast.com'
+                    })
+                });
+                const data = await response.text();
+                document.getElementById('result').innerHTML = '<h3>PUT Result:</h3><pre>' + data + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = '<h3>PUT Error:</h3><pre>' + error.message + '</pre>';
+            }
+        }
+    </script>
+</body>
+</html>

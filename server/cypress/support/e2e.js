@@ -1,0 +1,1 @@
+// Import commands.js using ES2015 syntax:\nimport './commands'\n\n// Alternatively you can use CommonJS syntax:\n// require('./commands')\n

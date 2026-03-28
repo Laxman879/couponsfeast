@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>APIs 47-58 Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        button { margin: 5px; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin: 10px 0; padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>APIs 47-58 Test Suite</h1>
+    
+    <h2>Pages Management (47-50)</h2>
+    <button onclick="testAPI(47, 'GET', '/api/admin/pages/site-config')">API 47: Get Site Config</button>
+    <button onclick="testAPI(48, 'PUT', '/api/admin/pages/site-config/update', {siteName: 'Test Site', siteDescription: 'Test Description', contactEmail: 'test@test.com'})">API 48: Update Site Config</button>
+    <button onclick="testAPI(49, 'GET', '/api/admin/pages/about')">API 49: Get Page</button>
+    <button onclick="testAPI(50, 'PUT', '/api/admin/pages/about/update', {title: 'About Us', content: 'Test content'})">API 50: Update Page</button>
+    
+    <h2>Upload Management (51-53)</h2>
+    <button onclick="testAPI(51, 'GET', '/api/admin/upload/test')">API 51: Test Upload</button>
+    <button onclick="alert('API 52: Upload Logo - Use file upload form')">API 52: Upload Logo (File Upload)</button>
+    <button onclick="testAPI(53, 'DELETE', '/api/admin/upload/logo/delete/test.png')">API 53: Delete Logo</button>
+    
+    <h2>Analytics (54-56)</h2>
+    <button onclick="testAPI(54, 'GET', '/api/admin/analytics/coupon-performance')">API 54: Coupon Analytics</button>
+    <button onclick="testAPI(55, 'GET', '/api/admin/analytics/store-performance')">API 55: Store Analytics</button>
+    <button onclick="testAPI(56, 'GET', '/api/admin/analytics/user-behavior')">API 56: User Behavior Analytics</button>
+    
+    <h2>Dashboard & System (57-58)</h2>
+    <button onclick="testAPI(57, 'GET', '/api/admin/dashboard/stats')">API 57: Dashboard Stats</button>
+    <button onclick="testAPI(58, 'GET', '/api/admin/system/health')">API 58: System Health</button>
+    
+    <div id="results"></div>
+
+    <script>
+        async function testAPI(apiNumber, method, endpoint, body = null) {
+            const resultsDiv = document.getElementById('results');
+            
+            try {
+                const options = {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                };
+                
+                if (body && (method === 'POST' || method === 'PUT')) {
+                    options.body = JSON.stringify(body);
+                }
+                
+                const response = await fetch(`http://localhost:5000${endpoint}`, options);
+                const data = await response.text();
+                
+                resultsDiv.innerHTML = `
+                    <div class="result">
+                        <h3>API ${apiNumber} Result (${response.status})</h3>
+                        <p><strong>Endpoint:</strong> ${method} ${endpoint}</p>
+                        <pre>${data}</pre>
+                    </div>
+                ` + resultsDiv.innerHTML;
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="result" style="background: #f8d7da; border-color: #f5c6cb;">
+                        <h3>API ${apiNumber} Error</h3>
+                        <p><strong>Endpoint:</strong> ${method} ${endpoint}</p>
+                        <pre>${error.message}</pre>
+                    </div>
+                ` + resultsDiv.innerHTML;
+            }
+        }
+    </script>
+</body>
+</html>

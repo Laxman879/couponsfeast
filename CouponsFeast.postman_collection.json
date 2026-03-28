@@ -1,0 +1,309 @@
+{
+	"info": {
+		"name": "CouponsFeast API",
+		"description": "Complete API collection for CouponsFeast platform - 17 endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "storeId",
+			"value": "PASTE_STORE_ID_HERE",
+			"type": "string"
+		},
+		{
+			"key": "couponId",
+			"value": "PASTE_COUPON_ID_HERE",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "0. Health Check",
+			"item": [
+				{
+					"name": "API Test",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/test",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "test"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "1. Store APIs",
+			"item": [
+				{
+					"name": "Get All Stores",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/stores",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "stores"]
+						}
+					}
+				},
+				{
+					"name": "Get Store by Slug",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/stores/amazon",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "stores", "amazon"]
+						}
+					}
+				},
+				{
+					"name": "Create Store",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Amazon\",\n  \"slug\": \"amazon\",\n  \"description\": \"World's largest online retailer\",\n  \"logo\": \"https://logo.clearbit.com/amazon.com\",\n  \"website\": \"https://www.amazon.com\",\n  \"category\": \"General\",\n  \"featured\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/stores",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "stores"]
+						}
+					}
+				},
+				{
+					"name": "Update Store",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Amazon Updated\",\n  \"description\": \"Updated description\",\n  \"featured\": false\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/stores/{{storeId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "stores", "{{storeId}}"]
+						}
+					}
+				},
+				{
+					"name": "Delete Store",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/stores/{{storeId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "stores", "{{storeId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "2. Coupon APIs",
+			"item": [
+				{
+					"name": "Get All Coupons",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/coupons",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "coupons"]
+						}
+					}
+				},
+				{
+					"name": "Get Coupon by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/coupons/{{couponId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "coupons", "{{couponId}}"]
+						}
+					}
+				},
+				{
+					"name": "Get Coupons by Store",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/coupons?store={{storeId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "coupons"],
+							"query": [
+								{
+									"key": "store",
+									"value": "{{storeId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Coupons by Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/coupons?category=Electronics",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "coupons"],
+							"query": [
+								{
+									"key": "category",
+									"value": "Electronics"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Coupon",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"50% Off Electronics\",\n  \"description\": \"Get 50% discount on all electronics\",\n  \"code\": \"SAVE50\",\n  \"discount\": \"50%\",\n  \"store\": \"{{storeId}}\",\n  \"category\": \"Electronics\",\n  \"expiryDate\": \"2024-12-31\",\n  \"link\": \"https://www.amazon.com/deals\",\n  \"featured\": true,\n  \"verified\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/coupons",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "coupons"]
+						}
+					}
+				},
+				{
+					"name": "Update Coupon",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"60% Off Electronics - Updated\",\n  \"discount\": \"60%\",\n  \"verified\": false\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/coupons/{{couponId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "coupons", "{{couponId}}"]
+						}
+					}
+				},
+				{
+					"name": "Delete Coupon",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/coupons/{{couponId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "coupons", "{{couponId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Analytics APIs",
+			"item": [
+				{
+					"name": "Reveal Coupon Code",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/coupons/{{couponId}}/reveal",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "coupons", "{{couponId}}", "reveal"]
+						}
+					}
+				},
+				{
+					"name": "Track Coupon Click",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/coupons/{{couponId}}/click",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "coupons", "{{couponId}}", "click"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "4. Search & Trending",
+			"item": [
+				{
+					"name": "Search Coupons",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/coupons/search?q=electronics",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "coupons", "search"],
+							"query": [
+								{
+									"key": "q",
+									"value": "electronics"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Trending Coupons",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/coupons/trending",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "coupons", "trending"]
+						}
+					}
+				}
+			]
+		}
+	]
+}
