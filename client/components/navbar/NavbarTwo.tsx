@@ -53,6 +53,12 @@ export default function NavbarTwo({ navLinks, config }: NavbarTwoProps) {
   const mobileBg = isDark ? darkPalette.bg : (siteConfig?.theme?.secondaryColor || '#9333ea');
   const primary = siteConfig?.theme?.primaryColor || '#7c3aed';
 
+  const dropBg = isDark ? darkPalette.cardBg : '#ffffff';
+  const dropText = isDark ? darkPalette.text : '#111827';
+  const dropMuted = isDark ? (darkPalette.text + 'aa') : '#9ca3af';
+  const dropHover = isDark ? darkPalette.bg : '#f9fafb';
+  const dropBorder = isDark ? darkPalette.cardBg : '#f3f4f6';
+
   // Load stores and categories once
   useEffect(() => {
     getStores().then(res => setAllStores(res.data?.data ?? res.data ?? [])).catch(() => {});
@@ -114,27 +120,31 @@ export default function NavbarTwo({ navLinks, config }: NavbarTwoProps) {
   const renderSearchDropdown = () => {
     if (!showDropdown) return null;
     return (
-      <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50 max-h-[400px] overflow-y-auto">
+      <div className="absolute top-full left-0 right-0 mt-2 rounded-xl shadow-2xl border overflow-hidden z-50 max-h-[400px] overflow-y-auto"
+        style={{ backgroundColor: dropBg, borderColor: dropBorder }}>
         {searching && (
-          <div className="px-4 py-3 text-sm text-gray-400">Searching...</div>
+          <div className="px-4 py-3 text-sm" style={{ color: dropMuted }}>Searching...</div>
         )}
         {!searching && !hasResults && (
-          <div className="px-4 py-6 text-center text-sm text-gray-400">No results for "{query}"</div>
+          <div className="px-4 py-6 text-center text-sm" style={{ color: dropMuted }}>No results for "{query}"</div>
         )}
 
         {results.stores.length > 0 && (
           <div>
-            <div className="px-4 py-2 text-[10px] font-bold tracking-widest uppercase text-gray-400 bg-gray-50">Stores</div>
+            <div className="px-4 py-2 text-[10px] font-bold tracking-widest uppercase" style={{ color: dropMuted, backgroundColor: dropHover }}>Stores</div>
             {results.stores.map((store: any) => (
               <button key={store._id} onClick={() => goToStore(store)}
-                className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors text-left cursor-pointer bg-transparent border-none outline-none">
+                className="w-full flex items-center gap-3 px-4 py-2.5 transition-colors text-left cursor-pointer bg-transparent border-none outline-none"
+                style={{ color: dropText }}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = dropHover)}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}>
                 {store.logo && (
                   <img src={store.logo.startsWith('http') ? store.logo : `http://localhost:5000${store.logo}`}
-                    alt="" className="w-8 h-8 rounded-lg object-contain bg-gray-100 p-1" />
+                    alt="" className="w-8 h-8 rounded-lg object-contain p-1" style={{ backgroundColor: dropHover }} />
                 )}
                 <div>
-                  <p className="text-sm font-semibold text-gray-900">{store.storeName}</p>
-                  {store.category && <p className="text-[10px] text-gray-400">{store.category}</p>}
+                  <p className="text-sm font-semibold">{store.storeName}</p>
+                  {store.category && <p className="text-[10px]" style={{ color: dropMuted }}>{store.category}</p>}
                 </div>
               </button>
             ))}
@@ -143,13 +153,16 @@ export default function NavbarTwo({ navLinks, config }: NavbarTwoProps) {
 
         {results.coupons.length > 0 && (
           <div>
-            <div className="px-4 py-2 text-[10px] font-bold tracking-widest uppercase text-gray-400 bg-gray-50">Coupons</div>
+            <div className="px-4 py-2 text-[10px] font-bold tracking-widest uppercase" style={{ color: dropMuted, backgroundColor: dropHover }}>Coupons</div>
             {results.coupons.map((coupon: any) => (
               <button key={coupon._id} onClick={() => goToCouponStore(coupon)}
-                className="w-full flex items-center justify-between gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors text-left cursor-pointer bg-transparent border-none outline-none">
+                className="w-full flex items-center justify-between gap-3 px-4 py-2.5 transition-colors text-left cursor-pointer bg-transparent border-none outline-none"
+                style={{ color: dropText }}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = dropHover)}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}>
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">{coupon.title}</p>
-                  <p className="text-[10px] text-gray-400">{coupon.store?.storeName || ''}</p>
+                  <p className="text-sm font-medium truncate">{coupon.title}</p>
+                  <p className="text-[10px]" style={{ color: dropMuted }}>{coupon.store?.storeName || ''}</p>
                 </div>
                 {coupon.discount && (
                   <span className="text-xs font-bold px-2 py-0.5 rounded-full flex-shrink-0" style={{ backgroundColor: `${primary}15`, color: primary }}>
@@ -270,19 +283,26 @@ export default function NavbarTwo({ navLinks, config }: NavbarTwoProps) {
               )}
             </div>
             {showDropdown && (
-              <div className="mt-2 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden max-h-[300px] overflow-y-auto">
-                {searching && <div className="px-4 py-3 text-sm text-gray-400">Searching...</div>}
-                {!searching && !hasResults && <div className="px-4 py-4 text-center text-sm text-gray-400">No results</div>}
+              <div className="mt-2 rounded-xl shadow-lg border overflow-hidden max-h-[300px] overflow-y-auto"
+                style={{ backgroundColor: dropBg, borderColor: dropBorder }}>
+                {searching && <div className="px-4 py-3 text-sm" style={{ color: dropMuted }}>Searching...</div>}
+                {!searching && !hasResults && <div className="px-4 py-4 text-center text-sm" style={{ color: dropMuted }}>No results</div>}
                 {results.stores.map((store: any) => (
                   <button key={store._id} onClick={() => { goToStore(store); setMobileOpen(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 text-left cursor-pointer bg-transparent border-none outline-none">
-                    <p className="text-sm font-semibold text-gray-900">{store.storeName}</p>
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-left cursor-pointer bg-transparent border-none outline-none"
+                    style={{ color: dropText }}
+                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = dropHover)}
+                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}>
+                    <p className="text-sm font-semibold">{store.storeName}</p>
                   </button>
                 ))}
                 {results.coupons.map((coupon: any) => (
                   <button key={coupon._id} onClick={() => { goToCouponStore(coupon); setMobileOpen(false); }}
-                    className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 text-left cursor-pointer bg-transparent border-none outline-none">
-                    <p className="text-sm text-gray-900 truncate">{coupon.title}</p>
+                    className="w-full flex items-center justify-between px-4 py-2.5 text-left cursor-pointer bg-transparent border-none outline-none"
+                    style={{ color: dropText }}
+                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = dropHover)}
+                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}>
+                    <p className="text-sm truncate">{coupon.title}</p>
                     {coupon.discount && <span className="text-xs font-bold flex-shrink-0" style={{ color: primary }}>{coupon.discount}</span>}
                   </button>
                 ))}

@@ -49,7 +49,7 @@ export default function StorePage() {
     const load = async () => {
       try {
         const [storeRes, couponRes, cfgRes] = await Promise.all([
-          getStores(), getCoupons(), getSiteConfig()
+          getStores(), getCoupons({ limit: 1000 }), getSiteConfig()
         ]);
         const stores: Store[] = storeRes.data?.data ?? storeRes.data ?? [];
         const allCoupons: Coupon[] = couponRes.data?.data ?? couponRes.data ?? [];
@@ -211,15 +211,14 @@ export default function StorePage() {
                 primaryColor={primary}
               />
             </div>
+
+            <FAQSection
+              heading={faqs.heading || `${storeName} Frequently Asked Questions`}
+              items={faqs.items}
+              primaryColor={primary}
+            />
           </main>
         </div>
-
-        {/* FAQ — full width */}
-        <FAQSection
-          heading={faqs.heading || `${storeName} Frequently Asked Questions`}
-          items={faqs.items}
-          primaryColor={primary}
-        />
 
         {/* Bottom breadcrumb — above footer */}
         <div className="mt-10 py-5 border-t border-gray-200 dark:border-gray-700 flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 flex-wrap justify-start">
