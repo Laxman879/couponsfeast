@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import {
-  Button, TextField, Switch, FormControlLabel,
+  Button, TextField, Switch, FormControlLabel, MenuItem,
   Drawer, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress, Chip
 } from '@mui/material';
 import { Add, Edit, Delete, Link as LinkIcon } from '@mui/icons-material';
@@ -143,34 +143,64 @@ export default function PopularLinksManagement() {
       )}
 
       <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}
-        PaperProps={{ sx: { width: { xs: '100%', sm: 420 } } }}>
-        <div className="flex items-center justify-between px-6 py-5" style={{ background: 'linear-gradient(135deg,#10b981,#059669)' }}>
-          <div className="flex items-center gap-2 text-white">
-            <LinkIcon />
-            <span className="font-bold text-lg">{editing ? 'Edit Link' : 'Add Link'}</span>
+        PaperProps={{ sx: { width: { xs: '100%', sm: 480 } } }}>
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 py-4 flex-shrink-0" style={{ background: 'linear-gradient(135deg,#10b981,#059669)' }}>
+            <div className="flex items-center gap-2 text-white">
+              <LinkIcon />
+              <span className="font-semibold text-lg">{editing ? 'Edit Link' : 'Add New Link'}</span>
+            </div>
+            <IconButton onClick={() => setDrawerOpen(false)} style={{ color: '#fff' }}><span className="text-xl leading-none">&times;</span></IconButton>
           </div>
-          <IconButton onClick={() => setDrawerOpen(false)} size="small" style={{ color: '#fff' }}>
-            <span className="text-xl">&times;</span>
-          </IconButton>
-        </div>
-        <div className="flex-1 overflow-y-auto px-6 py-5">
-          <div className="flex flex-col gap-5">
-            <TextField label="Name *" value={formData.name} onChange={(e) => set({ name: e.target.value })} fullWidth placeholder="e.g., Electronics" />
-            <TextField label="Link URL" value={formData.href} onChange={(e) => set({ href: e.target.value })} fullWidth placeholder="/category/electronics" />
-            <TextField label="Type" value={formData.type} onChange={(e) => set({ type: e.target.value })} fullWidth select SelectProps={{ native: true }}>
-              <option value="category">Popular Category</option>
-              <option value="store">Popular Store</option>
-            </TextField>
-            <TextField label="Order" type="number" value={formData.order} onChange={(e) => set({ order: Number(e.target.value) })} fullWidth />
-            <FormControlLabel control={<Switch checked={formData.isActive} onChange={(e) => set({ isActive: e.target.checked })} />} label="Active" />
+
+          {/* Body */}
+          <div className="flex-1 overflow-y-auto p-5 space-y-4">
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Link Information</p>
+
+            <TextField fullWidth label="Name *" placeholder="e.g., Electronics" value={formData.name}
+              onChange={(e) => set({ name: e.target.value })} variant="outlined"
+              sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
+
+            <TextField fullWidth label="Link URL" placeholder="/category/electronics" value={formData.href}
+              onChange={(e) => set({ href: e.target.value })} variant="outlined"
+              sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
+
+            <div className="grid grid-cols-2 gap-4">
+              <TextField fullWidth label="Type" value={formData.type} onChange={(e) => set({ type: e.target.value })} variant="outlined" select
+                InputLabelProps={{ shrink: true }}
+                sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                SelectProps={{ displayEmpty: true, renderValue: (val: any) => {
+                  if (!val) return <span style={{ color: '#9ca3af' }}>Select Type</span>;
+                  return val === 'category' ? 'Popular Category' : 'Popular Store';
+                }}}>
+                <MenuItem value="category">Popular Category</MenuItem>
+                <MenuItem value="store">Popular Store</MenuItem>
+              </TextField>
+
+              <TextField fullWidth label="Order" type="number" value={formData.order}
+                onChange={(e) => set({ order: Number(e.target.value) })} variant="outlined"
+                InputLabelProps={{ shrink: true }}
+                helperText="Lower = shown first"
+                sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
+            </div>
+
+            <div className="rounded-xl border border-gray-200 p-4 bg-gray-50">
+              <FormControlLabel
+                control={<Switch checked={formData.isActive} onChange={(e) => set({ isActive: e.target.checked })} color="success" />}
+                label={<span className="text-sm font-medium text-slate-700">Active (visible on site)</span>}
+              />
+            </div>
           </div>
-        </div>
-        <div className="flex gap-3 px-6 py-5 border-t border-slate-100 bg-slate-50">
-          <Button onClick={() => setDrawerOpen(false)} variant="outlined" fullWidth style={{ height: 44, borderRadius: 10 }}>Cancel</Button>
-          <Button onClick={handleSubmit} variant="contained" fullWidth
-            style={{ height: 44, background: 'linear-gradient(135deg,#10b981,#059669)', borderRadius: 10, textTransform: 'none', fontWeight: 600 }}>
-            {editing ? 'Update' : 'Create'}
-          </Button>
+
+          {/* Footer */}
+          <div className="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t flex-shrink-0">
+            <Button onClick={() => setDrawerOpen(false)} variant="outlined" style={{ borderRadius: 8, textTransform: 'none' }}>Cancel</Button>
+            <Button onClick={handleSubmit} variant="contained"
+              style={{ background: 'linear-gradient(135deg,#10b981,#059669)', borderRadius: 8, textTransform: 'none', fontWeight: 600, paddingLeft: 24, paddingRight: 24 }}>
+              {editing ? 'Update Link' : 'Create Link'}
+            </Button>
+          </div>
         </div>
       </Drawer>
 

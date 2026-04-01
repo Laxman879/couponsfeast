@@ -6,6 +6,15 @@ const api = axios.create({
   baseURL: API_URL,
 });
 
+// Attach auth token to every request
+api.interceptors.request.use((config) => {
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('admin_token');
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export const getCoupons = (params?: any) => api.get('/public/coupons/list', { params });
 export const getCouponById = (id: string) => api.get(`/public/coupons/details/${id}`);
 export const createCoupon = (data: any) => api.post('/admin/coupons/create', data);
@@ -110,5 +119,9 @@ export const uploadLogo = (file: File, logoType?: string) => {
   return api.post('/admin/upload/logo', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
 };
 export const deleteLogo = (filename: string) => api.delete(`/admin/upload/logo/delete/${filename}`);
+
+// Auth
+export const adminLogin = (data: { email: string; password: string }) => api.post('/auth/login', data);
+export const adminVerify = () => api.get('/auth/verify');
 
 export default api;

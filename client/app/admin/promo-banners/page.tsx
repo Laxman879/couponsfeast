@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import {
-  Button, TextField, Switch, FormControlLabel,
+  Button, TextField, Switch, FormControlLabel, MenuItem,
   Drawer, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress
 } from '@mui/material';
 import { Add, Edit, Delete, Campaign } from '@mui/icons-material';
@@ -150,51 +150,59 @@ export default function PromoBannersManagement() {
 
       <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}
         PaperProps={{ sx: { width: { xs: '100%', sm: 520 } } }}>
-        <div className="flex items-center justify-between px-6 py-5" style={{ background: 'linear-gradient(135deg,#a855f7,#9333ea)' }}>
-          <div className="flex items-center gap-2 text-white">
-            <Campaign />
-            <span className="font-bold text-lg">{editing ? 'Edit Banner' : 'Add Banner'}</span>
+        <div className="flex flex-col h-full">
+          <div className="flex items-center justify-between px-6 py-4 flex-shrink-0" style={{ background: 'linear-gradient(135deg,#a855f7,#9333ea)' }}>
+            <div className="flex items-center gap-2 text-white">
+              <Campaign />
+              <span className="font-semibold text-lg">{editing ? 'Edit Banner' : 'Add Banner'}</span>
+            </div>
+            <IconButton onClick={() => setDrawerOpen(false)} style={{ color: '#fff' }}><span className="text-xl leading-none">&times;</span></IconButton>
           </div>
-          <IconButton onClick={() => setDrawerOpen(false)} size="small" style={{ color: '#fff' }}>
-            <span className="text-xl">&times;</span>
-          </IconButton>
-        </div>
-        <div className="flex-1 overflow-y-auto px-6 py-5">
-          <div className="flex flex-col gap-5">
-            <TextField label="Banner Text *" value={formData.text} onChange={(e) => set({ text: e.target.value })} fullWidth placeholder="TODAY'S DEAL IS LIVE!" />
+          <div className="flex-1 overflow-y-auto p-5 space-y-4">
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Banner Information</p>
+            <TextField label="Banner Text *" value={formData.text} onChange={(e) => set({ text: e.target.value })} fullWidth placeholder="TODAY'S DEAL IS LIVE!" variant="outlined" sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
             <div className="grid grid-cols-2 gap-4">
-              <TextField label="Logo Tag" value={formData.logo} onChange={(e) => set({ logo: e.target.value })} fullWidth placeholder="amazon" />
-              <TextField label="Button Label" value={formData.buttonLabel} onChange={(e) => set({ buttonLabel: e.target.value })} fullWidth />
+              <TextField label="Logo Tag" value={formData.logo} onChange={(e) => set({ logo: e.target.value })} fullWidth placeholder="amazon" variant="outlined" sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
+              <TextField label="Button Label" value={formData.buttonLabel} onChange={(e) => set({ buttonLabel: e.target.value })} fullWidth variant="outlined" sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <TextField label="Store Name" value={formData.storeName} onChange={(e) => set({ storeName: e.target.value })} fullWidth />
-              <TextField label="Store URL" value={formData.storeUrl} onChange={(e) => set({ storeUrl: e.target.value })} fullWidth placeholder="/view/amazon.com?u=..." />
+              <TextField label="Store Name" value={formData.storeName} onChange={(e) => set({ storeName: e.target.value })} fullWidth variant="outlined" sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
+              <TextField label="Store URL" value={formData.storeUrl} onChange={(e) => set({ storeUrl: e.target.value })} fullWidth placeholder="/view/amazon.com?u=..." variant="outlined" sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <TextField label="Coupon Code" value={formData.couponCode} onChange={(e) => set({ couponCode: e.target.value })} fullWidth />
-              <TextField label="Discount" value={formData.discount} onChange={(e) => set({ discount: e.target.value })} fullWidth placeholder="20% Off" />
+              <TextField label="Coupon Code" value={formData.couponCode} onChange={(e) => set({ couponCode: e.target.value })} fullWidth variant="outlined" sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
+              <TextField label="Discount" value={formData.discount} onChange={(e) => set({ discount: e.target.value })} fullWidth placeholder="20% Off" variant="outlined" sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <TextField label="Expiry Date" type="date" value={formData.expiryDate} onChange={(e) => set({ expiryDate: e.target.value })} fullWidth InputLabelProps={{ shrink: true }} />
-              <TextField label="Order" type="number" value={formData.order} onChange={(e) => set({ order: Number(e.target.value) })} fullWidth />
+              <TextField label="Expiry Date" type="date" value={formData.expiryDate} onChange={(e) => set({ expiryDate: e.target.value })} fullWidth variant="outlined" InputLabelProps={{ shrink: true }} sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
+              <TextField label="Order" type="number" value={formData.order} onChange={(e) => set({ order: Number(e.target.value) })} fullWidth variant="outlined" InputLabelProps={{ shrink: true }} helperText="Lower = shown first" sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
             </div>
-            <TextField label="Gradient CSS" value={formData.gradient} onChange={(e) => set({ gradient: e.target.value })} fullWidth placeholder="linear-gradient(90deg, #a855f7, #9333ea)" />
+            <TextField label="Gradient CSS" value={formData.gradient} onChange={(e) => set({ gradient: e.target.value })} fullWidth placeholder="linear-gradient(90deg, #a855f7, #9333ea)" variant="outlined" sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
             <div className="w-full h-10 rounded-lg" style={{ background: formData.gradient }} />
-            <TextField label="Placement" value={formData.placement} onChange={(e) => set({ placement: e.target.value })} fullWidth select SelectProps={{ native: true }}>
-              <option value="both">Both (Inline + Sticky)</option>
-              <option value="inline">Inline Only</option>
-              <option value="sticky">Sticky Only</option>
+            <TextField label="Placement" value={formData.placement} onChange={(e) => set({ placement: e.target.value })} fullWidth select variant="outlined"
+              InputLabelProps={{ shrink: true }}
+              sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+              SelectProps={{ displayEmpty: true, renderValue: (val: any) => {
+                if (!val) return <span style={{ color: '#9ca3af' }}>Select Placement</span>;
+                const labels: Record<string, string> = { both: 'Both (Inline + Sticky)', inline: 'Inline Only', sticky: 'Sticky Only' };
+                return labels[val] || val;
+              }}}>
+              <MenuItem value="both">Both (Inline + Sticky)</MenuItem>
+              <MenuItem value="inline">Inline Only</MenuItem>
+              <MenuItem value="sticky">Sticky Only</MenuItem>
             </TextField>
-            <TextField label="Details" value={formData.details} onChange={(e) => set({ details: e.target.value })} fullWidth multiline rows={2} />
-            <FormControlLabel control={<Switch checked={formData.isActive} onChange={(e) => set({ isActive: e.target.checked })} />} label="Active" />
+            <TextField label="Details" value={formData.details} onChange={(e) => set({ details: e.target.value })} fullWidth multiline rows={2} variant="outlined" />
+            <div className="rounded-xl border border-gray-200 p-4 bg-gray-50">
+              <FormControlLabel control={<Switch checked={formData.isActive} onChange={(e) => set({ isActive: e.target.checked })} color="success" />} label={<span className="text-sm font-medium text-slate-700">Active (visible on site)</span>} />
+            </div>
           </div>
-        </div>
-        <div className="flex gap-3 px-6 py-5 border-t border-slate-100 bg-slate-50">
-          <Button onClick={() => setDrawerOpen(false)} variant="outlined" fullWidth style={{ height: 44, borderRadius: 10 }}>Cancel</Button>
-          <Button onClick={handleSubmit} variant="contained" fullWidth
-            style={{ height: 44, background: 'linear-gradient(135deg,#a855f7,#9333ea)', borderRadius: 10, textTransform: 'none', fontWeight: 600 }}>
-            {editing ? 'Update' : 'Create'}
-          </Button>
+          <div className="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t flex-shrink-0">
+            <Button onClick={() => setDrawerOpen(false)} variant="outlined" style={{ borderRadius: 8, textTransform: 'none' }}>Cancel</Button>
+            <Button onClick={handleSubmit} variant="contained"
+              style={{ background: 'linear-gradient(135deg,#a855f7,#9333ea)', borderRadius: 8, textTransform: 'none', fontWeight: 600, paddingLeft: 24, paddingRight: 24 }}>
+              {editing ? 'Update Banner' : 'Create Banner'}
+            </Button>
+          </div>
         </div>
       </Drawer>
 

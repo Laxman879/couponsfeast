@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import {
   LayoutDashboard, Store, Tag, Image, Settings, FileText,
@@ -24,13 +24,14 @@ const navItems = [
 ];
 
 function SidebarInner({
-  collapsed, setCollapsed, isMobile, onClose, pathname,
+  collapsed, setCollapsed, isMobile, onClose, pathname, onLogout,
 }: {
   collapsed: boolean;
   setCollapsed: (v: boolean) => void;
   isMobile: boolean;
   onClose: () => void;
   pathname: string;
+  onLogout: () => void;
 }) {
   const narrow = !isMobile && collapsed;
 
@@ -122,7 +123,7 @@ function SidebarInner({
           {!narrow && <span>Notifications</span>}
         </button>
 
-        <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-slate-50 transition-all ${narrow ? 'justify-center' : ''}`}>
+        <div onClick={onLogout} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-red-50 transition-all ${narrow ? 'justify-center' : ''}`}>
           <div className="w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center text-white text-sm font-bold bg-gradient-to-br from-indigo-500 to-violet-600 shadow-sm">
             A
           </div>
@@ -132,7 +133,7 @@ function SidebarInner({
                 <p className="text-slate-700 text-sm font-semibold truncate">Admin</p>
                 <p className="text-slate-400 text-xs truncate">admin@couponsfeast.com</p>
               </div>
-              <LogOut size={14} className="flex-shrink-0 text-slate-400" />
+              <LogOut size={14} className="flex-shrink-0 text-red-400" />
             </>
           )}
         </div>
@@ -152,9 +153,16 @@ function SidebarInner({
 }
 
 export default function AdminSidebar() {
+  const router = useRouter();
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin_token');
+    localStorage.removeItem('admin_user');
+    router.push('/admin/login');
+  };
 
   useEffect(() => { setMobileOpen(false); }, [pathname]);
   useEffect(() => {
@@ -178,14 +186,14 @@ export default function AdminSidebar() {
         <div className="lg:hidden fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
           <div className="relative z-10 flex self-stretch">
-            <SidebarInner collapsed={false} setCollapsed={setCollapsed} isMobile onClose={() => setMobileOpen(false)} pathname={pathname} />
+            <SidebarInner collapsed={false} setCollapsed={setCollapsed} isMobile onClose={() => setMobileOpen(false)} pathname={pathname} onLogout={handleLogout} />
           </div>
         </div>
       )}
 
       {/* Desktop sidebar */}
       <div className="hidden lg:flex self-stretch">
-        <SidebarInner collapsed={collapsed} setCollapsed={setCollapsed} isMobile={false} onClose={() => {}} pathname={pathname} />
+        <SidebarInner collapsed={collapsed} setCollapsed={setCollapsed} isMobile={false} onClose={() => {}} pathname={pathname} onLogout={handleLogout} />
       </div>
     </>
   );

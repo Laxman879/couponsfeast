@@ -469,11 +469,14 @@ export default function SiteConfigAdmin() {
               <LogoUploader 
                 currentLogo={config.logos.navbar}
                 logoType="navbar"
-                onLogoUpdate={(logoUrl) => {
-                  setConfig({
-                    ...config,
-                    logos: {...config.logos, navbar: logoUrl}
-                  });
+                onLogoUpdate={async (logoUrl) => {
+                  const updated = { ...config, logos: { ...config.logos, navbar: logoUrl } };
+                  setConfig(updated);
+                  try {
+                    await updateSiteConfig({ logos: updated.logos });
+                    localStorage.setItem('cms-updated', Date.now().toString());
+                    window.dispatchEvent(new CustomEvent('cms-updated'));
+                  } catch (e) { console.error('Auto-save logo failed', e); }
                 }}
               />
             </Grid>
@@ -482,11 +485,14 @@ export default function SiteConfigAdmin() {
               <LogoUploader 
                 currentLogo={config.logos.footer}
                 logoType="footer"
-                onLogoUpdate={(logoUrl) => {
-                  setConfig({
-                    ...config,
-                    logos: {...config.logos, footer: logoUrl}
-                  });
+                onLogoUpdate={async (logoUrl) => {
+                  const updated = { ...config, logos: { ...config.logos, footer: logoUrl } };
+                  setConfig(updated);
+                  try {
+                    await updateSiteConfig({ logos: updated.logos });
+                    localStorage.setItem('cms-updated', Date.now().toString());
+                    window.dispatchEvent(new CustomEvent('cms-updated'));
+                  } catch (e) { console.error('Auto-save logo failed', e); }
                 }}
               />
             </Grid>
@@ -495,14 +501,15 @@ export default function SiteConfigAdmin() {
               <LogoUploader 
                 currentLogo={config.logos.favicon}
                 logoType="favicon"
-                onLogoUpdate={(logoUrl) => {
-                  setConfig({
-                    ...config,
-                    logos: {...config.logos, favicon: logoUrl}
-                  });
-                  // Immediately update favicon
+                onLogoUpdate={async (logoUrl) => {
+                  const updated = { ...config, logos: { ...config.logos, favicon: logoUrl } };
+                  setConfig(updated);
                   updateFavicon(logoUrl);
-                  toast.success('Favicon updated! Changes will appear after saving.');
+                  try {
+                    await updateSiteConfig({ logos: updated.logos });
+                    localStorage.setItem('cms-updated', Date.now().toString());
+                    window.dispatchEvent(new CustomEvent('cms-updated'));
+                  } catch (e) { console.error('Auto-save logo failed', e); }
                 }}
               />
             </Grid>
@@ -511,11 +518,14 @@ export default function SiteConfigAdmin() {
               <LogoUploader 
                 currentLogo={config.logos.ogImage}
                 logoType="ogImage"
-                onLogoUpdate={(logoUrl) => {
-                  setConfig({
-                    ...config,
-                    logos: {...config.logos, ogImage: logoUrl}
-                  });
+                onLogoUpdate={async (logoUrl) => {
+                  const updated = { ...config, logos: { ...config.logos, ogImage: logoUrl } };
+                  setConfig(updated);
+                  try {
+                    await updateSiteConfig({ logos: updated.logos });
+                    localStorage.setItem('cms-updated', Date.now().toString());
+                    window.dispatchEvent(new CustomEvent('cms-updated'));
+                  } catch (e) { console.error('Auto-save logo failed', e); }
                 }}
               />
             </Grid>
@@ -684,6 +694,7 @@ export default function SiteConfigAdmin() {
               { key: 'navbar1', label: 'Layout 1', desc: 'Glassmorphism + CTA button' },
               { key: 'navbar2', label: 'Layout 2', desc: 'Solid color + search bar' },
               { key: 'navbar3', label: 'Layout 3', desc: 'Banner + white nav + CTA' },
+              { key: 'navbar4', label: 'Layout 4', desc: 'White + search + promo banner' },
             ].map((l) => (
               <Grid item xs={6} sm={4} md={3} key={l.key}>
                 <Box
@@ -723,6 +734,18 @@ export default function SiteConfigAdmin() {
                           {[1,2,3].map(i => <Box key={i} sx={{ width: 14, height: 4, borderRadius: 1, bgcolor: '#9ca3af' }} />)}
                         </Box>
                         <Box sx={{ width: 28, height: 12, borderRadius: 4, border: '1px solid #d1d5db' }} />
+                      </Box>
+                    </Box>
+                  )}
+                  {l.key === 'navbar4' && (
+                    <Box sx={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb' }}>
+                      <Box sx={{ height: 28, display: 'flex', alignItems: 'center', px: 1.5, gap: 1 }}>
+                        <Box sx={{ width: 20, height: 7, borderRadius: 1, bgcolor: config.theme.primaryColor }} />
+                        <Box sx={{ flex: 1, height: 12, borderRadius: 4, bgcolor: '#f3f4f6', border: '1px solid #e5e7eb' }} />
+                        <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#e5e7eb' }} />
+                      </Box>
+                      <Box sx={{ height: 12, borderTop: '1px solid #f3f4f6', display: 'flex', alignItems: 'center', px: 1.5, gap: 1 }}>
+                        {[1,2,3,4].map(i => <Box key={i} sx={{ width: 14, height: 3, borderRadius: 1, bgcolor: '#d1d5db' }} />)}
                       </Box>
                     </Box>
                   )}

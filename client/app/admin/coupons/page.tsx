@@ -151,7 +151,13 @@ export default function AdminCoupons() {
             <p className="text-xs font-bold text-gray-500 uppercase tracking-wider pt-2">Discount & Store</p>
             <div className="grid grid-cols-2 gap-4">
               <TextField fullWidth label="Discount *" placeholder="e.g., 20% OFF" value={formData.discount} onChange={e => ff('discount', e.target.value)} variant="outlined" InputProps={{ startAdornment: <Percent className="text-gray-400 mr-2" /> }} sx={inputSx} />
-              <TextField select fullWidth label="Store *" value={formData.store} onChange={e => ff('store', e.target.value)} variant="outlined" sx={inputSx}>
+              <TextField select fullWidth label="Store *" value={formData.store} onChange={e => ff('store', e.target.value)} variant="outlined" sx={inputSx}
+                InputLabelProps={{ shrink: true }}
+                SelectProps={{ displayEmpty: true, renderValue: (val: any) => {
+                  if (!val) return <span style={{ color: '#9ca3af' }}>Select a store</span>;
+                  const s = stores.find((st: any) => st._id === val);
+                  return s ? (s.storeName || s.name) : val;
+                }}}>
                 <MenuItem value=""><em>Select a store</em></MenuItem>
                 {stores.map((s) => <MenuItem key={s._id} value={s._id}>{s.storeName || s.name}</MenuItem>)}
               </TextField>
@@ -159,22 +165,39 @@ export default function AdminCoupons() {
             <TextField fullWidth label="Expiry Date" type="date" value={formData.expiryDate} onChange={e => ff('expiryDate', e.target.value)} variant="outlined" InputLabelProps={{ shrink: true }} sx={inputSx} />
 
             <p className="text-xs font-bold text-gray-500 uppercase tracking-wider pt-2">Tags</p>
-            <TextField select fullWidth label="Tags" value={formData.tags} onChange={e => ff('tags', typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value)} variant="outlined" SelectProps={{ multiple: true, renderValue: (selected: any) => (
-              <div className="flex flex-wrap gap-1">{(selected as string[]).map(t => <Chip key={t} label={t} size="small" onDelete={() => ff('tags', formData.tags.filter((tag: string) => tag !== t))} onMouseDown={e => e.stopPropagation()} style={{ background: 'rgba(168,85,247,0.08)', color: '#a855f7', fontSize: 11 }} />)}</div>
-            )}} sx={inputSx} helperText="Select tags from the predefined list">
-              {availableTags.map(t => <MenuItem key={t._id} value={t.name} style={{ fontWeight: formData.tags.includes(t.name) ? 700 : 400 }}>{t.name}</MenuItem>)}
+            {formData.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {formData.tags.map(t => (
+                  <Chip key={t} label={t} size="small"
+                    onDelete={() => ff('tags', formData.tags.filter((tag: string) => tag !== t))}
+                    style={{ background: 'rgba(168,85,247,0.08)', color: '#a855f7', fontSize: 11 }} />
+                ))}
+              </div>
+            )}
+            <TextField select fullWidth label="Add Tag" value="" onChange={e => {
+              const val = e.target.value;
+              if (val && !formData.tags.includes(val)) ff('tags', [...formData.tags, val]);
+            }} variant="outlined" sx={inputSx} helperText="Select tags from the predefined list"
+              InputLabelProps={{ shrink: true }}
+              SelectProps={{ displayEmpty: true, renderValue: () => <span style={{ color: '#9ca3af' }}>Select a tag to add...</span> }}>
+              {availableTags.filter(t => !formData.tags.includes(t.name)).map(t => <MenuItem key={t._id} value={t.name}>{t.name}</MenuItem>)}
               {availableTags.length === 0 && <MenuItem disabled>No tags available — create them in Tags page</MenuItem>}
             </TextField>
 
             <p className="text-xs font-bold text-gray-500 uppercase tracking-wider pt-2">Type & Labels</p>
             <div className="grid grid-cols-2 gap-4">
-              <TextField select fullWidth label="Type" value={formData.type} onChange={e => ff('type', e.target.value)} variant="outlined" sx={inputSx}>
-                {['code', 'sale', 'cashback', 'freeshipping'].map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
+              <TextField select fullWidth label="Type" value={formData.type} onChange={e => ff('type', e.target.value)} variant="outlined" sx={inputSx}
+                InputLabelProps={{ shrink: true }}
+                SelectProps={{ displayEmpty: true, renderValue: (val: any) => {
+                  if (!val) return <span style={{ color: '#9ca3af' }}>Select type</span>;
+                  return val.charAt(0).toUpperCase() + val.slice(1);
+                }}}>
+                {['code', 'sale', 'cashback', 'freeshipping'].map(t => <MenuItem key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</MenuItem>)}
               </TextField>
               <TextField fullWidth label="Label Type" placeholder="e.g., Code, Deal" value={formData.labelType} onChange={e => ff('labelType', e.target.value)} variant="outlined" sx={inputSx} />
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <TextField fullWidth label="Interested Users" type="number" value={formData.interestedUsers} onChange={e => ff('interestedUsers', Number(e.target.value))} variant="outlined" sx={inputSx} />
+              <TextField fullWidth label="Interested Users" type="number" value={formData.interestedUsers} onChange={e => ff('interestedUsers', Number(e.target.value))} variant="outlined" InputLabelProps={{ shrink: true }} sx={inputSx} />
               <TextField fullWidth label="Added By" placeholder="e.g., Staff" value={formData.addedBy} onChange={e => ff('addedBy', e.target.value)} variant="outlined" sx={inputSx} />
             </div>
             <TextField fullWidth label="Details" placeholder="Extra details shown on expand" value={formData.details} onChange={e => ff('details', e.target.value)} variant="outlined" multiline rows={3} />

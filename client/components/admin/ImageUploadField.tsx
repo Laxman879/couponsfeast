@@ -1,6 +1,6 @@
 'use client';
 import { useState, useRef } from 'react';
-import { TextField, Button, CircularProgress } from '@mui/material';
+import { TextField, CircularProgress, InputAdornment, IconButton } from '@mui/material';
 import { CloudUpload, Delete } from '@mui/icons-material';
 import { uploadLogo } from '@/services/api';
 import toast from 'react-hot-toast';
@@ -23,9 +23,7 @@ export default function ImageUploadField({ label, value, onChange, helperText, u
     setUploading(true);
     try {
       const res = await uploadLogo(file, uploadType);
-      const serverUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
-      const url = res.data.logoUrl.startsWith('http') ? res.data.logoUrl : `${serverUrl}${res.data.logoUrl}`;
-      onChange(url);
+      onChange(res.data.logoUrl);
       toast.success('Image uploaded!');
     } catch {
       toast.error('Upload failed');
@@ -42,7 +40,6 @@ export default function ImageUploadField({ label, value, onChange, helperText, u
       <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
 
       {compact ? (
-        /* Compact mode — just URL + buttons */
         <div className="flex gap-1.5 items-center">
           <input
             type="text"
@@ -69,29 +66,36 @@ export default function ImageUploadField({ label, value, onChange, helperText, u
           )}
         </div>
       ) : (
-        /* Full mode — with MUI label */
         <>
-          <div className="flex gap-2 items-end">
-            <TextField
-              fullWidth
-              label={label}
-              value={value}
-              onChange={(e) => onChange(e.target.value)}
-              placeholder="https://... or upload"
-              size="small"
-              helperText={helperText}
-            />
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={() => fileRef.current?.click()}
-              disabled={uploading}
-              startIcon={uploading ? <CircularProgress size={14} /> : <CloudUpload />}
-              style={{ minWidth: 100, height: 40, textTransform: 'none', borderRadius: 8, flexShrink: 0 }}
-            >
-              {uploading ? '...' : 'Upload'}
-            </Button>
-          </div>
+          <TextField
+            fullWidth
+            label={label}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="https://... or upload"
+            variant="outlined"
+            helperText={helperText}
+            sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end" sx={{ gap: 0.5 }}>
+                  {value && (
+                    <IconButton size="small" onClick={() => onChange('')} sx={{ color: '#ef4444' }}>
+                      <Delete fontSize="small" />
+                    </IconButton>
+                  )}
+                  <IconButton
+                    size="small"
+                    onClick={() => fileRef.current?.click()}
+                    disabled={uploading}
+                    sx={{ color: '#6366f1' }}
+                  >
+                    {uploading ? <CircularProgress size={18} /> : <CloudUpload fontSize="small" />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
           {value && (
             <img
               src={value}

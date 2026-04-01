@@ -43,8 +43,8 @@ export default function FooterFour({ config }: FooterFourProps) {
           {/* Brand */}
           <div className="flex-1 max-w-full lg:max-w-[400px]">
             <div className="mb-6">
-              {logoUrl?.startsWith('/uploads/') ? (
-                <img src={`http://localhost:5000${logoUrl}`} alt={siteName} className="h-10 w-auto" />
+              {logoUrl ? (
+                <img src={logoUrl.startsWith('http') ? logoUrl : `http://localhost:5000${logoUrl}`} alt={siteName} className="h-10 w-auto" />
               ) : (
                 <span className="text-2xl font-extrabold tracking-tight" style={{ color: accent }}>{siteName}</span>
               )}

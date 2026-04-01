@@ -62,8 +62,8 @@ export default function NavbarThree({ navLinks, config }: NavbarThreeProps) {
       >
         {/* Logo */}
         <Link href="/" className="flex-shrink-0 no-underline">
-          {logoUrl?.startsWith('/uploads/') ? (
-            <img src={`http://localhost:5000${logoUrl}`} alt={siteName} className="h-8 w-auto" />
+          {logoUrl ? (
+            <img src={logoUrl.startsWith('http') ? logoUrl : `http://localhost:5000${logoUrl}`} alt={siteName} className="h-8 w-auto" />
           ) : (
             <span className="font-extrabold text-xl tracking-tight" style={{ color: primary }}>
               {siteName}

@@ -1,6 +1,8 @@
 import express from "express";
 import publicRoutes from "./publicRoutes.js";
 import adminRoutes from "./adminRoutes.js";
+import authRoutes from "./auth/auth.routes.js";
+import authMiddleware from "../middleware/auth.js";
 import { trackGA4ErrorMiddleware } from "../middleware/ga4Analytics.js";
 
 const router = express.Router();
@@ -9,11 +11,14 @@ const router = express.Router();
 // UNIFIED API STRUCTURE (Admin + Public Only)
 // ==========================================
 
+// AUTH ROUTES (No auth required)
+router.use("/auth", authRoutes);
+
 // PUBLIC ROUTES (Read-only access for website visitors)
 router.use("/public", publicRoutes);
 
-// ADMIN ROUTES (Full access: CRUD + Backend Operations)
-router.use("/admin", adminRoutes);
+// ADMIN ROUTES (Protected - requires JWT token)
+router.use("/admin", authMiddleware, adminRoutes);
 
 // ==========================================
 // API DOCUMENTATION ROUTES

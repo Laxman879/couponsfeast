@@ -4,6 +4,7 @@ import { store } from '@/store';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { Toaster } from 'react-hot-toast';
+import AdminAuthGuard from '@/components/admin/AdminAuthGuard';
 
 const adminTheme = createTheme({
   typography: {
@@ -35,7 +36,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <ThemeProvider theme={adminTheme}>
         <CssBaseline />
         <div className="min-h-screen" style={{ background: '#f1f5fb', fontFamily: '"Roboto", sans-serif' }}>
-          {children}
+          <AdminAuthGuard>
+            {children}
+          </AdminAuthGuard>
         </div>
         <Toaster
           position="top-right"

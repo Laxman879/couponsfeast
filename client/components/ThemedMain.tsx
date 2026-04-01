@@ -8,7 +8,7 @@ export default function ThemedMain({ children }: { children: React.ReactNode }) 
   const isDark = theme === 'dark';
 
   return (
-    <main className="min-h-screen lg:pt-14">
+    <main className="min-h-screen pt-28 lg:pt-40">
       {children}
     </main>
   );

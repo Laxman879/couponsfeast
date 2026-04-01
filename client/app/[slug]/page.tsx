@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import { getPage, getCoupons, getStores, getCategories, getFeaturedCoupons } from '@/services/api';
+import { useParams, useRouter } from 'next/navigation';
+import { getPage, getCoupons, getStores, getCategories, getFeaturedCoupons, getStoreBySlug } from '@/services/api';
 import Link from 'next/link';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
@@ -31,6 +31,7 @@ interface PageData {
 
 export default function DynamicPage() {
   const params = useParams();
+  const router = useRouter();
   const slug = params?.slug as string;
   const [page, setPage] = useState<PageData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -52,16 +53,30 @@ export default function DynamicPage() {
       try {
         const res = await getPage(slug);
         const data = res.data?.data ?? res.data;
-        if (!data || data.isActive === false) { setNotFound(true); return; }
+        if (!data || data.isActive === false) {
+          // Redirect all -coupons slugs to /coupons/{slug} page
+          if (slug.endsWith('-coupons')) {
+            const itemSlug = slug.replace(/-coupons$/, '');
+            router.replace(`/coupons/${itemSlug}`);
+            return;
+          }
+          setNotFound(true);
+          return;
+        }
         setPage(data);
       } catch {
+        if (slug.endsWith('-coupons')) {
+          const itemSlug = slug.replace(/-coupons$/, '');
+          router.replace(`/coupons/${itemSlug}`);
+          return;
+        }
         setNotFound(true);
       } finally {
         setLoading(false);
       }
     };
     load();
-  }, [slug]);
+  }, [slug, router]);
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center" style={{ background: pageBg }}>

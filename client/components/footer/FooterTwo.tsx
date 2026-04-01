@@ -30,8 +30,8 @@ export default function FooterTwo({ config }: FooterTwoProps) {
       <div className="px-6 md:px-16 lg:px-24 xl:px-32">
         <div className="flex flex-col md:flex-row items-start justify-between gap-10 py-10" style={{ borderBottom: `1px solid ${border}` }}>
           <div>
-            {logoUrl?.startsWith('/uploads/') ? (
-              <img src={`http://localhost:5000${logoUrl}`} alt={siteName} className="h-10 w-auto mb-4" />
+            {logoUrl ? (
+              <img src={logoUrl.startsWith('http') ? logoUrl : `http://localhost:5000${logoUrl}`} alt={siteName} className="h-10 w-auto mb-4" />
             ) : (
               <span className="text-2xl font-extrabold tracking-tight" style={{ color: siteConfig?.theme?.primaryColor || '#7c3aed' }}>{siteName}</span>
             )}

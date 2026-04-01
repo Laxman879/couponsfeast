@@ -1,113 +1,60 @@
 import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
+import getCloudinary from '../config/cloudinary.js';
 
-// Create uploads directory if it doesn't exist
-const uploadsDir = path.join(process.cwd(), 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
-
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadsDir);
-  },
-  filename: (req, file, cb) => {
-    const logoType = req.body.logoType || 'logo';
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, `${logoType}-${uniqueSuffix}${path.extname(file.originalname)}`);
-  }
-});
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
-  const logoType = req.body.logoType;
-  
-  // Special handling for favicon
-  if (logoType === 'favicon') {
-    if (file.mimetype === 'image/x-icon' || file.mimetype === 'image/vnd.microsoft.icon' || file.mimetype === 'image/png') {
-      cb(null, true);
-    } else {
-      cb(new Error('Favicon must be ICO or PNG format!'), false);
-    }
-  } else {
-    // Accept all image files for other logo types
-    if (file.mimetype.startsWith('image/')) {
-      cb(null, true);
-    } else {
-      cb(new Error('Only image files are allowed!'), false);
-    }
-  }
+  if (file.mimetype.startsWith('image/')) cb(null, true);
+  else cb(new Error('Only image files are allowed!'), false);
 };
 
-export const upload = multer({ 
-  storage: storage,
-  fileFilter: fileFilter
-  // Removed file size limit
-});
+export const upload = multer({ storage, fileFilter });
 
 export const uploadLogo = async (req, res) => {
   try {
-    console.log('=== UPLOAD DEBUG ===');
-    console.log('Headers:', req.headers);
-    console.log('Body:', req.body);
-    console.log('File:', req.file);
-    console.log('Logo Type:', req.body.logoType);
-    console.log('===================');
-
-    // Always ensure we send a response
-    const sendResponse = (data, statusCode = 200) => {
-      if (!res.headersSent) {
-        res.status(statusCode).json(data);
-      }
-    };
-
     if (!req.file) {
-      console.log('ERROR: No file in request');
-      return sendResponse({ 
-        error: 'No file uploaded',
-        debug: {
-          hasFile: !!req.file,
-          hasFiles: !!req.files,
-          bodyKeys: Object.keys(req.body || {}),
-          contentType: req.headers['content-type']
-        }
-      }, 400);
+      return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    const logoUrl = `/uploads/${req.file.filename}`;
-    const logoType = req.body.logoType || 'logo';
-    
-    console.log(`SUCCESS: ${logoType} uploaded:`, logoUrl);
-    
-    const response = {
-      message: `${logoType.charAt(0).toUpperCase() + logoType.slice(1)} uploaded successfully`,
-      logoUrl: logoUrl,
-      filename: req.file.filename,
-      logoType: logoType
-    };
-    
-    console.log('Sending response:', response);
-    sendResponse(response);
+    // Check if Cloudinary is configured
+    if (!process.env.CLOUDINARY_CLOUD_NAME) {
+      return res.status(500).json({ error: 'Cloudinary not configured. Add CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET to .env' });
+    }
+
+    const logoType = req.body.logoType || 'image';
+    const base64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+
+    const result = await getCloudinary().uploader.upload(base64, {
+      folder: `coupon-feast/${logoType}s`,
+    });
+
+    res.json({
+      message: 'Uploaded successfully',
+      logoUrl: result.secure_url,
+      publicId: result.public_id,
+      filename: result.public_id,
+      logoType,
+    });
   } catch (error) {
     console.error('UPLOAD ERROR:', error);
-    if (!res.headersSent) {
-      res.status(500).json({ error: error.message });
-    }
+    res.status(500).json({ error: error.message });
   }
 };
 
 export const deleteLogo = async (req, res) => {
   try {
     const { filename } = req.params;
-    const filePath = path.join(uploadsDir, filename);
-    
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-      res.json({ message: 'Logo deleted successfully' });
-    } else {
-      res.status(404).json({ error: 'File not found' });
+
+    // filename can be a Cloudinary public_id (e.g. coupon-feast/logos/abc123)
+    // or a legacy local filename — try Cloudinary first
+    const publicId = decodeURIComponent(filename);
+    const result = await getCloudinary().uploader.destroy(publicId);
+
+    if (result.result === 'ok' || result.result === 'not found') {
+      return res.json({ message: 'Image deleted successfully' });
     }
+
+    res.status(400).json({ error: 'Failed to delete image', result });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import {
-  Button, TextField, Switch, FormControlLabel,
+  Button, TextField, Switch, FormControlLabel, MenuItem,
   Drawer, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress
 } from '@mui/material';
 import { Add, Edit, Delete, ViewCarousel, CloudUpload } from '@mui/icons-material';
@@ -244,12 +244,17 @@ export default function BannerManagement() {
                 InputProps={{ sx: { height: 48 }, startAdornment: <span className="inline-block w-5 h-5 rounded mr-2 flex-shrink-0 border border-slate-200" style={{ backgroundColor: formData.textPanelBg || '#ffffff' }} /> }} />
               <TextField label="Image Position" value={formData.imagePosition || 'right'} onChange={(e) => set({ imagePosition: e.target.value })} fullWidth select
                 helperText="Where the image focuses"
-                SelectProps={{ native: true, sx: { height: 48, color: '#000' } }}>
-                <option value="right">Right</option>
-                <option value="center">Center</option>
-                <option value="left">Left</option>
-                <option value="top">Top</option>
-                <option value="bottom">Bottom</option>
+                InputLabelProps={{ shrink: true }}
+                sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                SelectProps={{ displayEmpty: true, renderValue: (val: any) => {
+                  if (!val) return <span style={{ color: '#9ca3af' }}>Select Position</span>;
+                  return val.charAt(0).toUpperCase() + val.slice(1);
+                }}}>
+                <MenuItem value="right">Right</MenuItem>
+                <MenuItem value="center">Center</MenuItem>
+                <MenuItem value="left">Left</MenuItem>
+                <MenuItem value="top">Top</MenuItem>
+                <MenuItem value="bottom">Bottom</MenuItem>
               </TextField>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -274,20 +279,32 @@ export default function BannerManagement() {
                   <TextField label="Discount *" value={formData.discount} onChange={(e) => set({ discount: e.target.value })} fullWidth placeholder="20% OFF"
                     InputProps={{ sx: { height: 48 } }} />
                   <TextField label="Store *" value={formData.store || ''} onChange={(e) => handleStoreChange(e.target.value)} fullWidth select
-                    SelectProps={{ native: true, sx: { height: 48, color: '#000' } }}>
-                    <option value="">Select Store</option>
-                    {stores.map((s: any) => <option key={s._id} value={s._id}>{s.storeName}</option>)}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                    SelectProps={{ displayEmpty: true, renderValue: (val: any) => {
+                      if (!val) return <span style={{ color: '#9ca3af' }}>Select Store</span>;
+                      const s = stores.find((st: any) => st._id === val);
+                      return s ? s.storeName : val;
+                    }}}>
+                    <MenuItem value=""><em>Select Store</em></MenuItem>
+                    {stores.map((s: any) => <MenuItem key={s._id} value={s._id}>{s.storeName}</MenuItem>)}
                   </TextField>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <TextField label="Expiry Date" type="date" value={formData.expiryDate ? formData.expiryDate.split('T')[0] : ''} onChange={(e) => set({ expiryDate: e.target.value })} fullWidth InputLabelProps={{ shrink: true }}
                     InputProps={{ sx: { height: 48 } }} />
                   <TextField label="Type" value={formData.type || 'code'} onChange={(e) => set({ type: e.target.value })} fullWidth select
-                    SelectProps={{ native: true, sx: { height: 48, color: '#000' } }}>
-                    <option value="code">Code</option>
-                    <option value="sale">Sale</option>
-                    <option value="cashback">Cash Back</option>
-                    <option value="freeshipping">Free Shipping</option>
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                    SelectProps={{ displayEmpty: true, renderValue: (val: any) => {
+                      if (!val) return <span style={{ color: '#9ca3af' }}>Select Type</span>;
+                      const labels: Record<string, string> = { code: 'Code', sale: 'Sale', cashback: 'Cash Back', freeshipping: 'Free Shipping' };
+                      return labels[val] || val;
+                    }}}>
+                    <MenuItem value="code">Code</MenuItem>
+                    <MenuItem value="sale">Sale</MenuItem>
+                    <MenuItem value="cashback">Cash Back</MenuItem>
+                    <MenuItem value="freeshipping">Free Shipping</MenuItem>
                   </TextField>
                 </div>
                 <TextField label="Label Type" value={formData.labelType} onChange={(e) => set({ labelType: e.target.value })} fullWidth placeholder="Code"

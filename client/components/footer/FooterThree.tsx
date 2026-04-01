@@ -29,8 +29,8 @@ export default function FooterThree({ config }: FooterThreeProps) {
       <div className="flex flex-wrap justify-between gap-12 md:gap-6">
         {/* Brand + social */}
         <div className="max-w-80">
-          {logoUrl?.startsWith('/uploads/') ? (
-            <img src={`http://localhost:5000${logoUrl}`} alt={siteName} className="mb-4 h-9 w-auto" />
+          {logoUrl ? (
+            <img src={logoUrl.startsWith('http') ? logoUrl : `http://localhost:5000${logoUrl}`} alt={siteName} className="mb-4 h-9 w-auto" />
           ) : (
             <span className="text-2xl font-extrabold tracking-tight mb-4 block" style={{ color: accent }}>{siteName}</span>
           )}

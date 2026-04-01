@@ -165,10 +165,23 @@ export default function DynamicThemeProvider({ children }: { children: React.Rea
     document.documentElement.style.setProperty('--heading-font', siteConfig.fonts?.heading || 'Roboto');
     document.documentElement.style.setProperty('--body-font',    siteConfig.fonts?.body    || 'Roboto');
 
+    // Dynamically load Google Fonts for configured fonts
+    const fontsToLoad = new Set([siteConfig.fonts?.heading, siteConfig.fonts?.body].filter(Boolean) as string[]);
+    fontsToLoad.forEach(font => {
+      const fontId = `gfont-${font.replace(/\s+/g, '-').toLowerCase()}`;
+      if (!document.getElementById(fontId)) {
+        const link = document.createElement('link');
+        link.id = fontId;
+        link.rel = 'stylesheet';
+        link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}:wght@300;400;500;600;700;800;900&display=swap`;
+        document.head.appendChild(link);
+      }
+    });
+
     // Set favicon from config
     const faviconUrl = (siteConfig as any).logos?.favicon;
     if (faviconUrl) {
-      const href = faviconUrl.startsWith('/uploads/') ? `http://localhost:5000${faviconUrl}` : faviconUrl;
+      const href = faviconUrl.startsWith('http') ? faviconUrl : `http://localhost:5000${faviconUrl}`;
       let link = document.querySelector('link[rel="icon"]') as HTMLLinkElement;
       if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
       link.href = href;

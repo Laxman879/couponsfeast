@@ -191,8 +191,8 @@ export default function NavbarTwo({ navLinks, config }: NavbarTwoProps) {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
-            {siteConfig?.logos?.navbar?.startsWith('/uploads/') ? (
-              <img src={`http://localhost:5000${siteConfig.logos.navbar}`} alt={siteConfig.siteName || 'Logo'} className="h-8 w-auto" />
+            {siteConfig?.logos?.navbar ? (
+              <img src={siteConfig.logos.navbar.startsWith('http') ? siteConfig.logos.navbar : `http://localhost:5000${siteConfig.logos.navbar}`} alt={siteConfig.siteName || 'Logo'} className="h-8 w-auto" />
             ) : (
               <span className="font-extrabold text-2xl tracking-tight" style={{ color: navText }}>
                 {siteConfig?.siteName || 'CouponsFeast'}

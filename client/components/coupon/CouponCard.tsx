@@ -91,19 +91,19 @@ export default function CouponCard({ coupon }: { coupon: Coupon }) {
 
   return (
     <>
-      <div style={{ border: '1px solid #ddd' }} className={`rounded-xl overflow-hidden ${isCashBack ? 'bg-primary/5' : 'bg-white dark:bg-gray-800'}`}>
+      <div style={{ border: '1px solid #ddd' }} className={`rounded-xl overflow-hidden shadow-md ${isCashBack ? 'bg-primary/5' : 'bg-white dark:bg-gray-800'}`}>
         {/* Mobile: stack | Desktop: row */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4">
 
           {/* Mobile top row: discount + content side by side */}
           <div className="flex items-start gap-3 flex-1 min-w-0">
             {/* Discount */}
-            <div className="flex items-center justify-center px-3 py-4 sm:px-5 sm:py-5 min-w-[60px] sm:min-w-[90px] flex-shrink-0">
+            <div className="flex items-center justify-center px-4 py-5 sm:px-6 sm:py-7 min-w-[80px] sm:min-w-[110px] flex-shrink-0">
               {renderDiscount()}
             </div>
 
             {/* Content */}
-            <div className="flex-1 min-w-0 py-3 pr-3 sm:px-5 sm:py-4">
+            <div className="flex-1 min-w-0 py-4 pr-3 sm:px-5 sm:py-6">
               {isCashBack && (
                 <span className="text-xs text-primary font-semibold flex items-center gap-1 mb-1">
                   <span className="w-2 h-2 rounded-full bg-primary inline-block" /> Online Cash Back
@@ -127,10 +127,10 @@ export default function CouponCard({ coupon }: { coupon: Coupon }) {
           </div>
 
           {/* Action Button */}
-          <div className="flex items-center px-3 pb-3 sm:px-5 sm:py-4 flex-shrink-0">
+          <div className="flex items-center px-3 pb-4 sm:px-5 sm:py-6 flex-shrink-0">
             <button
               onClick={handleActivate}
-              className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-primary font-bold text-xs sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 rounded-full transition-colors w-full sm:w-auto sm:min-w-[110px] text-center"
+              className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-primary font-bold text-sm sm:text-base px-5 sm:px-6 py-2.5 sm:py-3 rounded-full transition-colors w-full sm:w-auto sm:min-w-[130px] text-center"
             >
               {coupon.code ? 'Reveal Code' : isCashBack ? 'Get Reward' : 'Get Deal'}
             </button>

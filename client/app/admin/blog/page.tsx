@@ -172,39 +172,42 @@ export default function BlogManagement() {
       {/* Promo Card Drawer */}
       <Drawer anchor="right" open={promoDrawerOpen} onClose={() => setPromoDrawerOpen(false)}
         PaperProps={{ sx: { width: { xs: '100%', sm: 520 } } }}>
-        <div className="flex items-center justify-between px-6 py-5" style={{ background: 'linear-gradient(135deg,#3b82f6,#2563eb)' }}>
-          <div className="flex items-center gap-2 text-white">
-            <PlayCircle />
-            <span className="font-bold text-lg">Edit Promo Card</span>
+        <div className="flex flex-col h-full">
+          <div className="flex items-center justify-between px-6 py-4 flex-shrink-0" style={{ background: 'linear-gradient(135deg,#3b82f6,#2563eb)' }}>
+            <div className="flex items-center gap-2 text-white">
+              <PlayCircle />
+              <span className="font-semibold text-lg">Edit Promo Card</span>
+            </div>
+            <IconButton onClick={() => setPromoDrawerOpen(false)} style={{ color: '#fff' }}><span className="text-xl leading-none">&times;</span></IconButton>
           </div>
-          <IconButton onClick={() => setPromoDrawerOpen(false)} size="small" style={{ color: '#fff' }}>
-            <span className="text-xl">&times;</span>
-          </IconButton>
-        </div>
-        <div className="flex-1 overflow-y-auto px-6 py-5">
-          <div className="flex flex-col gap-5">
-            <FormControlLabel
-              control={<Switch checked={promoForm.enabled} onChange={(e) => setPromoForm(p => ({ ...p, enabled: e.target.checked }))} color="primary" />}
-              label="Show Promo Card on Homepage"
-            />
-            <TextField fullWidth label="Title" value={promoForm.title} onChange={(e) => setPromoForm(p => ({ ...p, title: e.target.value }))} />
-            <TextField fullWidth label="Image URL" value={promoForm.image} onChange={(e) => setPromoForm(p => ({ ...p, image: e.target.value }))} placeholder="https://..." />
-            {promoForm.image && <img src={promoForm.image} alt="preview" className="h-20 rounded-lg object-cover border border-slate-100" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
-            <TextField fullWidth label="Description" value={promoForm.description} onChange={(e) => setPromoForm(p => ({ ...p, description: e.target.value }))} multiline rows={2} />
+          <div className="flex-1 overflow-y-auto p-5 space-y-4">
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Promo Card Settings</p>
+            <div className="rounded-xl border border-gray-200 p-4 bg-gray-50">
+              <FormControlLabel
+                control={<Switch checked={promoForm.enabled} onChange={(e) => setPromoForm(p => ({ ...p, enabled: e.target.checked }))} color="primary" />}
+                label={<span className="text-sm font-medium text-slate-700">Show Promo Card on Homepage</span>}
+              />
+            </div>
+            <TextField fullWidth label="Title" value={promoForm.title} onChange={(e) => setPromoForm(p => ({ ...p, title: e.target.value }))} variant="outlined" sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
+            <TextField fullWidth label="Image URL" value={promoForm.image} onChange={(e) => setPromoForm(p => ({ ...p, image: e.target.value }))} placeholder="https://..." variant="outlined" sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
+            {promoForm.image && <img src={promoForm.image} alt="preview" className="h-16 rounded-lg object-cover border border-gray-100" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
+            <TextField fullWidth label="Description" value={promoForm.description} onChange={(e) => setPromoForm(p => ({ ...p, description: e.target.value }))} multiline rows={3} variant="outlined" />
             <div className="grid grid-cols-2 gap-4">
-              <TextField fullWidth label="CTA Text" value={promoForm.ctaText} onChange={(e) => setPromoForm(p => ({ ...p, ctaText: e.target.value }))} />
-              <TextField fullWidth label="CTA Link" value={promoForm.ctaLink} onChange={(e) => setPromoForm(p => ({ ...p, ctaLink: e.target.value }))} />
+              <TextField fullWidth label="CTA Text" value={promoForm.ctaText} onChange={(e) => setPromoForm(p => ({ ...p, ctaText: e.target.value }))} variant="outlined" sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
+              <TextField fullWidth label="CTA Link" value={promoForm.ctaLink} onChange={(e) => setPromoForm(p => ({ ...p, ctaLink: e.target.value }))} variant="outlined" sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
             </div>
             <TextField fullWidth label="Video URL" value={promoForm.videoUrl} onChange={(e) => setPromoForm(p => ({ ...p, videoUrl: e.target.value }))}
-              placeholder="https://www.youtube.com/watch?v=... or .mp4 URL" helperText="Video plays in modal when user clicks play button" />
+              placeholder="https://www.youtube.com/watch?v=... or .mp4 URL"
+              helperText="Video plays in modal when user clicks play button"
+              variant="outlined" sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
           </div>
-        </div>
-        <div className="flex gap-3 px-6 py-5 border-t border-slate-100 bg-slate-50">
-          <Button onClick={() => setPromoDrawerOpen(false)} variant="outlined" fullWidth style={{ height: 44, borderRadius: 10 }}>Cancel</Button>
-          <Button onClick={savePromo} variant="contained" fullWidth disabled={promoSaving}
-            style={{ height: 44, background: 'linear-gradient(135deg,#3b82f6,#2563eb)', borderRadius: 10, textTransform: 'none', fontWeight: 600 }}>
-            {promoSaving ? 'Saving...' : 'Update Promo Card'}
-          </Button>
+          <div className="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t flex-shrink-0">
+            <Button onClick={() => setPromoDrawerOpen(false)} variant="outlined" style={{ borderRadius: 8, textTransform: 'none' }}>Cancel</Button>
+            <Button onClick={savePromo} variant="contained" disabled={promoSaving}
+              style={{ background: 'linear-gradient(135deg,#3b82f6,#2563eb)', borderRadius: 8, textTransform: 'none', fontWeight: 600, paddingLeft: 24, paddingRight: 24 }}>
+              {promoSaving ? 'Saving...' : 'Update Promo Card'}
+            </Button>
+          </div>
         </div>
       </Drawer>
 
@@ -269,50 +272,47 @@ export default function BlogManagement() {
 
       <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}
         PaperProps={{ sx: { width: { xs: '100%', sm: 520 } } }}>
-        <div className="flex items-center justify-between px-6 py-5" style={{ background: 'linear-gradient(135deg,#3b82f6,#2563eb)' }}>
-          <div className="flex items-center gap-2 text-white">
-            <Article />
-            <span className="font-bold text-lg">{editing ? 'Edit Article' : 'Add Article'}</span>
+        <div className="flex flex-col h-full">
+          <div className="flex items-center justify-between px-6 py-4 flex-shrink-0" style={{ background: 'linear-gradient(135deg,#3b82f6,#2563eb)' }}>
+            <div className="flex items-center gap-2 text-white">
+              <Article />
+              <span className="font-semibold text-lg">{editing ? 'Edit Article' : 'Add New Article'}</span>
+            </div>
+            <IconButton onClick={() => setDrawerOpen(false)} style={{ color: '#fff' }}><span className="text-xl leading-none">&times;</span></IconButton>
           </div>
-          <IconButton onClick={() => setDrawerOpen(false)} size="small" style={{ color: '#fff' }}>
-            <span className="text-xl">&times;</span>
-          </IconButton>
-        </div>
-        <div className="flex-1 overflow-y-auto px-6 py-5">
-          <div className="flex flex-col gap-5">
-            <TextField label="Title *" value={formData.title} onChange={(e) => { set({ title: e.target.value }); if (!editing) set({ slug: autoSlug(e.target.value) }); }} fullWidth />
-            <TextField label="Slug *" value={formData.slug} onChange={(e) => set({ slug: e.target.value })} fullWidth />
+          <div className="flex-1 overflow-y-auto p-5 space-y-4">
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Article Information</p>
+            <TextField fullWidth label="Title *" value={formData.title} onChange={(e) => { set({ title: e.target.value }); if (!editing) set({ slug: autoSlug(e.target.value) }); }} variant="outlined" placeholder="e.g., Top 10 Beauty Deals" sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
+            <TextField fullWidth label="Slug *" value={formData.slug} onChange={(e) => set({ slug: e.target.value })} variant="outlined" placeholder="e.g., top-10-beauty-deals" helperText="Auto-generated from title" sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
             <div className="grid grid-cols-2 gap-4">
-              <TextField label="Category" value={formData.category} onChange={(e) => set({ category: e.target.value })} fullWidth placeholder="e.g., BEAUTY" />
-              <TextField label="Order" type="number" value={formData.order} onChange={(e) => set({ order: Number(e.target.value) })} fullWidth />
+              <TextField fullWidth label="Category" value={formData.category} onChange={(e) => set({ category: e.target.value })} placeholder="e.g., BEAUTY" variant="outlined" sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
+              <TextField fullWidth label="Order" type="number" value={formData.order} onChange={(e) => set({ order: Number(e.target.value) })} variant="outlined" InputLabelProps={{ shrink: true }} helperText="Lower = shown first" sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
             </div>
-            <TextField label="Subtitle" value={formData.subtitle} onChange={(e) => set({ subtitle: e.target.value })} fullWidth />
-            <TextField label="Description" value={formData.description} onChange={(e) => set({ description: e.target.value })} fullWidth multiline rows={2} />
+            <TextField fullWidth label="Subtitle" value={formData.subtitle} onChange={(e) => set({ subtitle: e.target.value })} variant="outlined" placeholder="e.g., Best picks this week" sx={{ '& .MuiInputBase-root': { minHeight: 48 } }} />
+            <TextField fullWidth label="Description" value={formData.description} onChange={(e) => set({ description: e.target.value })} multiline rows={3} variant="outlined" />
             <ImageUploadField label="Image" value={formData.image} onChange={(url) => set({ image: url })} uploadType="blog" />
-            <div>
-              <p className="text-sm font-semibold text-slate-700 mb-2">Content Paragraphs</p>
-              {formData.content.map((p, i) => (
-                <div key={i} className="flex gap-2 mb-2">
-                  <TextField value={p} onChange={(e) => { const c = [...formData.content]; c[i] = e.target.value; set({ content: c }); }} fullWidth multiline rows={2} placeholder={`Paragraph ${i + 1}`} />
-                  <IconButton onClick={() => set({ content: formData.content.filter((_, j) => j !== i) })} size="small" style={{ color: '#ef4444' }}>
-                    <Delete fontSize="small" />
-                  </IconButton>
-                </div>
-              ))}
-              <Button size="small" onClick={() => set({ content: [...formData.content, ''] })} style={{ textTransform: 'none' }}>+ Add Paragraph</Button>
-            </div>
-            <div className="flex flex-wrap gap-5">
-              <FormControlLabel control={<Switch checked={formData.isActive} onChange={(e) => set({ isActive: e.target.checked })} />} label="Active" />
-              <FormControlLabel control={<Switch checked={formData.isFeatured} onChange={(e) => set({ isFeatured: e.target.checked })} color="warning" />} label="⭐ Featured" />
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider pt-2">Content Paragraphs</p>
+            {formData.content.map((p, i) => (
+              <div key={i} className="flex gap-2 items-start">
+                <TextField value={p} onChange={(e) => { const c = [...formData.content]; c[i] = e.target.value; set({ content: c }); }} fullWidth multiline rows={2} placeholder={`Paragraph ${i + 1}`} variant="outlined" />
+                <IconButton onClick={() => set({ content: formData.content.filter((_, j) => j !== i) })} size="small" style={{ color: '#ef4444', marginTop: 8 }}>
+                  <Delete fontSize="small" />
+                </IconButton>
+              </div>
+            ))}
+            <Button size="small" onClick={() => set({ content: [...formData.content, ''] })} style={{ textTransform: 'none', color: '#3b82f6' }}>+ Add Paragraph</Button>
+            <div className="rounded-xl border border-gray-200 p-4 bg-gray-50 space-y-1">
+              <FormControlLabel control={<Switch checked={formData.isActive} onChange={(e) => set({ isActive: e.target.checked })} color="success" />} label={<span className="text-sm font-medium text-slate-700">Active</span>} />
+              <FormControlLabel control={<Switch checked={formData.isFeatured} onChange={(e) => set({ isFeatured: e.target.checked })} color="warning" />} label={<span className="text-sm font-medium text-slate-700">⭐ Featured</span>} />
             </div>
           </div>
-        </div>
-        <div className="flex gap-3 px-6 py-5 border-t border-slate-100 bg-slate-50">
-          <Button onClick={() => setDrawerOpen(false)} variant="outlined" fullWidth style={{ height: 44, borderRadius: 10 }}>Cancel</Button>
-          <Button onClick={handleSubmit} variant="contained" fullWidth
-            style={{ height: 44, background: 'linear-gradient(135deg,#3b82f6,#2563eb)', borderRadius: 10, textTransform: 'none', fontWeight: 600 }}>
-            {editing ? 'Update' : 'Create'}
-          </Button>
+          <div className="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t flex-shrink-0">
+            <Button onClick={() => setDrawerOpen(false)} variant="outlined" style={{ borderRadius: 8, textTransform: 'none' }}>Cancel</Button>
+            <Button onClick={handleSubmit} variant="contained"
+              style={{ background: 'linear-gradient(135deg,#3b82f6,#2563eb)', borderRadius: 8, textTransform: 'none', fontWeight: 600, paddingLeft: 24, paddingRight: 24 }}>
+              {editing ? 'Update Article' : 'Create Article'}
+            </Button>
+          </div>
         </div>
       </Drawer>
 

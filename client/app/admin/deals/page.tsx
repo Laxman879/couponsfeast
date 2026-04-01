@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import {
-  Button, TextField, Switch, FormControlLabel,
+  Button, TextField, Switch, FormControlLabel, MenuItem,
   Drawer, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress
 } from '@mui/material';
 import { Add, Edit, Delete, LocalOffer } from '@mui/icons-material';
@@ -201,20 +201,32 @@ export default function DealsManagement() {
               <TextField label="Discount" value={formData.discount} onChange={(e) => set({ discount: e.target.value })} fullWidth placeholder="e.g., 30% Off"
                 InputProps={{ sx: { height: 48 } }} />
               <TextField label="Store" value={formData.store || ''} onChange={(e) => set({ store: e.target.value })} fullWidth select
-                SelectProps={{ native: true, sx: { height: 48, color: '#000' } }}>
-                <option value="">Select Store</option>
-                {stores.map((s: any) => <option key={s._id} value={s._id}>{s.storeName}</option>)}
+                InputLabelProps={{ shrink: true }}
+                sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                SelectProps={{ displayEmpty: true, renderValue: (val: any) => {
+                  if (!val) return <span style={{ color: '#9ca3af' }}>Select Store</span>;
+                  const s = stores.find((st: any) => st._id === val);
+                  return s ? s.storeName : val;
+                }}}>
+                <MenuItem value=""><em>Select Store</em></MenuItem>
+                {stores.map((s: any) => <MenuItem key={s._id} value={s._id}>{s.storeName}</MenuItem>)}
               </TextField>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <TextField label="Category" value={formData.category} onChange={(e) => set({ category: e.target.value })} fullWidth placeholder="e.g., Fashion"
                 InputProps={{ sx: { height: 48 } }} />
               <TextField label="Type" value={formData.type || 'deal'} onChange={(e) => set({ type: e.target.value })} fullWidth select
-                SelectProps={{ native: true, sx: { height: 48, color: '#000' } }}>
-                <option value="deal">Deal</option>
-                <option value="offer">Offer</option>
-                <option value="clearance">Clearance</option>
-                <option value="flash">Flash Sale</option>
+                InputLabelProps={{ shrink: true }}
+                sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                SelectProps={{ displayEmpty: true, renderValue: (val: any) => {
+                  if (!val) return <span style={{ color: '#9ca3af' }}>Select Type</span>;
+                  const labels: Record<string, string> = { deal: 'Deal', offer: 'Offer', clearance: 'Clearance', flash: 'Flash Sale' };
+                  return labels[val] || val;
+                }}}>
+                <MenuItem value="deal">Deal</MenuItem>
+                <MenuItem value="offer">Offer</MenuItem>
+                <MenuItem value="clearance">Clearance</MenuItem>
+                <MenuItem value="flash">Flash Sale</MenuItem>
               </TextField>
             </div>
             <TextField label="Product / Deal URL (Check Price button opens this)" value={formData.link} onChange={(e) => set({ link: e.target.value })} fullWidth

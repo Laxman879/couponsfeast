@@ -43,8 +43,8 @@ export default function NavbarOne({ navLinks, config }: NavbarOneProps) {
       <nav className={`sticky top-0 z-50 flex w-full items-center justify-between border-b ${navBg} px-4 py-3.5 backdrop-blur-md md:px-16 lg:px-24`}>
         {/* Logo */}
         <Link href="/">
-          {logoUrl?.startsWith('/uploads/') ? (
-            <img src={`http://localhost:5000${logoUrl}`} alt={siteName} className="h-8 w-auto" />
+          {logoUrl ? (
+            <img src={logoUrl.startsWith('http') ? logoUrl : `http://localhost:5000${logoUrl}`} alt={siteName} className="h-8 w-auto" />
           ) : (
             <span className="font-extrabold text-xl tracking-tight" style={{ color: primary }}>{siteName}</span>
           )}

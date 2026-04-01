@@ -5,6 +5,7 @@ import connectDB from "./src/config/database.js";
 import routes from "./src/routes/index.js";
 
 import { seedAllData } from "./src/utils/seedData.js";
+import { seedAdmin } from "./src/controllers/authController.js";
 
 // Load environment variables FIRST
 dotenv.config();
@@ -73,6 +74,7 @@ app.listen(PORT, async () => {
   console.log(`API Status: http://localhost:${PORT}/api/test/status`);
   
   await seedAllData();
+  await seedAdmin();
   
   // GA4 status check
   console.log(`GA4 Analytics: ${process.env.GA4_MEASUREMENT_ID ? 'Enabled' : 'Disabled'}`);
