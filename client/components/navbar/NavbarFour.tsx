@@ -139,16 +139,6 @@ export default function NavbarFour() {
     <header className="fixed top-0 left-0 right-0 z-50 shadow-sm" style={{ backgroundColor: navBg }}>
 
       {/* Top Promo Banner */}
-      {bannerVisible && (
-        <a href="#" className="flex items-center justify-center gap-3 text-white text-sm font-medium py-2 px-4 no-underline relative" style={{ backgroundColor: primary }}>
-          <img src="https://cdn.grabon.in/gograbon/images/union/1773321289045.png" alt="Promo" className="h-5 w-auto hidden sm:block" style={{ filter: 'brightness(0) invert(1)' }} />
-          <span>Rs 500 OFF On Domestic &amp; Rs 1000 OFF On International Flights</span>
-          <span className="border border-white rounded px-2 py-0.5 text-xs font-bold tracking-wide">BOOK NOW</span>
-          <button onClick={(e) => { e.preventDefault(); setBannerVisible(false); }} className="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-white opacity-70 hover:opacity-100">
-            <X className="w-4 h-4" />
-          </button>
-        </a>
-      )}
 
       <div className="max-w-7xl mx-auto px-4">
 
@@ -200,42 +190,7 @@ export default function NavbarFour() {
               <Search className="w-5 h-5" style={{ color: navText }} />
             </button>
 
-            {/* Notification Bell */}
-            <div className="relative">
-              <button className="relative p-2 rounded-full transition-colors" style={{ color: navText }} onClick={() => setNotifyOpen(!notifyOpen)}>
-              <Bell className="w-5 h-5" style={{ color: navText }} />
-                <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 rounded-full text-white text-[9px] flex items-center justify-center font-bold">2</span>
-              </button>
-              {notifyOpen && (
-                <div className="absolute right-0 top-full mt-2 w-80 rounded-xl shadow-2xl border z-50 overflow-hidden" style={{ backgroundColor: navBg, borderColor }}>
-                  <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor }}>
-                    <span className="font-semibold text-sm" style={{ color: navText }}>Notifications</span>
-                    <button onClick={() => setNotifyOpen(false)} className="bg-transparent border-none cursor-pointer">
-                      <X className="w-4 h-4" style={{ color: mutedText }} />
-                    </button>
-                  </div>
-                  <ul className="divide-y" style={{ borderColor }}>
-                    {notifications.map((n) => (
-                      <li key={n.id}>
-                        <a href="#" className="flex items-start gap-3 px-4 py-3 transition-colors no-underline" style={{ backgroundColor: 'transparent' }}
-                          onMouseEnter={e => e.currentTarget.style.backgroundColor = hoverBg}
-                          onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
-                        >
-                          <img src={n.img} alt={n.alt} className="w-14 h-10 rounded-lg object-cover shrink-0" />
-                          <p className="text-xs leading-relaxed line-clamp-2" style={{ color: navText }}>{n.title}</p>
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            {/* Login — desktop only */}
-            <button className="hidden lg:flex items-center gap-2 px-4 py-2 rounded-full border transition-colors text-sm font-medium" style={{ borderColor, color: navText }}>
-              <User className="w-4 h-4" />
-              Login
-            </button>
+            
           </div>
         </div>
 
@@ -255,15 +210,7 @@ export default function NavbarFour() {
               </Link>
             ))}
           </div>
-          <div className="flex items-center gap-2">
-            <a href="/deals" className="flex items-center gap-2 px-4 py-2 rounded-lg text-base font-normal transition-all no-underline" style={{ color: mutedText }}
-              onMouseEnter={e => { e.currentTarget.style.backgroundColor = hoverBg; e.currentTarget.style.color = navText; }}
-              onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = mutedText; }}
-            >
-              <Gift className="w-5 h-5" />
-              Deals Of The Day
-            </a>
-          </div>
+          
         </div>
       </div>
 
@@ -428,8 +375,7 @@ export default function NavbarFour() {
                 { label: `${currentMonth} Sales`, href: '/sales', icon: 'https://cdn.grabon.in/gograbon/v8/icons/calendar-v3.svg' },
                 { label: 'Blog', href: '/blog', icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-blog-icon-v2.png' },
                 { label: 'Deals', href: '/deals', icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-deals.png' },
-                { label: 'Deals Of The Day', href: '/deals', icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-deals.png' },
-              ].map((link) => (
+                              ].map((link) => (
                 <Link key={link.label} href={link.href} onClick={closeDrawer}
                   className="flex items-center gap-3 px-5 py-4 text-base font-normal transition-colors no-underline border-b"
                   style={{ color: isDark ? mutedText : '#6b7280', borderColor: isDark ? borderColor : '#e5e7eb' }}

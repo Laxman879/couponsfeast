@@ -130,7 +130,7 @@ export default function CouponCard({ coupon }: { coupon: Coupon }) {
           <div className="flex items-center px-3 pb-4 sm:px-5 sm:py-6 flex-shrink-0">
             <button
               onClick={handleActivate}
-              className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-primary font-bold text-sm sm:text-base px-5 sm:px-6 py-2.5 sm:py-3 rounded-full transition-colors w-full sm:w-auto sm:min-w-[130px] text-center"
+              className="bg-primary/10 hover:bg-primary hover:text-white text-primary font-bold text-sm sm:text-base px-5 sm:px-6 py-2.5 sm:py-3 rounded-full transition-all duration-300 w-full sm:w-auto sm:min-w-[130px] text-center hover:shadow-lg hover:shadow-primary/25"
             >
               {coupon.code ? 'Reveal Code' : isCashBack ? 'Get Reward' : 'Get Deal'}
             </button>

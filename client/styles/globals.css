@@ -228,6 +228,7 @@ body {
   padding: 0 !important;
   width: 100%;
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 /* ── Use dynamic font from theme (set via --body-font CSS var) ── */
@@ -283,4 +284,157 @@ button {
 }
 .nav-search-input:focus::placeholder {
   color: #9ca3af;
+}
+
+/* ── Global UX Polish ── */
+
+/* Smooth page transitions */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Better focus rings for accessibility */
+*:focus-visible {
+  outline: 2px solid rgb(var(--color-primary));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgb(var(--color-primary) / 0.25);
+}
+
+/* Smooth image loading */
+img {
+  transition: opacity 0.3s ease;
+}
+img[src=""], img:not([src]) {
+  opacity: 0;
+}
+
+/* Better link hover transitions */
+a {
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+/* Card hover lift effect */
+.hover\:shadow-xl {
+  transition: box-shadow 0.3s ease, transform 0.3s ease !important;
+}
+
+/* Smooth skeleton pulse */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.animate-pulse {
+  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+}
+
+/* Better button press feedback */
+button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* Smooth modal backdrop */
+.backdrop-blur-sm {
+  transition: backdrop-filter 0.3s ease;
+}
+
+/* Selection color matches theme */
+::selection {
+  background: rgb(var(--color-primary) / 0.2);
+  color: rgb(var(--color-text));
+}
+
+/* Custom scrollbar for non-hidden scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--color-primary) / 0.2);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--color-primary) / 0.4);
+}
+
+/* Coupon card dashed border on hover */
+[style*="border: 1px solid"] {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Badge pill animations */
+.rounded-full {
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+/* Smooth accordion expand */
+[class*="max-h-0"] {
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Toast notification polish */
+[role="status"] {
+  font-family: var(--body-font, 'Roboto'), sans-serif !important;
+}
+
+/* Prevent layout shift on images */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Better table row hover */
+tr {
+  transition: background-color 0.15s ease;
+}
+
+/* Drawer slide-in animation */
+.MuiDrawer-paper {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Chip hover effect */
+.MuiChip-root {
+  transition: background-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+.MuiChip-root:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Loading spinner theme color */
+.animate-spin {
+  border-color: rgb(var(--color-primary) / 0.2);
+  border-top-color: rgb(var(--color-primary));
+}
+
+/* Modal animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
+}
+.animate-slideUp {
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Lazy section fade-in on scroll */
+@keyframes sectionIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-sectionIn {
+  animation: sectionIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }

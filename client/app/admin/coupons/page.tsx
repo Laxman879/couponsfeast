@@ -12,7 +12,7 @@ import { Add, Edit, Delete, LocalOffer, Store, CalendarToday, Percent, Close, Ch
 import { formatDate } from '@/utils/dateUtils';
 import ImageUploadField from '@/components/admin/ImageUploadField';
 
-const defaultForm = { title: '', code: '', description: '', discount: '', store: '', category: '', expiryDate: '', type: 'code', labelType: 'Code', interestedUsers: 0, limitedTime: false, expiringToday: false, addedBy: '', exclusive: false, details: '', isFeatured: false, featuredImage: '', affiliateUrl: '', customLogo: '', tags: [] as string[] };
+const defaultForm = { title: '', code: '', description: '', discount: '', store: '', category: '', expiryDate: '', type: 'code', labelType: 'Code', interestedUsers: 0, limitedTime: false, expiringToday: false, addedBy: '', exclusive: false, details: '', isFeatured: false, featuredImage: '', affiliateUrl: '', tags: [] as string[] };
 const inputSx = { '& .MuiInputBase-root': { minHeight: 48 } };
 
 export default function AdminCoupons() {
@@ -273,7 +273,6 @@ export default function AdminCoupons() {
             {formData.isFeatured && (
               <>
                 <ImageUploadField label="Featured Card Image" value={formData.featuredImage} onChange={(url) => ff('featuredImage', url)} helperText="Recommended size: 160×170px" uploadType="featured" />
-                <ImageUploadField label="Featured Card Logo" value={formData.customLogo} onChange={(url) => ff('customLogo', url)} helperText="Logo shown on the featured card. Falls back to store logo if empty." uploadType="logo" />
               </>
             )}
           </div>

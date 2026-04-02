@@ -46,16 +46,14 @@ export default function CouponListCard({ coupon }: Props) {
                 <span className="block text-xs font-bold text-gray-400 uppercase tracking-widest leading-tight">{storeName || 'EXCLUSIVE'}</span>
                 <span className="block text-xs font-black uppercase tracking-widest leading-tight" style={{ color: primary }}>EXCLUSIVE</span>
               </div>
-              {storeLogo && <img src={storeLogo} alt={storeName} className="h-8 object-contain mt-1" />}
             </div>
           ) : discount ? (
             <div className="text-center">
               <span className="block text-2xl sm:text-3xl font-black leading-none" style={{ color: primary }}>{discount.split(' ')[0]}</span>
               <span className="block text-xs sm:text-sm font-bold" style={{ color: `${primary}cc` }}>{discount.split(' ').slice(1).join(' ')}</span>
-              {storeLogo && <img src={storeLogo} alt={storeName} className="h-8 object-contain mt-2" />}
             </div>
           ) : (
-            storeLogo && <img src={storeLogo} alt={storeName} className="h-10 object-contain" />
+            <span className="text-sm font-bold" style={{ color: primary }}>{storeName?.charAt(0) || '?'}</span>
           )}
         </div>
 
@@ -81,18 +79,13 @@ export default function CouponListCard({ coupon }: Props) {
           {code ? (
             <button
               onClick={handleReveal}
-              className="relative text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-lg transition-colors w-full text-center overflow-hidden"
+              className="text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-lg transition-all w-full text-center"
               style={{ backgroundColor: primary }}
             >
               {revealed ? (
                 <span className="tracking-widest">{code}</span>
               ) : (
-                <>
-                  <span className="absolute inset-y-0 right-0 w-8 bg-white/20 flex items-center justify-center text-[8px] font-black blur-sm select-none">
-                    {code.slice(0, 3)}
-                  </span>
-                  SHOW CODE
-                </>
+                'SHOW CODE'
               )}
             </button>
           ) : (
@@ -108,12 +101,8 @@ export default function CouponListCard({ coupon }: Props) {
 
       {/* Footer */}
       <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
-        {storeLogo ? (
-          <img src={storeLogo} alt={storeName} className="h-5 object-contain" />
-        ) : (
-          <span className="text-sm font-bold italic" style={{ color: primary }}>{storeName}</span>
-        )}
-        <a href={storeUrl || '#'} target="_blank" rel="noopener noreferrer"
+        <span className="text-sm font-bold" style={{ color: primary }}>{storeName}</span>
+        <a href={`/coupons/${store.slug || storeName.toLowerCase().replace(/\s+/g, '-')}-coupons`}
           className="flex items-center gap-1 text-xs sm:text-sm font-medium no-underline" style={{ color: primary }}>
           View All {storeName} Offers <ExternalLink className="w-3 h-3" />
         </a>
