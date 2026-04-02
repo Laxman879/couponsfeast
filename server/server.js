@@ -73,8 +73,14 @@ app.listen(PORT, async () => {
   console.log(`Test all APIs: http://localhost:${PORT}/api/test`);
   console.log(`API Status: http://localhost:${PORT}/api/test/status`);
   
-  await seedAllData();
   await seedAdmin();
+
+  // Drop stale unique index on coupon 'code' field
+  try {
+    const mongoose = (await import('mongoose')).default;
+    await mongoose.connection.db.collection('coupons').dropIndex('code_1');
+    console.log('Dropped stale unique index on coupons.code');
+  } catch (e) { /* index does not exist, thats fine */ }
   
   // GA4 status check
   console.log(`GA4 Analytics: ${process.env.GA4_MEASUREMENT_ID ? 'Enabled' : 'Disabled'}`);

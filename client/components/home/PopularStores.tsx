@@ -94,7 +94,7 @@ export default function PopularStores() {
         {featured && (
           <div className="lg:col-span-1">
             <Link
-              href={`/coupons/${storeSlug(featured)}`}
+              href={`/coupons/${storeSlug(featured)}-coupons`}
               className="rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border no-underline group block"
               style={{ backgroundColor: '#000', borderColor: borderClr, height: 320 }}
             >
@@ -149,14 +149,14 @@ export default function PopularStores() {
           {visibleStores.map((store) => (
             <Link
               key={store._id}
-              href={`/coupons/${storeSlug(store)}`}
+              href={`/coupons/${storeSlug(store)}-coupons`}
               className="no-underline group text-center"
             >
               <div
-                className="rounded-2xl border p-6 flex items-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
-                style={{ backgroundColor: cardBg, borderColor: borderClr, minHeight: 100 }}
+                className="rounded-2xl border overflow-hidden flex items-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+                style={{ backgroundColor: cardBg, borderColor: borderClr, height: 100 }}
               >
-                <img src={logoUrl(store)} alt={store.name || store.storeName} className="h-12 object-contain max-w-[85%]" />
+                <img src={logoUrl(store)} alt={store.name || store.storeName} className="w-full h-full object-cover" />
               </div>
               <p className="mt-2 text-sm font-semibold flex items-center justify-center gap-1" style={{ color: textColor }}>
                 {store.name || store.storeName}

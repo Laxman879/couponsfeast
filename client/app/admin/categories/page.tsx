@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import AdminShell from '@/components/admin/AdminShell';
-import { getCategories, createCategory, updateCategory, deleteCategory } from '@/services/api';
+import { getCategories, createCategory, updateCategory, deleteCategory, bulkDeleteCategories } from '@/services/api';
 import toast from 'react-hot-toast';
 import { LayoutGrid, Plus, Edit, Trash2, X, Check } from 'lucide-react';
 import {
@@ -68,6 +68,8 @@ export default function AdminCategories() {
   const [form,       setForm]       = useState<any>(empty);
   const [delConfirm, setDelConfirm] = useState<Category | null>(null);
   const [showIcons,  setShowIcons]  = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
 
   useEffect(() => { fetchCategories(); }, []);
 
@@ -111,6 +113,18 @@ export default function AdminCategories() {
     } catch { toast.error('Failed to delete category'); }
   };
 
+  const toggleSelect = (id: string) => setSelected(prev => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });
+  const toggleAll = () => setSelected(prev => prev.size === categories.length ? new Set() : new Set(categories.map(c => c._id)));
+
+  const confirmBulkDelete = async () => {
+    try {
+      const res = await bulkDeleteCategories(Array.from(selected));
+      toast.success(res.data?.message || `${selected.size} category(ies) deleted`);
+      setSelected(new Set()); fetchCategories();
+    } catch { toast.error('Failed to delete categories'); }
+    setBulkDeleteOpen(false);
+  };
+
   const card = 'bg-white rounded-2xl border border-slate-100 shadow-sm';
 
   return (
@@ -126,11 +140,27 @@ export default function AdminCategories() {
             <p className="text-slate-400 text-sm mt-0.5">Add and manage store categories shown in navbar dropdown and filters</p>
           </div>
         </div>
-        <button onClick={openAdd}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-sm font-semibold hover:opacity-90 transition-all"
-          style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}>
-          <Plus size={16} /> Add Category
-        </button>
+        <div className="flex items-center gap-3">
+          {selected.size > 0 && (
+            <button onClick={() => setBulkDeleteOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-sm font-semibold"
+              style={{ background: '#ef4444' }}>
+              <Trash2 size={14} /> Delete ({selected.size})
+            </button>
+          )}
+          {categories.length > 0 && (
+            <button onClick={toggleAll}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border"
+              style={{ borderColor: '#6366f1', color: '#6366f1' }}>
+              {selected.size === categories.length ? 'Deselect All' : 'Select All'}
+            </button>
+          )}
+          <button onClick={openAdd}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-sm font-semibold hover:opacity-90 transition-all"
+            style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}>
+            <Plus size={16} /> Add Category
+          </button>
+        </div>
       </div>
 
       {/* Info banner */}
@@ -161,7 +191,9 @@ export default function AdminCategories() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {categories.map(cat => (
-            <div key={cat._id} className={`${card} p-4 flex items-center gap-4 hover:shadow-md transition-shadow`}>
+            <div key={cat._id} className={`${card} p-4 flex items-center gap-4 hover:shadow-md transition-shadow`} style={{ borderColor: selected.has(cat._id) ? '#6366f1' : undefined }}>
+              <input type="checkbox" checked={selected.has(cat._id)} onChange={() => toggleSelect(cat._id)}
+                className="w-4 h-4 rounded accent-indigo-500 flex-shrink-0 cursor-pointer" />
               <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
                 style={{ background: `${cat.color}18` }}>
                 <CategoryIcon iconKey={cat.icon} size={20} color={cat.color} />
@@ -335,6 +367,26 @@ export default function AdminCategories() {
                 style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}>
                 {editing ? 'Save Changes' : 'Create Category'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk delete confirm */}
+      {bulkDeleteOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setBulkDeleteOpen(false)} />
+          <div className="relative z-10 bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+            <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-4">
+              <Trash2 size={22} className="text-red-500" />
+            </div>
+            <p className="text-center font-bold text-slate-800 mb-1">Delete {selected.size} category(ies)?</p>
+            <p className="text-center text-slate-400 text-sm mb-5">This cannot be undone.</p>
+            <div className="flex gap-3">
+              <button onClick={() => setBulkDeleteOpen(false)}
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50">Cancel</button>
+              <button onClick={confirmBulkDelete}
+                className="flex-1 py-2.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-colors">Delete All</button>
             </div>
           </div>
         </div>

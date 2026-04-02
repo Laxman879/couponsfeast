@@ -25,6 +25,4 @@ const couponSchema = new mongoose.Schema({
   customLogo: { type: String, default: '' }
 }, { timestamps: true });
 
-
-
 export default mongoose.model("Coupon", couponSchema);

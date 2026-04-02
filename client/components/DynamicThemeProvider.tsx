@@ -40,11 +40,19 @@ interface SiteConfigData {
   };
 }
 
+const defaultLabels = {
+  couponCard: { revealCode: 'Reveal Code', getReward: 'Get Reward', getDeal: 'Get Deal', seeDetails: 'See Details', hideDetails: 'Hide Details', limitedTime: 'Limited time', expiringToday: 'Expiring today', exclusive: 'Exclusive', interested: 'interested', onlineCashBack: 'Online Cash Back' },
+  promoModal: { saveMoreTitle: 'Save Even More', cashBackHeading: 'Add 1% cash back to this offer', cashBackButton: 'Activate 1% cash back', startShopping: 'Start Shopping', continueTo: 'Continue to', detailsLabel: 'Details & Exclusions', howItWorks: 'How does it work?', termsText: 'By continuing, you agree to our', termsLink: 'Terms', privacyLink: 'Privacy Policy', socialText: 'continue with social accounts', emailPlaceholder: 'Email Address', copiedText: 'Copied!', copyText: 'Copy', endsText: 'Ends' },
+  homepage: { tagline: "India's Leading Coupons & Deals Marketplace", featuredTitle: 'The Best Coupons, Promo Codes & Cash Back Offers', trendingTitle: 'Trending Deals Right Now', topStoresTitle: 'Shop at Top Stores', popularStoresTitle: 'Popular Stores', topCouponsTitle: "Today's Top Coupons & Offers", dealsTitle: 'Deals Of The Day', viewMoreDeals: 'View More Deals', popularOffersTitle: 'Popular Offers of the Day', collectionsTitle: 'Collections', cashBackTitle: 'Cash Back at Stores We Love', cashBackSubtitle: 'cha-ching', allCashBack: 'All Cash Back', latestCouponsTitle: 'Latest Coupons', topDealsTitle: "Today's Top Deals", topDealsSubtitle: 'Presented by Amazon', viewMoreDealsBtn: 'View more deals', allTopDeals: 'All Top Deals', dealsSectionTitle: 'Top Deals', dealsSectionAllBtn: 'All Deals', mostPopular: 'MOST POPULAR', storeOfMonth: 'Store Of The Month', viewCoupons: 'VIEW COUPONS', redeemNow: 'REDEEM NOW', buyNow: 'BUY NOW', checkPrice: 'Check price', shopNow: 'Shop Now', couponCode: 'Coupon code', cashBackLabel: 'Cash Back' },
+  discount: { cashText: 'Cash', backText: 'Back', freeText: 'Free', shipText: 'Ship', pingText: 'ping', saleText: 'SALE', upToText: 'Up To', offText: 'Off' },
+};
+
 interface DynamicThemeContextType {
   siteConfig: SiteConfigData | null;
   loading: boolean;
   refreshConfig: () => void;
   darkPalette: { bg: string; text: string; cardBg: string };
+  labels: typeof defaultLabels;
 }
 
 const DynamicThemeContext = createContext<DynamicThemeContextType>({
@@ -52,6 +60,7 @@ const DynamicThemeContext = createContext<DynamicThemeContextType>({
   loading: true,
   refreshConfig: () => {},
   darkPalette: { bg: '#111827', text: '#f9fafb', cardBg: '#1f2937' },
+  labels: defaultLabels,
 });
 
 export const useDynamicTheme = () => useContext(DynamicThemeContext);
@@ -214,6 +223,15 @@ export default function DynamicThemeProvider({ children }: { children: React.Rea
 
   const resolvedDarkPalette = DARK_PALETTES[(siteConfig as any)?.themeName || 'purple'] || DARK_PALETTES.purple;
 
+  // Merge admin uiLabels with defaults
+  const adminLabels = (siteConfig as any)?.uiLabels || {};
+  const labels = {
+    couponCard: { ...defaultLabels.couponCard, ...adminLabels.couponCard },
+    promoModal: { ...defaultLabels.promoModal, ...adminLabels.promoModal },
+    homepage: { ...defaultLabels.homepage, ...adminLabels.homepage },
+    discount: { ...defaultLabels.discount, ...adminLabels.discount },
+  };
+
   return (
     <DynamicThemeContext.Provider 
       value={{ 
@@ -221,6 +239,7 @@ export default function DynamicThemeProvider({ children }: { children: React.Rea
         loading, 
         refreshConfig: fetchSiteConfig,
         darkPalette: resolvedDarkPalette,
+        labels,
       }}
     >
       <ThemeProvider theme={muiTheme}>

@@ -276,3 +276,11 @@ button {
 .animate-scaleIn {
   animation: scaleIn 0.3s ease-out both;
 }
+
+/* Search bar placeholder styling */
+.nav-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+.nav-search-input:focus::placeholder {
+  color: #9ca3af;
+}

@@ -99,9 +99,28 @@ export default function DynamicPage() {
   );
 
   const sorted = [...(page?.sections || [])].sort((a, b) => a.order - b.order);
+  const isLegal = page?.template === 'legal';
 
   return (
     <div style={{ background: pageBg, minHeight: '100vh' }}>
+      {isLegal && (
+        <div style={{ borderBottom: `1px solid ${borderColor}` }}>
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex items-center gap-2 text-sm py-3">
+              <Link href="/" className="no-underline hover:underline" style={{ color: primary }}>Home</Link>
+              <ChevronRight size={14} style={{ color: textSecondary }} />
+              <span style={{ color: textPrimary }}>{page?.title}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isLegal && (
+        <div className="max-w-7xl mx-auto px-4 pt-8 pb-4">
+          <h1 className="text-2xl sm:text-3xl font-extrabold" style={{ color: primary }}>{page?.title}</h1>
+        </div>
+      )}
+
       {sorted.map((section, i) => (
         <SectionRenderer
           key={section.id || i}
@@ -115,17 +134,19 @@ export default function DynamicPage() {
           borderColor={borderColor}
           pageTitle={page?.title || ''}
           pageSlug={slug}
+          pageTemplate={page?.template || 'default'}
         />
       ))}
     </div>
   );
 }
 
-function SectionRenderer({ section, primary, isDark, pageBg, cardBg, textPrimary, textSecondary, borderColor, pageTitle, pageSlug }: any) {
+function SectionRenderer({ section, primary, isDark, pageBg, cardBg, textPrimary, textSecondary, borderColor, pageTitle, pageSlug, pageTemplate }: any) {
+  const isLegal = pageTemplate === 'legal';
   switch (section.type) {
     case 'heroBanner':     return <HeroBannerSection section={section} primary={primary} pageTitle={pageTitle} pageSlug={pageSlug} textSecondary={textSecondary} />;
-    case 'textContent':    return <TextSection section={section} cardBg={cardBg} textPrimary={textPrimary} textSecondary={textSecondary} borderColor={borderColor} />;
-    case 'customHTML':     return <HTMLSection section={section} />;
+    case 'textContent':    return <TextSection section={section} cardBg={cardBg} textPrimary={textPrimary} textSecondary={textSecondary} borderColor={borderColor} primary={primary} isLegal={isLegal} />;
+    case 'customHTML':     return <HTMLSection section={section} cardBg={cardBg} textPrimary={textPrimary} textSecondary={textSecondary} borderColor={borderColor} primary={primary} isLegal={isLegal} />;
     case 'featuredCoupons':
     case 'trendingCoupons': return <CouponsSection section={section} primary={primary} cardBg={cardBg} textPrimary={textPrimary} textSecondary={textSecondary} borderColor={borderColor} pageBg={pageBg} />;
     case 'topStores':      return <StoresSection section={section} primary={primary} cardBg={cardBg} textPrimary={textPrimary} textSecondary={textSecondary} borderColor={borderColor} pageBg={pageBg} />;
@@ -162,25 +183,32 @@ function HeroBannerSection({ section, primary, pageTitle, pageSlug, textSecondar
 }
 
 // ── Text Content ─────────────────────────────────────────────────────────────
-function TextSection({ section, cardBg, textPrimary, textSecondary, borderColor }: any) {
+function TextSection({ section, cardBg, textPrimary, textSecondary, borderColor, primary, isLegal }: any) {
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
-      <div className="rounded-2xl p-8" style={{ background: cardBg, border: `1px solid ${borderColor}` }}>
-        {section.title && <h2 className="text-2xl font-bold mb-4" style={{ color: textPrimary }}>{section.title}</h2>}
-        {section.content && (
-          <p className="text-base leading-relaxed whitespace-pre-wrap" style={{ color: textSecondary }}>{section.content}</p>
-        )}
-      </div>
+    <div className="max-w-7xl mx-auto px-4 py-6">
+      {!isLegal && section.title && <h2 className="text-xl font-bold mb-4 pb-2" style={{ color: primary, borderBottom: `2px solid ${borderColor}` }}>{section.title}</h2>}
+      {section.content && (
+        <div
+          className="max-w-none [&_*]:max-w-none [&_p]:mb-4 [&_h2]:mt-8 [&_h2]:mb-3 [&_h2]:text-xl [&_h2]:font-bold [&_h3]:mt-6 [&_h3]:mb-2 [&_h3]:text-lg [&_h3]:font-semibold [&_ul]:mb-4 [&_ul]:pl-6 [&_ul]:list-disc [&_ol]:mb-4 [&_ol]:pl-6 [&_ol]:list-decimal [&_li]:mb-2 [&_a]:underline"
+          style={{ color: textSecondary, lineHeight: '1.8', fontSize: '15px' }}
+          dangerouslySetInnerHTML={{ __html: section.content }}
+        />
+      )}
     </div>
   );
 }
 
 // ── Custom HTML ───────────────────────────────────────────────────────────────
-function HTMLSection({ section }: any) {
+function HTMLSection({ section, cardBg, textPrimary, textSecondary, borderColor, primary, isLegal }: any) {
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
-      {section.title && <h2 className="text-2xl font-bold mb-4 text-slate-800">{section.title}</h2>}
-      <div dangerouslySetInnerHTML={{ __html: section.content || '' }} />
+    <div className="max-w-7xl mx-auto px-4 py-6">
+      {!isLegal && section.title && <h2 className="text-xl font-bold mb-4 pb-2" style={{ color: primary, borderBottom: `2px solid ${borderColor}` }}>{section.title}</h2>}
+      <div
+        className="max-w-none [&_*]:max-w-none [&_p]:mb-4 [&_h2]:mt-8 [&_h2]:mb-3 [&_h2]:text-xl [&_h2]:font-bold [&_h3]:mt-6 [&_h3]:mb-2 [&_h3]:text-lg [&_h3]:font-semibold [&_ul]:mb-4 [&_ul]:pl-6 [&_ul]:list-disc [&_ol]:mb-4 [&_ol]:pl-6 [&_ol]:list-decimal [&_li]:mb-2 [&_a]:underline"
+        style={{ color: textSecondary, lineHeight: '1.8', fontSize: '15px' }}
+        style={{ color: textSecondary }}
+        dangerouslySetInnerHTML={{ __html: section.content || '' }}
+      />
     </div>
   );
 }

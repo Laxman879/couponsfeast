@@ -235,19 +235,19 @@ export default function NavbarTwo({ navLinks, config }: NavbarTwoProps) {
           {/* Desktop Search */}
           {showSearch && (
             <div ref={searchRef} className="hidden md:flex flex-1 max-w-xs lg:max-w-sm mx-4 relative">
-              <div className={`flex items-center w-full rounded-full px-4 py-2 transition-all bg-white/15 ${searchFocused ? 'bg-white/25' : ''}`}>
-                <Search className="w-4 h-4 flex-shrink-0" style={{ color: navText + 'b3' }} />
+              <div className={`flex items-center w-full rounded-full px-4 py-2 transition-all border ${searchFocused ? 'bg-white shadow-lg border-white' : 'bg-white/10 border-white/20 hover:bg-white/15'}`}>
+                <Search className="w-4 h-4 flex-shrink-0" style={{ color: searchFocused ? '#9ca3af' : navText + 'b3' }} />
                 <input type="text" placeholder="Search stores, coupons..."
                   value={query}
                   onChange={(e) => handleSearchChange(e.target.value)}
-                  className="bg-transparent border-none outline-none text-sm ml-2 w-full placeholder-white/60"
-                  style={{ color: navText }}
+                  className="bg-transparent border-none outline-none text-sm ml-2 w-full nav-search-input"
+                  style={{ color: searchFocused ? '#111827' : navText }}
                   onFocus={() => setSearchFocused(true)}
                 />
                 {query && (
                   <button onClick={() => { setQuery(''); setResults({ coupons: [], stores: [] }); }}
                     className="p-0.5 hover:opacity-70 cursor-pointer bg-transparent border-none outline-none">
-                    <X className="w-3.5 h-3.5" style={{ color: navText }} />
+                    <X className="w-3.5 h-3.5" style={{ color: searchFocused ? '#6b7280' : navText }} />
                   </button>
                 )}
               </div>

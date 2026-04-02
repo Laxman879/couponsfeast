@@ -4,8 +4,8 @@ import {
   Button, TextField, Switch, FormControlLabel, MenuItem,
   Drawer, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress
 } from '@mui/material';
-import { Add, Edit, Delete, LocalOffer } from '@mui/icons-material';
-import { getDeals, createDeal, updateDeal, deleteDeal, getStores } from '@/services/api';
+import { Add, Edit, Delete, LocalOffer, CheckBox as CheckBoxIcon, CheckBoxOutlineBlank } from '@mui/icons-material';
+import { getAdminDeals, createDeal, updateDeal, deleteDeal, bulkDeleteDeals, getStores } from '@/services/api';
 import AdminShell from '@/components/admin/AdminShell';
 import ImageUploadField from '@/components/admin/ImageUploadField';
 import toast from 'react-hot-toast';
@@ -18,17 +18,28 @@ interface Deal {
   store?: string;
   category?: string;
   image?: string;
+  logo?: string;
   link?: string;
   type?: string;
   expiryDate?: string;
   isActive: boolean;
   isFeatured?: boolean;
+  section?: string;
 }
 
 const emptyForm: Deal = {
   title: '', description: '', discount: '', store: '', category: '',
-  image: '', link: '', type: 'deal', expiryDate: '',
-  isActive: true, isFeatured: false,
+  image: '', logo: '', link: '', type: 'deal', expiryDate: '',
+  isActive: true, isFeatured: false, section: '',
+};
+
+const sectionLabels: Record<string, string> = {
+  popular_offers: 'Popular Offers of the Day',
+  popular_stores: 'Popular Stores',
+  top_coupons: 'Today\'s Top Coupons & Offers',
+  deals_of_day: 'Deals Of The Day',
+  collections: 'Coupon Feast Collections',
+  trending_deals: 'Trending Deals',
 };
 
 export default function DealsManagement() {
@@ -39,12 +50,14 @@ export default function DealsManagement() {
   const [editingDeal, setEditingDeal] = useState<Deal | null>(null);
   const [formData, setFormData] = useState<Deal>(emptyForm);
   const [deleteConfirm, setDeleteConfirm] = useState<Deal | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
 
   useEffect(() => { fetchDeals(); fetchStores(); }, []);
 
   const fetchDeals = async () => {
     try {
-      const res = await getDeals();
+      const res = await getAdminDeals();
       const data = res.data?.data ?? res.data ?? [];
       setDeals(Array.isArray(data) ? data : []);
     } catch { toast.error('Failed to load deals'); }
@@ -80,6 +93,18 @@ export default function DealsManagement() {
     } catch { toast.error('Failed to delete deal'); }
   };
 
+  const toggleSelect = (id: string) => setSelected(prev => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });
+  const toggleAll = () => setSelected(prev => prev.size === deals.length ? new Set() : new Set(deals.map(d => d._id!)));
+
+  const confirmBulkDelete = async () => {
+    try {
+      const res = await bulkDeleteDeals(Array.from(selected));
+      toast.success(res.data?.message || `${selected.size} deal(s) deleted`);
+      setSelected(new Set()); fetchDeals();
+    } catch { toast.error('Failed to delete deals'); }
+    setBulkDeleteOpen(false);
+  };
+
   const openEdit = (d: Deal) => {
     setFormData({ ...d, store: (d.store as any)?._id || d.store || '', type: d.type || 'deal' });
     setEditingDeal(d);
@@ -87,6 +112,47 @@ export default function DealsManagement() {
   };
   const openAdd = () => { setFormData(emptyForm); setEditingDeal(null); setDrawerOpen(true); };
   const set = (patch: Partial<Deal>) => setFormData(f => ({ ...f, ...patch }));
+
+  const renderDealCard = (deal: Deal) => {
+    const store = (deal.store as any);
+    const storeName = store?.storeName || '';
+    const serverUrl = 'http://localhost:5000';
+    const logo = deal.logo || (store?.logo ? (store.logo.startsWith('http') ? store.logo : `${serverUrl}${store.logo}`) : '');
+    const img = deal.image || '';
+    return (
+      <div key={deal._id} className="rounded-2xl p-4 bg-white border border-slate-100 shadow-sm hover:shadow-md transition-shadow" style={{ borderColor: selected.has(deal._id!) ? '#f97316' : undefined }}>
+        <div className="flex items-start justify-between mb-2">
+          <div className="flex items-center gap-3">
+            <IconButton size="small" onClick={() => toggleSelect(deal._id!)} style={{ color: selected.has(deal._id!) ? '#f97316' : '#d1d5db' }}>
+              {selected.has(deal._id!) ? <CheckBoxIcon /> : <CheckBoxOutlineBlank />}
+            </IconButton>
+            {logo ? (
+              <img src={logo} alt={deal.title} className="w-10 h-10 rounded-full object-contain border border-slate-100 bg-white p-0.5" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+            ) : img ? (
+              <img src={img} alt={deal.title} className="w-10 h-10 rounded-lg object-cover border border-slate-100" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+            ) : (
+              <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center">
+                <LocalOffer style={{ color: '#f97316', fontSize: 16 }} />
+              </div>
+            )}
+            <div className="min-w-0">
+              <p className="font-bold text-slate-800 text-sm truncate">{deal.title}</p>
+              {storeName && <p className="text-slate-400 text-xs">{storeName}</p>}
+            </div>
+          </div>
+          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full flex-shrink-0"
+            style={{ background: deal.isActive ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)', color: deal.isActive ? '#10b981' : '#ef4444' }}>
+            {deal.isActive ? 'Active' : 'Off'}
+          </span>
+        </div>
+        {deal.discount && <span className="inline-block text-xs font-semibold bg-orange-50 text-orange-600 px-2 py-0.5 rounded-full mb-2">{deal.discount}</span>}
+        <div className="flex gap-2 mt-2">
+          <IconButton onClick={() => openEdit(deal)} size="small" style={{ background: 'rgba(99,102,241,0.08)', color: '#6366f1', borderRadius: 8 }}><Edit fontSize="small" /></IconButton>
+          <IconButton onClick={() => setDeleteConfirm(deal)} size="small" style={{ background: 'rgba(239,68,68,0.08)', color: '#ef4444', borderRadius: 8 }}><Delete fontSize="small" /></IconButton>
+        </div>
+      </div>
+    );
+  };
 
   if (loading) return (
     <AdminShell>
@@ -109,10 +175,22 @@ export default function DealsManagement() {
             <p className="text-slate-400 text-sm mt-0.5">Create and manage deals shown on the homepage</p>
           </div>
         </div>
-        <Button variant="contained" startIcon={<Add />} onClick={openAdd}
-          style={{ background: 'linear-gradient(135deg,#f97316,#ea580c)', borderRadius: 12, textTransform: 'none', fontWeight: 600, boxShadow: '0 4px 12px rgba(249,115,22,0.3)' }}>
-          Add Deal
-        </Button>
+        <div className="flex items-center gap-3">
+          {selected.size > 0 && (
+            <Button variant="contained" startIcon={<Delete />} onClick={() => setBulkDeleteOpen(true)}
+              style={{ background: '#ef4444', borderRadius: 12, textTransform: 'none', fontWeight: 600 }}>Delete ({selected.size})</Button>
+          )}
+          {deals.length > 0 && (
+            <Button variant="outlined" onClick={toggleAll} size="small"
+              style={{ borderColor: '#f97316', color: '#f97316', borderRadius: 10, textTransform: 'none', fontSize: 12 }}>
+              {selected.size === deals.length ? 'Deselect All' : 'Select All'}
+            </Button>
+          )}
+          <Button variant="contained" startIcon={<Add />} onClick={openAdd}
+            style={{ background: 'linear-gradient(135deg,#f97316,#ea580c)', borderRadius: 12, textTransform: 'none', fontWeight: 600, boxShadow: '0 4px 12px rgba(249,115,22,0.3)' }}>
+            Add Deal
+          </Button>
+        </div>
       </div>
 
       {/* Empty state */}
@@ -129,54 +207,39 @@ export default function DealsManagement() {
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {deals.map((deal) => {
-            const store = (deal.store as any);
-            const storeName = store?.storeName || '';
-            const serverUrl = 'http://localhost:5000';
-            const logo = deal.image || (store?.logo ? (store.logo.startsWith('http') ? store.logo : `${serverUrl}${store.logo}`) : '');
+        <div className="flex flex-col gap-6">
+          {/* Grouped by section */}
+          {Object.entries(sectionLabels).map(([sectionKey, sectionLabel]) => {
+            const sectionDeals = deals.filter(d => (d as any).section === sectionKey);
+            if (sectionDeals.length === 0) return null;
             return (
-              <div key={deal._id} className="rounded-2xl p-5 bg-white border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    {logo ? (
-                      <img src={logo} alt={deal.title} className="w-12 h-12 rounded-lg object-contain border border-slate-100 bg-white p-1" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-                    ) : (
-                      <div className="w-12 h-12 rounded-lg bg-orange-50 flex items-center justify-center">
-                        <LocalOffer style={{ color: '#f97316', fontSize: 18 }} />
-                      </div>
-                    )}
-                    <div>
-                      <p className="font-bold text-slate-800 text-sm">{deal.title}</p>
-                      {storeName && <p className="text-slate-400 text-xs">{storeName}</p>}
-                    </div>
-                  </div>
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                    style={{ background: deal.isActive ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)', color: deal.isActive ? '#10b981' : '#ef4444' }}>
-                    {deal.isActive ? 'Active' : 'Inactive'}
-                  </span>
+              <div key={sectionKey}>
+                <div className="flex items-center gap-2 mb-3">
+                  <h3 className="font-bold text-slate-700 text-sm">{sectionLabel}</h3>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600">{sectionDeals.length}</span>
                 </div>
-                {deal.discount && (
-                  <span className="inline-block text-xs font-semibold bg-orange-50 text-orange-600 px-2 py-0.5 rounded-full mb-2">
-                    🔥 {deal.discount}
-                  </span>
-                )}
-                {deal.description && <p className="text-slate-500 text-xs mb-3 line-clamp-2">{deal.description}</p>}
-                <div className="flex items-center gap-2 text-xs text-slate-400 mb-3">
-                  <span className="bg-slate-50 px-2 py-0.5 rounded">{deal.type || 'deal'}</span>
-                  {deal.category && <span className="bg-slate-50 px-2 py-0.5 rounded">{deal.category}</span>}
-                </div>
-                <div className="flex gap-2">
-                  <IconButton onClick={() => openEdit(deal)} size="small" style={{ background: 'rgba(99,102,241,0.08)', color: '#6366f1', borderRadius: 8 }}>
-                    <Edit fontSize="small" />
-                  </IconButton>
-                  <IconButton onClick={() => setDeleteConfirm(deal)} size="small" style={{ background: 'rgba(239,68,68,0.08)', color: '#ef4444', borderRadius: 8 }}>
-                    <Delete fontSize="small" />
-                  </IconButton>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {sectionDeals.map((deal) => renderDealCard(deal))}
                 </div>
               </div>
             );
           })}
+          {/* Ungrouped deals */}
+          {(() => {
+            const ungrouped = deals.filter(d => !(d as any).section);
+            if (ungrouped.length === 0) return null;
+            return (
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <h3 className="font-bold text-slate-700 text-sm">General (no section)</h3>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">{ungrouped.length}</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {ungrouped.map((deal) => renderDealCard(deal))}
+                </div>
+              </div>
+            );
+          })()}
         </div>
       )}
 
@@ -236,14 +299,36 @@ export default function DealsManagement() {
             <TextField label="Expiry Date" type="date" value={formData.expiryDate ? formData.expiryDate.split('T')[0] : ''} onChange={(e) => set({ expiryDate: e.target.value })} fullWidth InputLabelProps={{ shrink: true }}
               InputProps={{ sx: { height: 48 } }} />
 
-            {/* Deal Image / Logo */}
+            {/* Deal Image (card background) */}
             <ImageUploadField
-              label="Deal Image / Logo"
+              label="Deal Image (card background)"
               value={formData.image || ''}
               onChange={(url) => set({ image: url })}
-              helperText="Logo or image shown on the deal card"
+              helperText="Background image shown on the deal card"
               uploadType="deal"
             />
+
+            {/* Brand Logo (small circle) */}
+            <ImageUploadField
+              label="Brand Logo (small circle)"
+              value={formData.logo || ''}
+              onChange={(url) => set({ logo: url })}
+              helperText="Small round logo shown between image and text. Falls back to store logo if empty."
+              uploadType="logo"
+            />
+
+            {/* Homepage Section */}
+            <TextField label="Homepage Section" value={formData.section || ''} onChange={(e) => set({ section: e.target.value })} fullWidth select
+              helperText="Which homepage section should this deal appear in?"
+              InputLabelProps={{ shrink: true }}
+              sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+              SelectProps={{ displayEmpty: true, renderValue: (val: any) => {
+                if (!val) return <span style={{ color: '#9ca3af' }}>No section (general deal)</span>;
+                return sectionLabels[val] || val;
+              }}}>
+              <MenuItem value=""><em>No section (general deal)</em></MenuItem>
+              {Object.entries(sectionLabels).map(([key, label]) => <MenuItem key={key} value={key}>{label}</MenuItem>)}
+            </TextField>
 
             <div className="flex flex-wrap gap-5 pt-1">
               <FormControlLabel control={<Switch checked={formData.isActive} onChange={(e) => set({ isActive: e.target.checked })} />}
@@ -261,6 +346,18 @@ export default function DealsManagement() {
           </Button>
         </div>
       </Drawer>
+
+      {/* Bulk Delete */}
+      <Dialog open={bulkDeleteOpen} onClose={() => setBulkDeleteOpen(false)} maxWidth="xs" fullWidth>
+        <DialogTitle style={{ color: '#ef4444', background: '#fef2f2' }}>
+          <div className="flex items-center gap-2"><Delete /><span>Delete {selected.size} Deal(s)</span></div>
+        </DialogTitle>
+        <DialogContent className="pt-4"><p className="text-slate-600 text-sm">Delete <strong>{selected.size} selected deal(s)</strong>? This cannot be undone.</p></DialogContent>
+        <DialogActions className="p-4 bg-slate-50">
+          <Button onClick={() => setBulkDeleteOpen(false)} variant="outlined">Cancel</Button>
+          <Button onClick={confirmBulkDelete} variant="contained" style={{ background: '#ef4444', borderRadius: 8, textTransform: 'none' }}>Delete All</Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Delete Confirm */}
       <Dialog open={!!deleteConfirm} onClose={() => setDeleteConfirm(null)} maxWidth="xs" fullWidth>

@@ -17,6 +17,7 @@ api.interceptors.request.use((config) => {
 
 export const getCoupons = (params?: any) => api.get('/public/coupons/list', { params });
 export const getCouponById = (id: string) => api.get(`/public/coupons/details/${id}`);
+export const getAdminCoupons = () => api.get('/admin/coupons/list');
 export const createCoupon = (data: any) => api.post('/admin/coupons/create', data);
 export const updateCoupon = (id: string, data: any) => api.put(`/admin/coupons/update/${id}`, data);
 export const deleteCoupon = (id: string) => api.delete(`/admin/coupons/delete/${id}`);
@@ -44,6 +45,7 @@ export const getFooterLinks = () => api.get('/public/footer/links');
 // Deals
 export const getDeals = (params?: any) => api.get('/public/deals/list', { params });
 export const getDealById = (id: string) => api.get(`/public/deals/details/${id}`);
+export const getAdminDeals = () => api.get('/admin/deals');
 export const createDeal = (data: any) => api.post('/admin/deals/create', data);
 export const updateDeal = (id: string, data: any) => api.put(`/admin/deals/update/${id}`, data);
 export const deleteDeal = (id: string) => api.delete(`/admin/deals/delete/${id}`);
@@ -119,6 +121,15 @@ export const uploadLogo = (file: File, logoType?: string) => {
   return api.post('/admin/upload/logo', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
 };
 export const deleteLogo = (filename: string) => api.delete(`/admin/upload/logo/delete/${filename}`);
+
+// Bulk Delete
+export const bulkDeleteStores = (ids: string[]) => api.post('/admin/stores/bulk-delete', { ids });
+export const bulkDeleteCoupons = (ids: string[]) => api.post('/admin/coupons/bulk-delete', { ids });
+export const bulkDeleteDeals = (ids: string[]) => api.post('/admin/deals/bulk-delete', { ids });
+export const bulkDeleteBanners = (ids: string[]) => api.post('/admin/banner/bulk-delete', { ids });
+export const bulkDeleteTags = (ids: string[]) => api.post('/admin/tags/bulk-delete', { ids });
+export const bulkDeleteBlogArticles = (ids: string[]) => api.post('/admin/blog/bulk-delete', { ids });
+export const bulkDeleteCategories = (ids: string[]) => api.post('/admin/categories/bulk-delete', { ids });
 
 // Auth
 export const adminLogin = (data: { email: string; password: string }) => api.post('/auth/login', data);

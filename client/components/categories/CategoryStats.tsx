@@ -1,6 +1,25 @@
+'use client';
+import { useEffect, useState } from 'react';
 import { Grid3X3 } from "lucide-react";
+import { getCategories, getCoupons } from '@/services/api';
 
 export default function CategoryStats() {
+  const [catCount, setCatCount] = useState(0);
+  const [couponCount, setCouponCount] = useState(0);
+
+  useEffect(() => {
+    getCategories().then(res => {
+      const data = res.data?.data ?? res.data ?? [];
+      setCatCount(Array.isArray(data) ? data.length : 0);
+    }).catch(() => {});
+    getCoupons({ limit: 1 }).then(res => {
+      const total = res.data?.total ?? (res.data?.data ?? res.data ?? []).length;
+      setCouponCount(total);
+    }).catch(() => {});
+  }, []);
+
+  const today = new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric', weekday: 'short' });
+
   return (
     <div
       className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
@@ -15,16 +34,16 @@ export default function CategoryStats() {
         </div>
         <div className="flex items-center gap-4 sm:gap-6 sm:ml-3">
           <div>
-            <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">172</p>
+            <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">{catCount.toLocaleString()}</p>
             <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">Total Categories</p>
           </div>
           <div>
-            <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">98,634</p>
+            <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">{couponCount.toLocaleString()}</p>
             <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">Total Coupons &amp; Offers</p>
           </div>
         </div>
       </div>
-      <p className="text-[10px] sm:text-xs text-green-600 font-medium">Verified On: 31 Mar 2026 (TUE)</p>
+      <p className="text-[10px] sm:text-xs text-green-600 font-medium">Verified On: {today}</p>
     </div>
   );
 }

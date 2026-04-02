@@ -127,10 +127,9 @@ export const getBanners = async (req, res) => {
 
 export const createBanner = async (req, res) => {
   try {
-    const bannerData = {
-      ...req.body,
-      isActive: req.body.isActive !== undefined ? req.body.isActive : true
-    };
+    const bannerData = { ...req.body };
+    if (!bannerData.store) delete bannerData.store;
+    if (bannerData.isActive === undefined) bannerData.isActive = true;
     
     const banner = await Banner.create(bannerData);
     res.status(201).json({
@@ -153,7 +152,9 @@ export const createBanner = async (req, res) => {
 
 export const updateBanner = async (req, res) => {
   try {
-    const banner = await Banner.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const data = { ...req.body };
+    if (!data.store) delete data.store;
+    const banner = await Banner.findByIdAndUpdate(req.params.id, data, { new: true, runValidators: true });
     if (!banner) return res.status(404).json({ success: false, error: 'Banner not found' });
     res.json({ success: true, data: banner });
   } catch (error) {

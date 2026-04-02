@@ -4,8 +4,8 @@ import {
   Button, TextField, Switch, FormControlLabel,
   Drawer, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress
 } from '@mui/material';
-import { Add, Edit, Delete, Article, PlayCircle, Videocam } from '@mui/icons-material';
-import { getAdminBlogArticles, createBlogArticle, updateBlogArticle, deleteBlogArticle, getSiteConfig, updateSiteConfig } from '@/services/api';
+import { Add, Edit, Delete, Article, PlayCircle, Videocam, CheckBox as CheckBoxIcon, CheckBoxOutlineBlank } from '@mui/icons-material';
+import { getAdminBlogArticles, createBlogArticle, updateBlogArticle, deleteBlogArticle, bulkDeleteBlogArticles, getSiteConfig, updateSiteConfig } from '@/services/api';
 import AdminShell from '@/components/admin/AdminShell';
 import ImageUploadField from '@/components/admin/ImageUploadField';
 import toast from 'react-hot-toast';
@@ -47,6 +47,8 @@ export default function BlogManagement() {
   const [editing, setEditing] = useState<BlogArticle | null>(null);
   const [formData, setFormData] = useState<BlogArticle>(emptyForm);
   const [deleteConfirm, setDeleteConfirm] = useState<BlogArticle | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
   const [promo, setPromo] = useState(defaultPromo);
   const [promoForm, setPromoForm] = useState(defaultPromo);
   const [promoDrawerOpen, setPromoDrawerOpen] = useState(false);
@@ -106,6 +108,18 @@ export default function BlogManagement() {
       await deleteBlogArticle(deleteConfirm._id);
       toast.success('Article deleted!'); setDeleteConfirm(null); fetchArticles();
     } catch { toast.error('Failed to delete'); }
+  };
+
+  const toggleSelect = (id: string) => setSelected(prev => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });
+  const toggleAll = () => setSelected(prev => prev.size === articles.length ? new Set() : new Set(articles.map(a => a._id!)));
+
+  const confirmBulkDelete = async () => {
+    try {
+      const res = await bulkDeleteBlogArticles(Array.from(selected));
+      toast.success(res.data?.message || `${selected.size} article(s) deleted`);
+      setSelected(new Set()); fetchArticles();
+    } catch { toast.error('Failed to delete articles'); }
+    setBulkDeleteOpen(false);
   };
 
   const openEdit = (a: BlogArticle) => { setFormData({ ...a }); setEditing(a); setDrawerOpen(true); };
@@ -222,10 +236,22 @@ export default function BlogManagement() {
             <p className="text-slate-400 text-sm mt-0.5">Manage blog section on homepage</p>
           </div>
         </div>
-        <Button variant="contained" startIcon={<Add />} onClick={openAdd}
-          style={{ background: 'linear-gradient(135deg,#3b82f6,#2563eb)', borderRadius: 12, textTransform: 'none', fontWeight: 600 }}>
-          Add Article
-        </Button>
+        <div className="flex items-center gap-3">
+          {selected.size > 0 && (
+            <Button variant="contained" startIcon={<Delete />} onClick={() => setBulkDeleteOpen(true)}
+              style={{ background: '#ef4444', borderRadius: 12, textTransform: 'none', fontWeight: 600 }}>Delete ({selected.size})</Button>
+          )}
+          {articles.length > 0 && (
+            <Button variant="outlined" onClick={toggleAll} size="small"
+              style={{ borderColor: '#3b82f6', color: '#3b82f6', borderRadius: 10, textTransform: 'none', fontSize: 12 }}>
+              {selected.size === articles.length ? 'Deselect All' : 'Select All'}
+            </Button>
+          )}
+          <Button variant="contained" startIcon={<Add />} onClick={openAdd}
+            style={{ background: 'linear-gradient(135deg,#3b82f6,#2563eb)', borderRadius: 12, textTransform: 'none', fontWeight: 600 }}>
+            Add Article
+          </Button>
+        </div>
       </div>
 
       {articles.length === 0 ? (
@@ -240,7 +266,12 @@ export default function BlogManagement() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {articles.map((a) => (
-            <div key={a._id} className="rounded-2xl p-5 bg-white border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+            <div key={a._id} className="rounded-2xl p-5 bg-white border shadow-sm hover:shadow-md transition-shadow" style={{ borderColor: selected.has(a._id!) ? '#3b82f6' : 'rgb(241 245 249)' }}>
+              <div className="flex items-center gap-2 mb-2">
+                <IconButton size="small" onClick={() => toggleSelect(a._id!)} style={{ color: selected.has(a._id!) ? '#3b82f6' : '#d1d5db' }}>
+                  {selected.has(a._id!) ? <CheckBoxIcon /> : <CheckBoxOutlineBlank />}
+                </IconButton>
+              </div>
               {a.image && <img src={a.image} alt={a.title} className="w-full h-32 object-cover rounded-lg mb-3" />}
               <div className="flex items-start justify-between mb-2">
                 <div>
@@ -315,6 +346,18 @@ export default function BlogManagement() {
           </div>
         </div>
       </Drawer>
+
+      {/* Bulk Delete */}
+      <Dialog open={bulkDeleteOpen} onClose={() => setBulkDeleteOpen(false)} maxWidth="xs" fullWidth>
+        <DialogTitle style={{ color: '#ef4444', background: '#fef2f2' }}>
+          <div className="flex items-center gap-2"><Delete /><span>Delete {selected.size} Article(s)</span></div>
+        </DialogTitle>
+        <DialogContent className="pt-4"><p className="text-slate-600 text-sm">Delete <strong>{selected.size} selected article(s)</strong>? This cannot be undone.</p></DialogContent>
+        <DialogActions className="p-4 bg-slate-50">
+          <Button onClick={() => setBulkDeleteOpen(false)} variant="outlined">Cancel</Button>
+          <Button onClick={confirmBulkDelete} variant="contained" style={{ background: '#ef4444', borderRadius: 8, textTransform: 'none' }}>Delete All</Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog open={!!deleteConfirm} onClose={() => setDeleteConfirm(null)} maxWidth="xs" fullWidth>
         <DialogTitle style={{ color: '#ef4444', background: '#fef2f2' }}>

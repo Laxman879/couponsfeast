@@ -26,4 +26,17 @@ router.put("/update/:id", storeController.updateStore);
 // DELETE /api/admin/stores/delete/:id - Delete store
 router.delete("/delete/:id", storeController.deleteStore);
 
+// POST /api/admin/stores/bulk-delete
+router.post("/bulk-delete", async (req, res) => {
+  const Store = (await import("../../../models/Store.js")).default;
+  try {
+    const { ids } = req.body;
+    if (!ids?.length) return res.status(400).json({ error: 'No IDs provided' });
+    const result = await Store.deleteMany({ _id: { $in: ids } });
+    res.json({ message: `${result.deletedCount} store(s) deleted` });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;

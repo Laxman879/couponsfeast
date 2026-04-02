@@ -6,6 +6,7 @@ import { ChevronRight, ExternalLink } from 'lucide-react';
 import { getDeals, getStores, getCoupons } from '@/services/api';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
+import PromoModal from '@/components/coupon/PromoModal';
 
 export default function DealsPage() {
   const { siteConfig, darkPalette } = useDynamicTheme();
@@ -25,6 +26,7 @@ export default function DealsPage() {
   const [loading, setLoading] = useState(true);
   const [countdown, setCountdown] = useState('');
   const [activeStore, setActiveStore] = useState('All');
+  const [modalData, setModalData] = useState<any>(null);
 
   const serverUrl = 'http://localhost:5000';
 
@@ -75,6 +77,22 @@ export default function DealsPage() {
     if (activeStore === 'All') return deals;
     return deals.filter(d => d.store?.storeName === activeStore);
   }, [deals, activeStore]);
+
+  const openDeal = (deal: any) => {
+    const url = deal.link || deal.store?.websiteUrl;
+    if (url) window.open(url, '_blank');
+    const rawLogo = deal.store?.logo || '';
+    setModalData({
+      title: deal.title,
+      code: deal.couponCode || deal.code || '',
+      discount: deal.discount || '',
+      storeName: deal.store?.storeName || '',
+      storeLogo: rawLogo.startsWith('http') ? rawLogo : rawLogo ? `${serverUrl}${rawLogo}` : '',
+      storeUrl: url || '',
+      expiryDate: deal.expiryDate || '',
+      details: deal.description || deal.details || '',
+    });
+  };
 
   const featured = filteredDeals[0];
   const gridDeals = filteredDeals.slice(1);
@@ -152,7 +170,7 @@ export default function DealsPage() {
               <div
                 className="rounded-2xl overflow-hidden flex flex-col sm:flex-row mb-8 cursor-pointer hover:shadow-xl transition-shadow"
                 style={{ backgroundColor: cardBg, boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px' }}
-                onClick={() => { const url = featured.link || featured.store?.websiteUrl; if (url) window.open(url, '_blank'); }}
+                onClick={() => openDeal(featured)}
               >
                 <div className="sm:w-1/2 flex items-center justify-center p-6" style={{ backgroundColor: isDark ? darkPalette.bg : '#f3f4f6' }}>
                   <img src={getImage(featured)} alt={featured.title} className="max-h-[220px] object-contain" />
@@ -187,7 +205,7 @@ export default function DealsPage() {
                       key={deal._id}
                       className="rounded-2xl overflow-hidden cursor-pointer group hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
                       style={{ backgroundColor: cardBg, boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px' }}
-                      onClick={() => { const url = deal.link || deal.store?.websiteUrl; if (url) window.open(url, '_blank'); }}
+                      onClick={() => openDeal(deal)}
                     >
                       {/* Image */}
                       <div className="h-[160px] overflow-hidden" style={{ backgroundColor: isDark ? darkPalette.bg : '#f3f4f6' }}>
@@ -297,6 +315,12 @@ export default function DealsPage() {
           </p>
         </div>
       </section>
+
+      {modalData && (
+        <PromoModal onClose={() => setModalData(null)} title={modalData.title} code={modalData.code}
+          discount={modalData.discount} storeName={modalData.storeName} storeLogo={modalData.storeLogo}
+          storeUrl={modalData.storeUrl} expiryDate={modalData.expiryDate} details={modalData.details} />
+      )}
     </div>
   );
 }

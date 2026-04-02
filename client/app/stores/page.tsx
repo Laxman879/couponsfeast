@@ -109,6 +109,38 @@ export default function StoresPage() {
 
         {/* Main */}
         <div className="flex-1 min-w-0">
+          {/* Popular Stores */}
+          {!loading && stores.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">Popular Stores</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {stores.slice(0, 4).map((store) => {
+                  const rawLogo = store.logo || '';
+                  const logo = rawLogo.startsWith('http') ? rawLogo : rawLogo ? `${serverUrl}${rawLogo}` : '';
+                  return (
+                    <Link key={store._id} href={`/${store.slug}-coupons`}
+                      className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-primary/30 transition-all cursor-pointer group text-center no-underline block"
+                      style={{ boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px' }}>
+                      <div className="flex justify-center mb-3">
+                        <div className="w-14 h-14 rounded-full bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors overflow-hidden">
+                          {logo ? (
+                            <img src={logo} alt={store.storeName} className="w-10 h-10 object-contain" />
+                          ) : (
+                            <Store className="w-7 h-7 text-primary/70" />
+                          )}
+                        </div>
+                      </div>
+                      <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100">{store.storeName}</h3>
+                      {store.category && (
+                        <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1">{store.category}</p>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Alphabet Filter */}
           <div className="mb-6">
             <div className="flex items-center justify-between mb-4">

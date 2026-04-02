@@ -6,11 +6,12 @@ const router = express.Router();
 // GET /api/public/deals/list - Get active deals
 router.get("/list", async (req, res) => {
   try {
-    const { store, category, type, limit = 20 } = req.query;
+    const { store, category, type, section, limit = 20 } = req.query;
     const query = { isActive: true };
     if (store) query.store = store;
     if (category) query.category = category;
     if (type) query.type = type;
+    if (section) query.section = section;
 
     const deals = await Deal.find(query)
       .populate("store", "storeName slug logo websiteUrl")

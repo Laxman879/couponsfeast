@@ -41,4 +41,15 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
+router.post("/bulk-delete", async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!ids?.length) return res.status(400).json({ success: false, error: "No IDs provided" });
+    const result = await BlogArticle.deleteMany({ _id: { $in: ids } });
+    res.json({ success: true, message: `${result.deletedCount} article(s) deleted` });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 export default router;

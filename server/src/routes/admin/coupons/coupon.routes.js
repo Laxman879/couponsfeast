@@ -1,29 +1,36 @@
 import express from "express";
+import mongoose from "mongoose";
 import * as couponController from "../../../controllers/couponController.js";
 import { trackGA4APIMiddleware } from "../../../middleware/ga4Analytics.js";
 
 const router = express.Router();
 
-// Add GA4 analytics middleware
 router.use(trackGA4APIMiddleware);
 
-// ==========================================
-// ADMIN COUPON APIs (5 endpoints)
-// ==========================================
-
-// GET /api/admin/coupons/list - List all coupons
 router.get("/list", couponController.getCoupons);
-
-// GET /api/admin/coupons/details/:id - Get coupon details
 router.get("/details/:id", couponController.getCouponById);
-
-// POST /api/admin/coupons/create - Create new coupon
 router.post("/create", couponController.createCoupon);
-
-// PUT /api/admin/coupons/update/:id - Update coupon
 router.put("/update/:id", couponController.updateCoupon);
-
-// DELETE /api/admin/coupons/delete/:id - Delete coupon
 router.delete("/delete/:id", couponController.deleteCoupon);
+
+router.post("/bulk-delete", async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!ids?.length) return res.status(400).json({ error: "No IDs provided" });
+
+    const Coupon = mongoose.model("Coupon");
+    const CouponClick = mongoose.model("CouponClick");
+    const FeaturedCoupon = mongoose.model("FeaturedCoupon");
+
+    await Promise.all([
+      CouponClick.deleteMany({ couponId: { $in: ids } }),
+      FeaturedCoupon.deleteMany({ couponId: { $in: ids } }),
+    ]);
+    const result = await Coupon.deleteMany({ _id: { $in: ids } });
+    res.json({ message: `${result.deletedCount} coupon(s) deleted` });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 export default router;

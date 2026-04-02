@@ -25,6 +25,11 @@ const bannerSchema = new mongoose.Schema({
   exclusive: { type: Boolean, default: false },
   secondaryImage: String,
   imagePosition: { type: String, enum: ['center', 'left', 'right', 'top', 'bottom'], default: 'right' },
+  bannerType: { type: String, enum: ['hero_left', 'hero_right', 'fullwidth'], default: 'hero_left' },
+  secondDiscount: { type: String, default: '' },
+  secondDiscountDesc: { type: String, default: '' },
+  emoji: { type: String, default: '' },
+  cardBgColor: { type: String, default: '' },
   isActive: { type: Boolean, default: true }
 }, { timestamps: true });
 

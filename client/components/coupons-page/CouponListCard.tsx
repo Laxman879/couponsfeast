@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { CheckCircle, ExternalLink } from 'lucide-react';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { trackClick } from '@/services/api';
+import PromoModal from '@/components/coupon/PromoModal';
 
 interface Props {
   coupon: any;
@@ -11,6 +12,7 @@ interface Props {
 
 export default function CouponListCard({ coupon }: Props) {
   const [revealed, setRevealed] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const { siteConfig } = useDynamicTheme();
   const primary = siteConfig?.theme?.primaryColor || '#7c3aed';
   const serverUrl = 'http://localhost:5000';
@@ -28,9 +30,11 @@ export default function CouponListCard({ coupon }: Props) {
     setRevealed(true);
     if (storeUrl) window.open(storeUrl, '_blank', 'noopener,noreferrer');
     if (coupon._id) trackClick(coupon._id).catch(() => {});
+    setShowModal(true);
   };
 
   return (
+    <>
     <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow duration-200 overflow-hidden"
       style={{ boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px' }}>
       <div className="flex items-stretch">
@@ -115,5 +119,11 @@ export default function CouponListCard({ coupon }: Props) {
         </a>
       </div>
     </div>
+    {showModal && (
+      <PromoModal onClose={() => setShowModal(false)} title={coupon.title} code={code}
+        discount={discount} storeName={storeName} storeLogo={storeLogo}
+        storeUrl={storeUrl} expiryDate={coupon.expiryDate} details={coupon.details} />
+    )}
+    </>
   );
 }

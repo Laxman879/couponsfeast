@@ -120,7 +120,7 @@ export default function CouponSidebar({ categoryName, stores, categories, select
         <p className="font-bold text-gray-900 dark:text-gray-100 mb-2 text-lg">Related Categories</p>
         <div className="space-y-2">
           {categories.slice(0, 6).map(c => (
-            <Link key={c._id} href={`/coupons/${c.name?.toLowerCase().replace(/[&\/]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-')}`}
+            <Link key={c._id} href={`/coupons/${c.name?.toLowerCase().replace(/[&\/]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-')}-coupons`}
               className="block text-sm no-underline" style={{ color: primary }}>
               {c.name} Coupons
             </Link>
@@ -135,7 +135,7 @@ export default function CouponSidebar({ categoryName, stores, categories, select
         <p className="font-bold text-gray-900 dark:text-gray-100 mb-2 text-lg">Top {categoryName} Stores</p>
         <div className="space-y-2">
           {stores.slice(0, 6).map(s => (
-            <Link key={s._id} href={`/coupons/${s.slug}`}
+            <Link key={s._id} href={`/coupons/${s.slug}-coupons`}
               className="block text-sm no-underline" style={{ color: primary }}>
               {s.storeName} Coupons
             </Link>

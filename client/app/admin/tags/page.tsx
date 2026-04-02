@@ -6,9 +6,9 @@ import {
   TextField, Drawer, IconButton
 } from '@mui/material';
 import AdminShell from '@/components/admin/AdminShell';
-import { getTags, createTag, updateTag, deleteTag } from '@/services/api';
+import { getTags, createTag, updateTag, deleteTag, bulkDeleteTags } from '@/services/api';
 import toast from 'react-hot-toast';
-import { Add, Edit, Delete, Label, Close } from '@mui/icons-material';
+import { Add, Edit, Delete, Label, Close, CheckBox, CheckBoxOutlineBlank, IndeterminateCheckBox } from '@mui/icons-material';
 
 export default function AdminTags() {
   const [tags, setTags] = useState<any[]>([]);
@@ -17,6 +17,8 @@ export default function AdminTags() {
   const [tagToDelete, setTagToDelete] = useState<any>(null);
   const [formData, setFormData] = useState({ name: '', slug: '' });
   const [editId, setEditId] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
 
   useEffect(() => { fetchTags(); }, []);
 
@@ -49,6 +51,20 @@ export default function AdminTags() {
     setDeleteOpen(false); setTagToDelete(null);
   };
 
+  const toggleSelect = (id: string) => setSelected(prev => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });
+  const toggleAll = () => setSelected(prev => prev.size === tags.length ? new Set() : new Set(tags.map((t: any) => t._id)));
+  const isAllSelected = tags.length > 0 && selected.size === tags.length;
+  const isSomeSelected = selected.size > 0 && selected.size < tags.length;
+
+  const confirmBulkDelete = async () => {
+    try {
+      const res = await bulkDeleteTags(Array.from(selected));
+      toast.success(res.data?.message || `${selected.size} tag(s) deleted`);
+      setSelected(new Set()); fetchTags();
+    } catch (error: any) { toast.error(error.response?.data?.error || 'Failed to delete tags'); }
+    setBulkDeleteOpen(false);
+  };
+
   return (
     <AdminShell>
       <div className="flex justify-between items-center mb-6 p-5 rounded-2xl" style={{ background: '#fff', boxShadow: '0 2px 16px rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.07)' }}>
@@ -59,14 +75,31 @@ export default function AdminTags() {
             <p className="text-gray-400 text-xs">Create and manage tags for coupons</p>
           </div>
         </div>
-        <Button variant="contained" startIcon={<Add />} onClick={() => setOpen(true)} size="medium"
-          style={{ background: 'linear-gradient(135deg, #a855f7, #7c3aed)', borderRadius: 12, textTransform: 'none', fontWeight: 600, boxShadow: '0 4px 12px rgba(168,85,247,0.35)' }}>Add Tag</Button>
+        <div className="flex items-center gap-3">
+          {selected.size > 0 && (
+            <Button variant="contained" startIcon={<Delete />} onClick={() => setBulkDeleteOpen(true)} size="medium"
+              style={{ background: '#ef4444', borderRadius: 12, textTransform: 'none', fontWeight: 600 }}>Delete ({selected.size})</Button>
+          )}
+          {tags.length > 0 && (
+            <Button variant="outlined" onClick={toggleAll} size="small"
+              style={{ borderColor: '#a855f7', color: '#a855f7', borderRadius: 10, textTransform: 'none', fontSize: 12 }}>
+              {isAllSelected ? 'Deselect All' : 'Select All'}
+            </Button>
+          )}
+          <Button variant="contained" startIcon={<Add />} onClick={() => setOpen(true)} size="medium"
+            style={{ background: 'linear-gradient(135deg, #a855f7, #7c3aed)', borderRadius: 12, textTransform: 'none', fontWeight: 600, boxShadow: '0 4px 12px rgba(168,85,247,0.35)' }}>Add Tag</Button>
+        </div>
       </div>
 
       <div className="rounded-2xl overflow-hidden" style={{ background: '#fff', boxShadow: '0 2px 16px rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.07)' }}>
         <Table>
           <TableHead>
             <TableRow style={{ background: 'rgba(168,85,247,0.04)' }}>
+              <TableCell padding="checkbox" style={{ width: 48 }}>
+                <IconButton size="small" onClick={toggleAll} style={{ color: '#a855f7' }}>
+                  {isAllSelected ? <CheckBox /> : isSomeSelected ? <IndeterminateCheckBox /> : <CheckBoxOutlineBlank />}
+                </IconButton>
+              </TableCell>
               {['Tag Name', 'Slug', 'Actions'].map((h, i) => (
                 <TableCell key={h} className={i === 2 ? 'text-center' : ''} style={{ color: '#a855f7', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 700 }}>{h}</TableCell>
               ))}
@@ -74,7 +107,12 @@ export default function AdminTags() {
           </TableHead>
           <TableBody>
             {tags.map((tag) => (
-              <TableRow key={tag._id} className="hover:bg-gray-50 transition-colors">
+              <TableRow key={tag._id} className="hover:bg-gray-50 transition-colors" style={{ background: selected.has(tag._id) ? 'rgba(168,85,247,0.04)' : undefined }}>
+                <TableCell padding="checkbox">
+                  <IconButton size="small" onClick={() => toggleSelect(tag._id)} style={{ color: selected.has(tag._id) ? '#a855f7' : '#d1d5db' }}>
+                    {selected.has(tag._id) ? <CheckBox /> : <CheckBoxOutlineBlank />}
+                  </IconButton>
+                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Avatar style={{ background: 'rgba(168,85,247,0.1)', color: '#a855f7', width: 36, height: 36 }}><Label style={{ fontSize: 16 }} /></Avatar>
@@ -91,7 +129,7 @@ export default function AdminTags() {
               </TableRow>
             ))}
             {tags.length === 0 && (
-              <TableRow><TableCell colSpan={3} className="text-center py-16">
+              <TableRow><TableCell colSpan={4} className="text-center py-16">
                 <div className="flex flex-col items-center gap-3">
                   <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(168,85,247,0.08)' }}><Label style={{ color: '#a855f7', fontSize: 24 }} /></div>
                   <p className="text-gray-500 font-medium">No Tags Found</p>
@@ -128,6 +166,23 @@ export default function AdminTags() {
           </div>
         </div>
       </Drawer>
+
+      {/* Bulk Delete Dialog */}
+      <Dialog open={bulkDeleteOpen} onClose={() => setBulkDeleteOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle style={{ color: '#ef4444', background: '#fef2f2' }}>
+          <div className="flex items-center gap-2"><Delete /><span>Delete {selected.size} Tag(s)</span></div>
+        </DialogTitle>
+        <DialogContent className="p-6">
+          <div className="text-center py-4">
+            <Typography variant="h6">Delete <strong>{selected.size} selected tag(s)</strong>?</Typography>
+            <p className="text-gray-500 text-sm mt-2">This action cannot be undone.</p>
+          </div>
+        </DialogContent>
+        <DialogActions className="p-6 bg-gray-50">
+          <Button onClick={() => setBulkDeleteOpen(false)} variant="outlined">Cancel</Button>
+          <Button onClick={confirmBulkDelete} variant="contained" startIcon={<Delete />} style={{ background: '#ef4444', borderRadius: 8, textTransform: 'none' }}>Delete All</Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Delete Dialog */}
       <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)} maxWidth="sm" fullWidth>

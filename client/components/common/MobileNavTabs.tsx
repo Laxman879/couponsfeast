@@ -6,11 +6,11 @@ import { usePathname } from 'next/navigation';
 const tabs = [
   { label: 'Categories', href: '/category' },
   { label: 'Stores', href: '/stores' },
-  { label: 'Brands', href: '#' },
-  { label: 'Banks', href: '#' },
-  { label: 'Festivals', href: '#' },
-  { label: 'Product Deals', href: '#' },
-  { label: 'Cities Deals', href: '#' },
+  { label: 'Brands', href: '/brands' },
+  { label: 'Banks', href: '/banks' },
+  { label: 'Festivals', href: '/festivals' },
+  { label: 'Product Deals', href: '/product-deals' },
+  { label: 'Cities Deals', href: '/cities-deals' },
 ];
 
 export default function MobileNavTabs() {

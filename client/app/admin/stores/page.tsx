@@ -6,9 +6,9 @@ import {
   TextField, Drawer, IconButton, Accordion, AccordionSummary, AccordionDetails
 } from '@mui/material';
 import AdminShell from '@/components/admin/AdminShell';
-import { getStores, createStore, updateStore, deleteStore } from '@/services/api';
+import { getStores, createStore, updateStore, deleteStore, bulkDeleteStores } from '@/services/api';
 import toast from 'react-hot-toast';
-import { Add, Edit, Delete, Store, Language, Close, ExpandMore } from '@mui/icons-material';
+import { Add, Edit, Delete, Store, Language, Close, ExpandMore, CheckBox, CheckBoxOutlineBlank, IndeterminateCheckBox } from '@mui/icons-material';
 import ImageUploadField from '@/components/admin/ImageUploadField';
 
 const defaultForm = {
@@ -34,6 +34,8 @@ export default function AdminStores() {
   const [formData, setFormData] = useState({ ...defaultForm });
   const [editId, setEditId] = useState<string | null>(null);
   const [slugManual, setSlugManual] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
 
   useEffect(() => { fetchStores(); }, []);
 
@@ -73,6 +75,20 @@ export default function AdminStores() {
     setDeleteOpen(false); setStoreToDelete(null);
   };
 
+  const toggleSelect = (id: string) => setSelected(prev => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });
+  const toggleAll = () => setSelected(prev => prev.size === stores.length ? new Set() : new Set(stores.map((s: any) => s._id)));
+  const isAllSelected = stores.length > 0 && selected.size === stores.length;
+  const isSomeSelected = selected.size > 0 && selected.size < stores.length;
+
+  const confirmBulkDelete = async () => {
+    try {
+      const res = await bulkDeleteStores(Array.from(selected));
+      toast.success(res.data?.message || `${selected.size} store(s) deleted`);
+      setSelected(new Set()); fetchStores();
+    } catch (error: any) { toast.error(error.response?.data?.error || 'Failed to delete stores'); }
+    setBulkDeleteOpen(false);
+  };
+
   const f = (field: string, val: any) => setFormData(p => ({ ...p, [field]: val }));
   const fp = (field: string, val: any) => setFormData(p => ({ ...p, promoInfo: { ...p.promoInfo, [field]: val } }));
   const fi = (field: string, val: any) => setFormData(p => ({ ...p, storeInfo: { ...p.storeInfo, [field]: val } }));
@@ -95,14 +111,31 @@ export default function AdminStores() {
             <p className="text-gray-400 text-xs">Manage your stores, logos, and store information</p>
           </div>
         </div>
-        <Button variant="contained" startIcon={<Add />} onClick={() => setOpen(true)} size="medium"
-          style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', borderRadius: 12, textTransform: 'none', fontWeight: 600, boxShadow: '0 4px 12px rgba(99,102,241,0.35)' }}>Add Store</Button>
+        <div className="flex items-center gap-3">
+          {selected.size > 0 && (
+            <Button variant="contained" startIcon={<Delete />} onClick={() => setBulkDeleteOpen(true)} size="medium"
+              style={{ background: '#ef4444', borderRadius: 12, textTransform: 'none', fontWeight: 600 }}>Delete ({selected.size})</Button>
+          )}
+          {stores.length > 0 && (
+            <Button variant="outlined" onClick={toggleAll} size="small"
+              style={{ borderColor: '#6366f1', color: '#6366f1', borderRadius: 10, textTransform: 'none', fontSize: 12 }}>
+              {isAllSelected ? 'Deselect All' : 'Select All'}
+            </Button>
+          )}
+          <Button variant="contained" startIcon={<Add />} onClick={() => setOpen(true)} size="medium"
+            style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', borderRadius: 12, textTransform: 'none', fontWeight: 600, boxShadow: '0 4px 12px rgba(99,102,241,0.35)' }}>Add Store</Button>
+        </div>
       </div>
 
       <div className="rounded-2xl overflow-hidden" style={{ background: '#fff', boxShadow: '0 2px 16px rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.07)' }}>
         <Table>
           <TableHead>
             <TableRow style={{ background: 'rgba(99,102,241,0.04)' }}>
+              <TableCell padding="checkbox" style={{ width: 48 }}>
+                <IconButton size="small" onClick={toggleAll} style={{ color: '#6366f1' }}>
+                  {isAllSelected ? <CheckBox /> : isSomeSelected ? <IndeterminateCheckBox /> : <CheckBoxOutlineBlank />}
+                </IconButton>
+              </TableCell>
               {['Store Info', 'Slug', 'Website', 'Actions'].map((h, i) => (
                 <TableCell key={h} className={i === 3 ? 'text-center' : ''} style={{ color: '#6366f1', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 700 }}>{h}</TableCell>
               ))}
@@ -110,7 +143,12 @@ export default function AdminStores() {
           </TableHead>
           <TableBody>
             {stores.map((store) => (
-              <TableRow key={store._id} className="hover:bg-gray-50 transition-colors">
+              <TableRow key={store._id} className="hover:bg-gray-50 transition-colors" style={{ background: selected.has(store._id) ? 'rgba(99,102,241,0.04)' : undefined }}>
+                <TableCell padding="checkbox">
+                  <IconButton size="small" onClick={() => toggleSelect(store._id)} style={{ color: selected.has(store._id) ? '#6366f1' : '#d1d5db' }}>
+                    {selected.has(store._id) ? <CheckBox /> : <CheckBoxOutlineBlank />}
+                  </IconButton>
+                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     {store.logo ? <Avatar src={store.logo} style={{ width: 36, height: 36 }} /> : <Avatar style={{ background: 'rgba(99,102,241,0.1)', color: '#6366f1', width: 36, height: 36 }}><Store style={{ fontSize: 16 }} /></Avatar>}
@@ -133,7 +171,7 @@ export default function AdminStores() {
               </TableRow>
             ))}
             {stores.length === 0 && (
-              <TableRow><TableCell colSpan={4} className="text-center py-16">
+              <TableRow><TableCell colSpan={5} className="text-center py-16">
                 <div className="flex flex-col items-center gap-3">
                   <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(99,102,241,0.08)' }}><Store style={{ color: '#6366f1', fontSize: 24 }} /></div>
                   <p className="text-gray-500 font-medium">No Stores Found</p>
@@ -338,6 +376,23 @@ export default function AdminStores() {
           </div>
         </div>
       </Drawer>
+
+      {/* Bulk Delete Dialog */}
+      <Dialog open={bulkDeleteOpen} onClose={() => setBulkDeleteOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle style={{ color: '#ef4444', background: '#fef2f2' }}>
+          <div className="flex items-center gap-2"><Delete /><span>Delete {selected.size} Store(s)</span></div>
+        </DialogTitle>
+        <DialogContent className="p-6">
+          <div className="text-center py-4">
+            <Typography variant="h6">Delete <strong>{selected.size} selected store(s)</strong>?</Typography>
+            <p className="text-gray-500 text-sm mt-2">This cannot be undone. Associated coupons may be affected.</p>
+          </div>
+        </DialogContent>
+        <DialogActions className="p-6 bg-gray-50">
+          <Button onClick={() => setBulkDeleteOpen(false)} variant="outlined">Cancel</Button>
+          <Button onClick={confirmBulkDelete} variant="contained" startIcon={<Delete />} style={{ background: '#ef4444', borderRadius: 8, textTransform: 'none' }}>Delete All</Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Delete Dialog */}
       <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)} maxWidth="sm" fullWidth>
