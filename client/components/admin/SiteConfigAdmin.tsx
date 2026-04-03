@@ -79,6 +79,11 @@ export default function SiteConfigAdmin() {
         { heading: 'Quick Links', links: [{ label: 'Home', href: '/' }, { label: 'Stores', href: '/stores' }, { label: 'Coupons', href: '/coupons' }] },
         { heading: 'Company', links: [{ label: 'About', href: '#' }, { label: 'Blog', href: '#' }, { label: 'Contact', href: '#' }] },
         { heading: 'Support', links: [{ label: 'Help Center', href: '#' }, { label: 'Privacy Policy', href: '#' }, { label: 'Terms', href: '#' }] },
+      ],
+      bottomLinks: [
+        { label: 'Privacy Policy', href: '/privacy-policy' },
+        { label: 'Terms & Conditions', href: '/terms-and-conditions' },
+        { label: 'Sitemap', href: '/sitemap.xml' },
       ]
     },
     fonts: {
@@ -695,16 +700,18 @@ export default function SiteConfigAdmin() {
               { key: 'navbar2', label: 'Layout 2', desc: 'Solid color + search bar' },
               { key: 'navbar3', label: 'Layout 3', desc: 'Banner + white nav + CTA' },
               { key: 'navbar4', label: 'Layout 4', desc: 'White + search + promo banner' },
-            ].map((l) => (
+            ].map((l) => {
+              const selectedNav = (config.navbar?.layout || 'navbar2') === l.key;
+              return (
               <Grid item xs={6} sm={4} md={3} key={l.key}>
                 <Box
                   onClick={() => setConfig({ ...config, navbar: { ...config.navbar, layout: l.key } })}
                   sx={{
                     cursor: 'pointer', borderRadius: 2, overflow: 'hidden',
-                    border: (config.navbar?.layout || 'navbar2') === l.key
+                    border: selectedNav
                       ? `3px solid ${config.theme.primaryColor}`
                       : '3px solid #e5e7eb',
-                    boxShadow: 1, transition: 'transform 0.15s',
+                    boxShadow: selectedNav ? 4 : 1, transition: 'transform 0.15s, box-shadow 0.15s',
                     '&:hover': { transform: 'scale(1.04)' }
                   }}
                 >
@@ -752,10 +759,12 @@ export default function SiteConfigAdmin() {
                   <Box sx={{ p: 1.5, textAlign: 'center', bgcolor: '#f9fafb' }}>
                     <Typography variant="caption" fontWeight="bold" display="block">{l.label}</Typography>
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>{l.desc}</Typography>
+                    {selectedNav && <Typography variant="caption" color="success.main" fontWeight="bold">Active</Typography>}
                   </Box>
                 </Box>
               </Grid>
-            ))}
+              );
+            })}
           </Grid>
           <Divider sx={{ mb: 3 }} />
 
@@ -768,14 +777,16 @@ export default function SiteConfigAdmin() {
               { key: 'transparent', label: 'Transparent', desc: 'Glass / transparent look',  preview: 'rgba(0,0,0,0.3)' },
               { key: 'white',       label: 'White',       desc: 'Clean white navbar',         preview: '#ffffff' },
               { key: 'dark',        label: 'Dark',        desc: 'Always dark navbar',         preview: '#1f2937' },
-            ].map((s) => (
+            ].map((s) => {
+              const selectedNavStyle = (config.navbar?.style || 'solid') === s.key;
+              return (
               <Grid item xs={6} sm={4} md={2} key={s.key}>
                 <Box
                   onClick={() => setConfig({ ...config, navbar: { ...config.navbar, style: s.key } })}
                   sx={{
                     cursor: 'pointer', borderRadius: 2, overflow: 'hidden',
-                    border: config.navbar?.style === s.key ? `3px solid ${config.theme.primaryColor}` : '3px solid #e5e7eb',
-                    boxShadow: 1, transition: 'transform 0.15s',
+                    border: selectedNavStyle ? `3px solid ${config.theme.primaryColor}` : '3px solid #e5e7eb',
+                    boxShadow: selectedNavStyle ? 4 : 1, transition: 'transform 0.15s, box-shadow 0.15s',
                     '&:hover': { transform: 'scale(1.04)' }
                   }}
                 >
@@ -787,10 +798,12 @@ export default function SiteConfigAdmin() {
                   <Box sx={{ p: 1, textAlign: 'center', bgcolor: '#f9fafb' }}>
                     <Typography variant="caption" fontWeight="bold" display="block">{s.label}</Typography>
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>{s.desc}</Typography>
+                    {selectedNavStyle && <Typography variant="caption" color="success.main" fontWeight="bold" display="block">Active</Typography>}
                   </Box>
                 </Box>
               </Grid>
-            ))}
+              );
+            })}
           </Grid>
           <Divider sx={{ mb: 3 }} />
 
@@ -893,16 +906,18 @@ export default function SiteConfigAdmin() {
               { key: 'footer2', label: 'Layout 2', desc: 'Quick links + 3 columns' },
               { key: 'footer3', label: 'Layout 3', desc: 'Social + newsletter + columns' },
               { key: 'footer4', label: 'Layout 4', desc: 'Dark + contact cards' },
-            ].map((l) => (
+            ].map((l) => {
+              const selectedLayout = (config.footerConfig?.layout || 'footer1') === l.key;
+              return (
               <Grid item xs={6} sm={4} md={3} key={l.key}>
                 <Box
                   onClick={() => setConfig({ ...config, footerConfig: { ...config.footerConfig, layout: l.key } })}
                   sx={{
                     cursor: 'pointer', borderRadius: 2, overflow: 'hidden',
-                    border: (config.footerConfig?.layout || 'footer1') === l.key
+                    border: selectedLayout
                       ? `3px solid ${config.theme.primaryColor}`
                       : '3px solid #e5e7eb',
-                    boxShadow: 1, transition: 'transform 0.15s',
+                    boxShadow: selectedLayout ? 4 : 1, transition: 'transform 0.15s, box-shadow 0.15s',
                     '&:hover': { transform: 'scale(1.04)' }
                   }}
                 >
@@ -934,10 +949,12 @@ export default function SiteConfigAdmin() {
                   <Box sx={{ p: 1.5, textAlign: 'center', bgcolor: '#f9fafb' }}>
                     <Typography variant="caption" fontWeight="bold" display="block">{l.label}</Typography>
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>{l.desc}</Typography>
+                    {selectedLayout && <Typography variant="caption" color="success.main" fontWeight="bold">Active</Typography>}
                   </Box>
                 </Box>
               </Grid>
-            ))}
+              );
+            })}
           </Grid>
           <Divider sx={{ mb: 3 }} />
 
@@ -950,14 +967,16 @@ export default function SiteConfigAdmin() {
               { key: 'dark',      label: 'Dark',      desc: 'Full dark footer',         topColor: '#111827',                    botColor: '#000000' },
               { key: 'light',     label: 'Light',     desc: 'White / light footer',     topColor: '#f9fafb',                    botColor: '#e5e7eb' },
               { key: 'branded',   label: 'Branded',   desc: 'Bold brand color footer',  topColor: config.theme.primaryColor,   botColor: config.theme.accentColor },
-            ].map((s) => (
+            ].map((s) => {
+              const selectedStyle = (config.footerConfig?.style || 'standard') === s.key;
+              return (
               <Grid item xs={6} sm={4} md={2} key={s.key}>
                 <Box
                   onClick={() => setConfig({ ...config, footerConfig: { ...config.footerConfig, style: s.key } })}
                   sx={{
                     cursor: 'pointer', borderRadius: 2, overflow: 'hidden',
-                    border: config.footerConfig?.style === s.key ? `3px solid ${config.theme.primaryColor}` : '3px solid #e5e7eb',
-                    boxShadow: 1, transition: 'transform 0.15s',
+                    border: selectedStyle ? `3px solid ${config.theme.primaryColor}` : '3px solid #e5e7eb',
+                    boxShadow: selectedStyle ? 4 : 1, transition: 'transform 0.15s, box-shadow 0.15s',
                     '&:hover': { transform: 'scale(1.04)' }
                   }}
                 >
@@ -968,10 +987,12 @@ export default function SiteConfigAdmin() {
                   <Box sx={{ p: 1, textAlign: 'center', bgcolor: '#f9fafb' }}>
                     <Typography variant="caption" fontWeight="bold" display="block">{s.label}</Typography>
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>{s.desc}</Typography>
+                    {selectedStyle && <Typography variant="caption" color="success.main" fontWeight="bold" display="block">Active</Typography>}
                   </Box>
                 </Box>
               </Grid>
-            ))}
+              );
+            })}
           </Grid>
           <Divider sx={{ mb: 3 }} />
 
@@ -1140,6 +1161,42 @@ export default function SiteConfigAdmin() {
             const cols = [...(config.footerContent?.columns || []), { heading: 'New Column', links: [{ label: 'Link', href: '#' }] }];
             setConfig({ ...config, footerContent: { ...config.footerContent, columns: cols } });
           }}>Add Column</Button>
+
+          {/* Bottom Bar Links */}
+          <Divider sx={{ my: 4 }} />
+          <Typography variant="subtitle1" fontWeight="bold" gutterBottom>Bottom Bar Links</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            These links appear at the very bottom of the footer (e.g. Privacy Policy, Terms of Service). They show across all footer layouts.
+          </Typography>
+
+          {(config.footerContent?.bottomLinks || []).map((link: any, linkIdx: number) => (
+            <Box key={linkIdx} sx={{ display: 'flex', gap: 1, mb: 1.5, alignItems: 'center' }}>
+              <Chip label={linkIdx + 1} size="small" sx={{ minWidth: 28, fontWeight: 'bold' }} />
+              <TextField size="small" label="Label" value={link.label} sx={{ flex: 1 }}
+                onChange={(e) => {
+                  const links = [...(config.footerContent?.bottomLinks || [])];
+                  links[linkIdx] = { ...link, label: e.target.value };
+                  setConfig({ ...config, footerContent: { ...config.footerContent, bottomLinks: links } });
+                }}
+              />
+              <TextField size="small" label="URL" value={link.href} sx={{ flex: 1 }}
+                onChange={(e) => {
+                  const links = [...(config.footerContent?.bottomLinks || [])];
+                  links[linkIdx] = { ...link, href: e.target.value };
+                  setConfig({ ...config, footerContent: { ...config.footerContent, bottomLinks: links } });
+                }}
+              />
+              <IconButton size="small" color="error" onClick={() => {
+                const links = (config.footerContent?.bottomLinks || []).filter((_: any, i: number) => i !== linkIdx);
+                setConfig({ ...config, footerContent: { ...config.footerContent, bottomLinks: links } });
+              }}><DeleteIcon fontSize="small" /></IconButton>
+            </Box>
+          ))}
+
+          <Button size="small" startIcon={<AddIcon />} onClick={() => {
+            const links = [...(config.footerContent?.bottomLinks || []), { label: '', href: '#' }];
+            setConfig({ ...config, footerContent: { ...config.footerContent, bottomLinks: links } });
+          }}>Add Bottom Link</Button>
         </AccordionDetails>
       </Accordion>
 

@@ -30,7 +30,7 @@ export default function FooterOne({ config }: FooterOneProps) {
   const content = siteConfig?.footerContent;
   const col0 = content?.columns?.[0] ?? { heading: '', links: [{ label: 'Cash Back', href: '#' }, { label: 'Browse Stores', href: '/stores' }, { label: 'Browse Categories', href: '/categories' }, { label: 'Blog', href: '#' }] };
   const col1 = content?.columns?.[1] ?? { heading: 'MY RMN', links: [{ label: 'My Account', href: '#' }, { label: 'Submit a Coupon', href: '#' }, { label: 'Get Help', href: '#' }] };
-  const bottomLinks = content?.columns?.[2]?.links ?? [{ label: 'Terms of Service', href: '#' }, { label: 'Privacy Policy', href: '#' }, { label: 'Sitemap', href: '#' }];
+  const bottomLinks = content?.bottomLinks ?? content?.columns?.[2]?.links ?? [{ label: 'Terms & Conditions', href: '/terms-and-conditions' }, { label: 'Privacy Policy', href: '/privacy-policy' }, { label: 'Sitemap', href: '/sitemap.xml' }];
 
   return (
     <footer className="text-white" style={{ backgroundColor: primary }}>

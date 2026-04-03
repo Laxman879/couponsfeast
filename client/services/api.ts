@@ -100,10 +100,11 @@ export const updateFeaturedCoupon = (id: string, data: any) => api.put(`/admin/f
 export const deleteFeaturedCoupon = (id: string) => api.delete(`/admin/featured-coupons/delete/${id}`);
 
 // Footer
-export const getFooter = () => api.get('/admin/footer/links/list');
-export const createFooterLink = (data: any) => api.post('/admin/footer/links/create', data);
-export const updateFooterLink = (id: string, data: any) => api.put(`/admin/footer/links/update/${id}`, data);
-export const deleteFooterLink = (id: string) => api.delete(`/admin/footer/links/delete/${id}`);
+export const getFooter = () => api.get('/admin/footer');
+export const getAllFooterLinksAdmin = () => api.get('/admin/footer');
+export const createFooterLink = (data: any) => api.post('/admin/footer/create', data);
+export const updateFooterLink = (id: string, data: any) => api.put(`/admin/footer/${id}`, data);
+export const deleteFooterLink = (id: string) => api.delete(`/admin/footer/${id}`);
 
 // Tags
 export const getTags = () => api.get('/public/tags/list');

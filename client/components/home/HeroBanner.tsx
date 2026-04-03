@@ -36,13 +36,14 @@ export default function HeroBanner() {
           name: b.label || b.title?.split(' ')[0] || '',
           bgColor: b.bgColor || '#673de6',
           title: b.discount || b.title || '',
-          sub1: b.title || '',
+          sub1: (b.title && b.title !== b.label) ? b.title : '',
           sub2: b.secondDiscount || (b.couponCode ? `CODE: ${b.couponCode}` : ''),
-          sub2desc: b.secondDiscountDesc || b.description || '',
-          cta: b.cta || shopNow,
+          sub2desc: b.secondDiscountDesc ?? b.description ?? '',
+          cta: b.cta ?? '',
           image: b.image || '',
           emoji: b.emoji || '',
           link: b.storeUrl || b.buttonLink || '',
+          isImageOnly: !!(b.image && !b.discount && !b.title && !b.cta),
           // modal data
           storeName: (b.store as any)?.storeName || b.label || '',
           storeLogo: (b.store as any)?.logo || '',
@@ -55,8 +56,8 @@ export default function HeroBanner() {
         const right = active.filter((b: any) => b.bannerType === 'hero_right').map((b: any) => ({
           name: b.label || b.title?.split(' ')[0] || '',
           badge: b.discount || 'DEAL',
-          desc: b.title || '',
-          cta: b.cta || shopNow,
+          desc: b.title ?? '',
+          cta: b.cta ?? '',
           emoji: b.emoji || '',
           image: b.image || '',
           cardBgColor: b.cardBgColor || '',
@@ -100,21 +101,27 @@ export default function HeroBanner() {
         {/* LEFT: Main Banner */}
         <div className="flex-1 min-w-0">
           <div className="relative rounded-xl overflow-hidden">
-            <div className="min-h-[280px] md:min-h-[350px] flex flex-col justify-center relative"
+            <div className="min-h-[280px] md:min-h-[350px] flex flex-col justify-center relative cursor-pointer"
+              onClick={() => {
+                if (brand.code) navigator.clipboard.writeText(brand.code).catch(() => {});
+                if (brand.link) window.open(brand.link, '_blank', 'noopener,noreferrer');
+                setModalData(brand);
+              }}
               style={{ background: !brand.image ? `linear-gradient(135deg, ${brand.bgColor}, ${brand.bgColor}cc)` : undefined }}>
               {brand.image && (
                 <>
                   <img src={brand.image} alt="" className="absolute inset-0 w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-black/40" />
+                  {!brand.isImageOnly && <div className="absolute inset-0 bg-black/40" />}
                 </>
               )}
+              {!brand.isImageOnly && (
               <div className="relative z-10 p-6 md:p-8">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-white text-lg font-extrabold uppercase tracking-wide">{brand.name}</span>
                 </div>
 
                 <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-1">{brand.title}</h2>
-                <p className="text-white/80 text-sm font-medium mb-3">{brand.sub1}</p>
+                {brand.sub1 && <p className="text-white/80 text-sm font-medium mb-3">{brand.sub1}</p>}
 
                 {brand.sub2 && (
                   <>
@@ -124,8 +131,11 @@ export default function HeroBanner() {
                   </>
                 )}
 
+                {brand.cta && (
                 <button
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (brand.code) navigator.clipboard.writeText(brand.code).catch(() => {});
                     if (brand.link) window.open(brand.link, '_blank', 'noopener,noreferrer');
                     setModalData(brand);
                   }}
@@ -133,7 +143,9 @@ export default function HeroBanner() {
                   style={{ backgroundColor: cardBg, color: primary }}>
                   {brand.cta}
                 </button>
+                )}
               </div>
+              )}
 
               {!brand.image && brand.emoji && (
                 <div className="absolute right-6 top-1/2 -translate-y-1/2 text-8xl md:text-9xl opacity-90 select-none">
@@ -161,7 +173,12 @@ export default function HeroBanner() {
         {/* RIGHT: Card Panel */}
         {rightCard && (
           <div className="w-[260px] shrink-0 hidden md:flex flex-col">
-            <div className="rounded-t-xl flex-1 flex flex-col justify-between min-h-[180px] md:min-h-[230px] relative overflow-hidden"
+            <div className="rounded-t-xl flex-1 flex flex-col justify-between min-h-[180px] md:min-h-[230px] relative overflow-hidden cursor-pointer"
+              onClick={() => {
+                if (rightCard.code) navigator.clipboard.writeText(rightCard.code).catch(() => {});
+                if (rightCard.link) window.open(rightCard.link, '_blank', 'noopener,noreferrer');
+                setModalData(rightCard);
+              }}
               style={{ background: !rightCard.image ? (rightCard.cardBgColor ? `linear-gradient(135deg, ${rightCard.cardBgColor}, ${rightCard.cardBgColor}cc)` : `linear-gradient(135deg, ${primary}, ${secondary})`) : undefined }}>
               {rightCard.image ? (
                 <img src={rightCard.image} alt="" className="w-full h-full object-cover absolute inset-0" />
@@ -169,18 +186,20 @@ export default function HeroBanner() {
                 <div className="text-6xl absolute right-4 bottom-2 opacity-70 select-none">{rightCard.emoji}</div>
               ) : null}
               <div className="relative z-10 p-5">
-                <span className="inline-block px-2 py-0.5 bg-white/20 text-white text-xs font-bold rounded mb-2 backdrop-blur-sm">{rightCard.badge}</span>
+                <span className="inline-block px-2 py-0.5 text-xs font-bold rounded mb-2 backdrop-blur-sm" style={{ backgroundColor: `${primary}cc`, color: '#ffffff' }}>{rightCard.badge}</span>
               </div>
             </div>
 
             <div className="border border-t-0 rounded-b-xl p-4 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderClr }}>
               <p className="text-xs font-bold mb-1" style={{ color: mutedText }}>{rightCard.badge}</p>
               <p className="text-xs leading-relaxed mb-3" style={{ color: textColor }}>{rightCard.desc}</p>
-              <button onClick={() => {
+              {rightCard.cta && <button onClick={(e) => {
+                    e.stopPropagation();
+                    if (rightCard.code) navigator.clipboard.writeText(rightCard.code).catch(() => {});
                     if (rightCard.link) window.open(rightCard.link, '_blank', 'noopener,noreferrer');
                     setModalData(rightCard);
                   }}
-                className="text-xs font-bold hover:underline tracking-wide cursor-pointer" style={{ color: primary }}>{rightCard.cta}</button>
+                className="text-xs font-bold hover:underline tracking-wide cursor-pointer" style={{ color: primary }}>{rightCard.cta}</button>}
             </div>
 
             {/* Right tabs */}

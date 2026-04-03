@@ -2,7 +2,7 @@
 
 import { Dialog, DialogContent, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDynamicTheme } from "@/components/DynamicThemeProvider";
 import { useTheme } from "@/components/ThemeProvider";
 
@@ -41,6 +41,16 @@ export default function CouponModal({
   const cashbackText = isDark ? darkPalette.text : '#1e40af';
   const inputBg = isDark ? darkPalette.cardBg : '#ffffff';
   const inputText = isDark ? darkPalette.text : '#111827';
+
+  // Auto-copy code when modal opens
+  useEffect(() => {
+    if (open && couponCode) {
+      navigator.clipboard.writeText(couponCode).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500);
+      }).catch(() => {});
+    }
+  }, [open, couponCode]);
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(couponCode);
@@ -120,8 +130,8 @@ export default function CouponModal({
 
           <p className="text-sm mb-4" style={{ color: subText }}>
             By continuing, you agree to our{" "}
-            <span className="underline" style={{ color: primary }}>Terms of Service</span> and{" "}
-            <span className="underline" style={{ color: primary }}>Privacy Policy</span>
+            <span className="underline" style={{ color: primary }}><a href="/terms-and-conditions" style={{ color: 'inherit' }}>Terms & Conditions</a></span> and{" "}
+            <span className="underline" style={{ color: primary }}><a href="/privacy-policy" style={{ color: 'inherit' }}>Privacy Policy</a></span>
           </p>
 
           {/* Email */}

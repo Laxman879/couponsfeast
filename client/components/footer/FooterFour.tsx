@@ -126,8 +126,8 @@ export default function FooterFour({ config }: FooterFourProps) {
             {siteConfig?.footer?.copyright || `© ${new Date().getFullYear()} ${siteName}. All Rights Reserved.`}
           </p>
           <div className="flex flex-wrap justify-center gap-5 md:gap-9">
-            {['Privacy Policy', 'Terms of Service', 'About Us'].map(item => (
-              <a key={item} href="#" className="text-sm no-underline transition-colors hover:opacity-80" style={{ color: textMuted }}>{item}</a>
+            {(content?.bottomLinks || [{ label: 'Privacy Policy', href: '/privacy-policy' }, { label: 'Terms & Conditions', href: '/terms-and-conditions' }, { label: 'About Us', href: '/about-us' }]).map((item: any) => (
+              <a key={item.label} href={item.href} className="text-sm no-underline transition-colors hover:opacity-80" style={{ color: textMuted }}>{item.label}</a>
             ))}
           </div>
         </div>

@@ -23,6 +23,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { getNavigation, updateNavigation, getPage, updatePage, getCategories, createCategory, updateCategory, deleteCategory, getPopularStores, createPopularStore, updatePopularStore, deletePopularStore, getAllFooterLinksAdmin, createFooterLink, updateFooterLink, deleteFooterLink, getAllPages, createPage, deletePage, getSiteConfig, updateSiteConfig } from '@/services/api';
+
 import SiteConfigAdmin from '@/components/admin/SiteConfigAdmin';
 import AdminShell from '@/components/admin/AdminShell';
 import toast from 'react-hot-toast';
@@ -96,7 +97,7 @@ export default function CMSAdmin() {
       setCategories(categoriesRes.data);
       setPopularStores(storesRes.data);
       setFooterLinks(footerLinksRes.data.data);
-      setPages(pagesRes.data || []);
+      setPages(pagesRes.data?.data || pagesRes.data || []);
       setFaqHeading(cfgRes.data?.faqs?.heading || 'Frequently Asked Questions');
       setFaqShowOn(cfgRes.data?.faqs?.showOn || 'both');
       setFaqItems(cfgRes.data?.faqs?.items || []);

@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Copy, Check, ExternalLink } from 'lucide-react';
 
 interface PromoModalProps {
@@ -19,6 +19,16 @@ export default function PromoModal({
 }: PromoModalProps) {
   const [copied, setCopied] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+
+  // Auto-copy code to clipboard when modal opens
+  useEffect(() => {
+    if (code) {
+      navigator.clipboard.writeText(code).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500);
+      }).catch(() => {});
+    }
+  }, [code]);
 
   const handleCopy = () => {
     if (code) {
@@ -116,8 +126,8 @@ export default function PromoModal({
             <h3 className="text-center text-base font-bold text-gray-900 mb-4">Add 1% cash back to this offer</h3>
             <p className="text-center text-xs text-gray-400 mb-4 leading-relaxed">
               By continuing, you agree to our{' '}
-              <a href="#" className="underline text-gray-600">Terms</a>{' '}and{' '}
-              <a href="#" className="underline text-gray-600">Privacy Policy</a>
+              <a href="/terms-and-conditions" className="underline text-gray-600">Terms</a>{' '}and{' '}
+              <a href="/privacy-policy" className="underline text-gray-600">Privacy Policy</a>
             </p>
             <input
               type="email"

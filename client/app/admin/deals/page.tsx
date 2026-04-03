@@ -33,6 +33,14 @@ const emptyForm: Deal = {
   isActive: true, isFeatured: false, section: '',
 };
 
+const inputSx = {
+  '& .MuiOutlinedInput-root': {
+    minHeight: 48,
+    borderRadius: '8px',
+    '& textarea': { border: 'none', outline: 'none' },
+  },
+};
+
 const sectionLabels: Record<string, string> = {
   popular_offers: 'Popular Offers of the Day',
   popular_stores: 'Popular Stores',
@@ -257,15 +265,13 @@ export default function DealsManagement() {
         </div>
         <div className="flex-1 overflow-y-auto px-6 py-5">
           <div className="flex flex-col gap-5">
-            <TextField label="Title *" value={formData.title} onChange={(e) => set({ title: e.target.value })} fullWidth placeholder="e.g., 30% Off Train Essentials"
-              InputProps={{ sx: { height: 52, fontSize: 15 } }} />
-            <TextField label="Description" value={formData.description} onChange={(e) => set({ description: e.target.value })} fullWidth placeholder="Brief description of the deal" multiline rows={2} />
+            <TextField label="Title *" value={formData.title} onChange={(e) => set({ title: e.target.value })} fullWidth placeholder="e.g., 30% Off Train Essentials" sx={inputSx} />
+            <TextField label="Description" value={formData.description} onChange={(e) => set({ description: e.target.value })} fullWidth placeholder="Brief description of the deal" multiline rows={2} sx={inputSx} />
             <div className="grid grid-cols-2 gap-4">
-              <TextField label="Discount" value={formData.discount} onChange={(e) => set({ discount: e.target.value })} fullWidth placeholder="e.g., 30% Off"
-                InputProps={{ sx: { height: 48 } }} />
+              <TextField label="Discount" value={formData.discount} onChange={(e) => set({ discount: e.target.value })} fullWidth placeholder="e.g., 30% Off" sx={inputSx} />
               <TextField label="Store" value={formData.store || ''} onChange={(e) => set({ store: e.target.value })} fullWidth select
                 InputLabelProps={{ shrink: true }}
-                sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                sx={inputSx}
                 SelectProps={{ displayEmpty: true, renderValue: (val: any) => {
                   if (!val) return <span style={{ color: '#9ca3af' }}>Select Store</span>;
                   const s = stores.find((st: any) => st._id === val);
@@ -276,11 +282,10 @@ export default function DealsManagement() {
               </TextField>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <TextField label="Category" value={formData.category} onChange={(e) => set({ category: e.target.value })} fullWidth placeholder="e.g., Fashion"
-                InputProps={{ sx: { height: 48 } }} />
+              <TextField label="Category" value={formData.category} onChange={(e) => set({ category: e.target.value })} fullWidth placeholder="e.g., Fashion" sx={inputSx} />
               <TextField label="Type" value={formData.type || 'deal'} onChange={(e) => set({ type: e.target.value })} fullWidth select
                 InputLabelProps={{ shrink: true }}
-                sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                sx={inputSx}
                 SelectProps={{ displayEmpty: true, renderValue: (val: any) => {
                   if (!val) return <span style={{ color: '#9ca3af' }}>Select Type</span>;
                   const labels: Record<string, string> = { deal: 'Deal', offer: 'Offer', clearance: 'Clearance', flash: 'Flash Sale' };
@@ -295,9 +300,8 @@ export default function DealsManagement() {
             <TextField label="Product / Deal URL (Check Price button opens this)" value={formData.link} onChange={(e) => set({ link: e.target.value })} fullWidth
               placeholder="https://www.amazon.in/dp/B0F1BPM734?tag=couponsfeast-21"
               helperText='This URL opens in a new tab when user clicks "Check price" button'
-              InputProps={{ sx: { height: 48 } }} />
-            <TextField label="Expiry Date" type="date" value={formData.expiryDate ? formData.expiryDate.split('T')[0] : ''} onChange={(e) => set({ expiryDate: e.target.value })} fullWidth InputLabelProps={{ shrink: true }}
-              InputProps={{ sx: { height: 48 } }} />
+              sx={inputSx} />
+            <TextField label="Expiry Date" type="date" value={formData.expiryDate ? formData.expiryDate.split('T')[0] : ''} onChange={(e) => set({ expiryDate: e.target.value })} fullWidth InputLabelProps={{ shrink: true }} sx={inputSx} />
 
             {/* Deal Image (card background) */}
             <ImageUploadField
@@ -321,7 +325,7 @@ export default function DealsManagement() {
             <TextField label="Homepage Section" value={formData.section || ''} onChange={(e) => set({ section: e.target.value })} fullWidth select
               helperText="Which homepage section should this deal appear in?"
               InputLabelProps={{ shrink: true }}
-              sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+              sx={inputSx}
               SelectProps={{ displayEmpty: true, renderValue: (val: any) => {
                 if (!val) return <span style={{ color: '#9ca3af' }}>No section (general deal)</span>;
                 return sectionLabels[val] || val;
