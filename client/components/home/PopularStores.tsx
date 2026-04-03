@@ -156,7 +156,7 @@ export default function PopularStores() {
                 className="rounded-2xl border overflow-hidden flex items-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
                 style={{ backgroundColor: cardBg, borderColor: borderClr, height: 100 }}
               >
-                <img src={logoUrl(store)} alt={store.name || store.storeName} className="w-full h-full object-cover" />
+                <img src={logoUrl(store)} alt={store.name || store.storeName} className="w-3/4 h-3/4 object-contain" />
               </div>
               <p className="mt-2 text-sm font-semibold flex items-center justify-center gap-1" style={{ color: textColor }}>
                 {store.name || store.storeName}
