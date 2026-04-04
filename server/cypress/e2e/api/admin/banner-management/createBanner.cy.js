@@ -1,4 +1,6 @@
 describe('Admin - Create Banner API', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = Cypress.env('apiUrl') || 'http://localhost:5000';
   const endpoint = '/api/admin/banner/create';
 
@@ -23,7 +25,7 @@ describe('Admin - Create Banner API', () => {
       isActive: true
     };
 
-    cy.request('POST', `${baseUrl}${endpoint}`, bannerData)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, bannerData)
       .then((response) => {
         expect(response.status).to.eq(201);
         if (response.body.success) {
@@ -59,7 +61,7 @@ describe('Admin - Create Banner API', () => {
       subtitle: 'Missing title field'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: incompleteData,
@@ -76,7 +78,7 @@ describe('Admin - Create Banner API', () => {
       title: 'Minimal Banner'
     };
 
-    cy.request('POST', `${baseUrl}${endpoint}`, minimalData)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, minimalData)
       .then((response) => {
         expect(response.status).to.eq(201);
         expect(response.body.data).to.have.property('title', minimalData.title);
@@ -95,7 +97,7 @@ describe('Admin - Create Banner API', () => {
       buttonLink: {}   // Should be string
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: invalidData,
@@ -112,7 +114,7 @@ describe('Admin - Create Banner API', () => {
       title: 'Default Values Test'
     };
 
-    cy.request('POST', `${baseUrl}${endpoint}`, basicData)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, basicData)
       .then((response) => {
         expect(response.status).to.eq(201);
         expect(response.body.data).to.have.property('title', basicData.title);
@@ -135,7 +137,7 @@ describe('Admin - Create Banner API', () => {
       buttonLink: 'https://example.com/' + 'l'.repeat(200)
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: maxLengthData,
@@ -160,7 +162,7 @@ describe('Admin - Create Banner API', () => {
       buttonLink: ''
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: emptyData,
@@ -182,7 +184,7 @@ describe('Admin - Create Banner API', () => {
       isActive: true
     };
 
-    cy.request('POST', `${baseUrl}${endpoint}`, specialCharData)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, specialCharData)
       .then((response) => {
         expect(response.status).to.eq(201);
         expect(response.body.data.title).to.include('Special');
@@ -200,7 +202,7 @@ describe('Admin - Create Banner API', () => {
       isActive: true
     };
 
-    cy.request('POST', `${baseUrl}${endpoint}`, unicodeData)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, unicodeData)
       .then((response) => {
         expect(response.status).to.eq(201);
         expect(response.body.data.title).to.include('测试');
@@ -218,7 +220,7 @@ describe('Admin - Create Banner API', () => {
       isActive: true
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: invalidUrlData,
@@ -243,7 +245,7 @@ describe('Admin - Create Banner API', () => {
       isActive: true
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: nullData,
@@ -265,7 +267,7 @@ describe('Admin - Create Banner API', () => {
 
     const startTime = Date.now();
     
-    cy.request('POST', `${baseUrl}${endpoint}`, bannerData)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, bannerData)
       .then((response) => {
         const responseTime = Date.now() - startTime;
         expect(response.status).to.eq(201);
@@ -276,7 +278,7 @@ describe('Admin - Create Banner API', () => {
   // Test Case 13: Concurrent banner creation
   it('should handle concurrent banner creation', () => {
     // Sequential requests to avoid Promise.all timeout
-    cy.request('POST', `${baseUrl}${endpoint}`, {
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, {
       title: 'Concurrent Banner 1',
       subtitle: 'Subtitle 1',
       isActive: true
@@ -285,7 +287,7 @@ describe('Admin - Create Banner API', () => {
       expect(response.body.data.title).to.include('1');
     });
     
-    cy.request('POST', `${baseUrl}${endpoint}`, {
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, {
       title: 'Concurrent Banner 2',
       subtitle: 'Subtitle 2',
       isActive: true
@@ -294,7 +296,7 @@ describe('Admin - Create Banner API', () => {
       expect(response.body.data.title).to.include('2');
     });
     
-    cy.request('POST', `${baseUrl}${endpoint}`, {
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, {
       title: 'Concurrent Banner 3',
       subtitle: 'Subtitle 3',
       isActive: true
@@ -316,7 +318,7 @@ describe('Admin - Create Banner API', () => {
       extraData: 'E'.repeat(2000) // Large additional field
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: largeData,
@@ -337,7 +339,7 @@ describe('Admin - Create Banner API', () => {
     };
 
     // Test with wrong Content-Type
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: bannerData,
@@ -350,7 +352,7 @@ describe('Admin - Create Banner API', () => {
     });
 
     // Test with correct Content-Type
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: bannerData,

@@ -8,8 +8,9 @@ interface Props {
 
 export default function CategoryCard({ icon: Icon, name }: Props) {
   const slug = name.toLowerCase().replace(/[&\/]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
+  const cleanSlug = slug.replace(/-coupons$/, '');
   return (
-    <Link href={`/coupons/${slug}-coupons`} className="text-center cursor-pointer group no-underline block">
+    <Link href={`/coupons/${cleanSlug}-coupons`} className="text-center cursor-pointer group no-underline block">
       <div
         className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 flex items-center justify-center hover:border-primary/30 transition-all min-h-[80px]"
         style={{ boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px' }}

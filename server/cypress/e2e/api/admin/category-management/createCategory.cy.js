@@ -1,4 +1,6 @@
 describe('Admin API - Create Category', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
 
@@ -7,7 +9,7 @@ describe('Admin API - Create Category', () => {
   });
 
   it('should create category successfully with valid data', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/categories/create`,
       body: {
@@ -23,7 +25,7 @@ describe('Admin API - Create Category', () => {
   });
 
   it('should return 400 for missing required fields', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/categories/create`,
       body: {},
@@ -35,7 +37,7 @@ describe('Admin API - Create Category', () => {
   });
 
   it('should return 400 for invalid category name', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/categories/create`,
       body: {
@@ -55,9 +57,9 @@ describe('Admin API - Create Category', () => {
       slug: `duplicate-${timestamp}`
     };
 
-    cy.request('POST', `${baseUrl}/categories/create`, categoryData);
+    cy.authRequest('POST', `${baseUrl}/categories/create`, categoryData);
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/categories/create`,
       body: categoryData,
@@ -69,7 +71,7 @@ describe('Admin API - Create Category', () => {
   });
 
   it('should handle very long category names', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/categories/create`,
       body: {
@@ -83,7 +85,7 @@ describe('Admin API - Create Category', () => {
   });
 
   it('should create category with unicode characters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/categories/create`,
       body: {
@@ -98,7 +100,7 @@ describe('Admin API - Create Category', () => {
   });
 
   it('should validate slug format', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/categories/create`,
       body: {
@@ -112,7 +114,7 @@ describe('Admin API - Create Category', () => {
   });
 
   it('should handle special characters in description', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/categories/create`,
       body: {
@@ -126,7 +128,7 @@ describe('Admin API - Create Category', () => {
   });
 
   it('should return proper response structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/categories/create`,
       body: {
@@ -142,7 +144,7 @@ describe('Admin API - Create Category', () => {
 
   it('should handle concurrent category creation', () => {
     const requests = Array.from({length: 3}, (_, i) => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/categories/create`,
         body: {
@@ -162,7 +164,7 @@ describe('Admin API - Create Category', () => {
 
   it('should respond within acceptable time', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/categories/create`,
       body: {
@@ -177,7 +179,7 @@ describe('Admin API - Create Category', () => {
   });
 
   it('should handle malformed JSON', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/categories/create`,
       body: 'invalid json',
@@ -189,7 +191,7 @@ describe('Admin API - Create Category', () => {
   });
 
   it('should validate required content-type header', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/categories/create`,
       body: {
@@ -204,7 +206,7 @@ describe('Admin API - Create Category', () => {
   });
 
   it('should auto-generate slug if not provided', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/categories/create`,
       body: {
@@ -225,7 +227,7 @@ describe('Admin API - Create Category', () => {
       description: 'Data integrity test'
     };
 
-    cy.request('POST', `${baseUrl}/categories/create`, categoryData).then((createResponse) => {
+    cy.authRequest('POST', `${baseUrl}/categories/create`, categoryData).then((createResponse) => {
       expect(createResponse.status).to.eq(201);
       const categoryId = createResponse.body._id;
 

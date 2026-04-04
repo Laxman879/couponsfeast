@@ -128,6 +128,23 @@ export const getBanners = async (req, res) => {
 export const createBanner = async (req, res) => {
   try {
     const bannerData = { ...req.body };
+
+    // Validate required fields
+    if (!bannerData.title || (typeof bannerData.title === 'string' && !bannerData.title.trim())) {
+      return res.status(400).json({ success: false, error: 'Title is required' });
+    }
+
+    // Validate data types
+    const stringFields = ['title', 'subtitle', 'buttonText', 'buttonLink', 'image'];
+    for (const field of stringFields) {
+      if (bannerData[field] !== undefined && bannerData[field] !== null && typeof bannerData[field] !== 'string') {
+        return res.status(400).json({ success: false, error: `${field} must be a string` });
+      }
+    }
+    if (bannerData.isActive !== undefined && typeof bannerData.isActive !== 'boolean') {
+      return res.status(400).json({ success: false, error: 'isActive must be a boolean' });
+    }
+
     if (!bannerData.store) delete bannerData.store;
     if (bannerData.isActive === undefined) bannerData.isActive = true;
     

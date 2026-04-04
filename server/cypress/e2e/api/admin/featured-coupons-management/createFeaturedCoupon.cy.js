@@ -1,4 +1,6 @@
 describe('Admin API - Create Featured Coupon', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
   let testStoreId;
@@ -6,7 +8,7 @@ describe('Admin API - Create Featured Coupon', () => {
   beforeEach(() => {
     cy.task('clearDatabase');
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/stores/create`,
       body: {
@@ -26,7 +28,7 @@ describe('Admin API - Create Featured Coupon', () => {
   });
 
   it('should create featured coupon successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/featured-coupons/create`,
       body: {
@@ -49,7 +51,7 @@ describe('Admin API - Create Featured Coupon', () => {
   });
 
   it('should return 400 for missing required fields', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/featured-coupons/create`,
       body: {},
@@ -63,7 +65,7 @@ describe('Admin API - Create Featured Coupon', () => {
   });
 
   it('should validate coupon title requirements', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/featured-coupons/create`,
       body: {
@@ -90,14 +92,14 @@ describe('Admin API - Create Featured Coupon', () => {
       isFeatured: true
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/featured-coupons/create`,
       body: couponData,
       failOnStatusCode: false
     });
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/featured-coupons/create`,
       body: couponData,
@@ -111,7 +113,7 @@ describe('Admin API - Create Featured Coupon', () => {
   });
 
   it('should auto-set isFeatured to true', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/featured-coupons/create`,
       body: {
@@ -130,7 +132,7 @@ describe('Admin API - Create Featured Coupon', () => {
   });
 
   it('should validate discount value range', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/featured-coupons/create`,
       body: {
@@ -146,7 +148,7 @@ describe('Admin API - Create Featured Coupon', () => {
   });
 
   it('should handle unicode characters in coupon title', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/featured-coupons/create`,
       body: {
@@ -166,7 +168,7 @@ describe('Admin API - Create Featured Coupon', () => {
   });
 
   it('should validate store reference', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/featured-coupons/create`,
       body: {
@@ -183,7 +185,7 @@ describe('Admin API - Create Featured Coupon', () => {
   });
 
   it('should set default values for optional fields', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/featured-coupons/create`,
       body: {
@@ -204,7 +206,7 @@ describe('Admin API - Create Featured Coupon', () => {
 
   it('should handle concurrent coupon creation', () => {
     const requests = Array.from({length: 3}, (_, i) => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/featured-coupons/create`,
         body: {
@@ -230,7 +232,7 @@ describe('Admin API - Create Featured Coupon', () => {
 
   it('should respond within acceptable time', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/featured-coupons/create`,
       body: {
@@ -248,7 +250,7 @@ describe('Admin API - Create Featured Coupon', () => {
   });
 
   it('should handle malformed JSON', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/featured-coupons/create`,
       body: 'invalid json',
@@ -260,7 +262,7 @@ describe('Admin API - Create Featured Coupon', () => {
   });
 
   it('should validate expiry date format', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/featured-coupons/create`,
       body: {
@@ -277,7 +279,7 @@ describe('Admin API - Create Featured Coupon', () => {
   });
 
   it('should initialize click count and metrics', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/featured-coupons/create`,
       body: {
@@ -304,7 +306,7 @@ describe('Admin API - Create Featured Coupon', () => {
       description: 'Data integrity test'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/featured-coupons/create`,
       body: couponData,
@@ -315,7 +317,7 @@ describe('Admin API - Create Featured Coupon', () => {
       if (createResponse.status === 201) {
         const couponId = createResponse.body.data._id;
 
-        cy.request({
+        cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
           url: `${baseUrl}/coupons/${couponId}`,
           failOnStatusCode: false
         }).then((getResponse) => {

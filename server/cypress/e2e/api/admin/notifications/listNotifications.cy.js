@@ -1,4 +1,6 @@
 describe('Admin API - List Notifications', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
 
@@ -7,7 +9,7 @@ describe('Admin API - List Notifications', () => {
       cy.task('clearDatabase');
       
       Array.from({length: 3}, (_, i) => {
-        cy.request({
+        cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
           method: 'POST',
           url: `${baseUrl}/notifications/send`,
           body: {
@@ -22,7 +24,7 @@ describe('Admin API - List Notifications', () => {
     });
 
     it('should list notifications successfully', () => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/notifications`,
         failOnStatusCode: false
@@ -36,7 +38,7 @@ describe('Admin API - List Notifications', () => {
     });
 
     it('should handle pagination', () => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/notifications?page=1&limit=2`,
         failOnStatusCode: false
@@ -52,7 +54,7 @@ describe('Admin API - List Notifications', () => {
     });
 
     it('should filter by type', () => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/notifications?type=info`,
         failOnStatusCode: false
@@ -72,7 +74,7 @@ describe('Admin API - List Notifications', () => {
     });
 
     it('should filter by status', () => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/notifications?status=sent`,
         failOnStatusCode: false
@@ -82,7 +84,7 @@ describe('Admin API - List Notifications', () => {
     });
 
     it('should sort by creation date', () => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/notifications?sortBy=createdAt&order=desc`,
         failOnStatusCode: false
@@ -102,7 +104,7 @@ describe('Admin API - List Notifications', () => {
     });
 
     it('should include notification metadata', () => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/notifications`,
         failOnStatusCode: false
@@ -122,7 +124,7 @@ describe('Admin API - List Notifications', () => {
     });
 
     it('should search notifications', () => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/notifications?search=Notification`,
         failOnStatusCode: false
@@ -141,7 +143,7 @@ describe('Admin API - List Notifications', () => {
 
     it('should respond within time limit', () => {
       const startTime = Date.now();
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/notifications`,
         failOnStatusCode: false
@@ -153,7 +155,7 @@ describe('Admin API - List Notifications', () => {
     });
 
     it('should handle concurrent requests', () => {
-      const requests = Array.from({length: 5}, () => cy.request({
+      const requests = Array.from({length: 5}, () => cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/notifications`,
         failOnStatusCode: false
@@ -166,7 +168,7 @@ describe('Admin API - List Notifications', () => {
     });
 
     it('should include total count', () => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/notifications`,
         failOnStatusCode: false
@@ -181,7 +183,7 @@ describe('Admin API - List Notifications', () => {
     });
 
     it('should return proper structure', () => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/notifications`,
         failOnStatusCode: false
@@ -196,7 +198,7 @@ describe('Admin API - List Notifications', () => {
     });
 
     it('should handle invalid parameters', () => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/notifications?page=-1&limit=0`,
         failOnStatusCode: false
@@ -207,7 +209,7 @@ describe('Admin API - List Notifications', () => {
 
     it('should filter by date range', () => {
       const today = new Date().toISOString().split('T')[0];
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/notifications?startDate=${today}`,
         failOnStatusCode: false
@@ -217,12 +219,12 @@ describe('Admin API - List Notifications', () => {
     });
 
     it('should maintain consistency', () => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/notifications`,
         failOnStatusCode: false
       }).then((first) => {
-        cy.request({
+        cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
           method: 'GET',
           url: `${baseUrl}/notifications`,
           failOnStatusCode: false

@@ -1,4 +1,6 @@
 describe('Admin API - List Uploads', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
 
@@ -7,7 +9,7 @@ describe('Admin API - List Uploads', () => {
   });
 
   it('should handle list uploads endpoint (may be unimplemented)', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/uploads`,
       failOnStatusCode: false
@@ -21,7 +23,7 @@ describe('Admin API - List Uploads', () => {
   });
 
   it('should handle pagination (if implemented)', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/uploads?page=1&limit=3`,
       failOnStatusCode: false
@@ -31,7 +33,7 @@ describe('Admin API - List Uploads', () => {
   });
 
   it('should handle sorting (if implemented)', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/uploads?sortBy=createdAt&order=desc`,
       failOnStatusCode: false
@@ -41,7 +43,7 @@ describe('Admin API - List Uploads', () => {
   });
 
   it('should handle filtering (if implemented)', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/uploads?type=image`,
       failOnStatusCode: false
@@ -51,7 +53,7 @@ describe('Admin API - List Uploads', () => {
   });
 
   it('should handle empty uploads list', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/uploads`,
       failOnStatusCode: false
     }).then((response) => {
@@ -60,7 +62,7 @@ describe('Admin API - List Uploads', () => {
   });
 
   it('should handle search (if implemented)', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/uploads?search=test`,
       failOnStatusCode: false
@@ -71,7 +73,7 @@ describe('Admin API - List Uploads', () => {
 
   it('should handle date filtering (if implemented)', () => {
     const today = new Date().toISOString().split('T')[0];
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/uploads?startDate=${today}`,
       failOnStatusCode: false
@@ -82,7 +84,7 @@ describe('Admin API - List Uploads', () => {
 
   it('should respond within time limit', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/uploads`,
       failOnStatusCode: false
     }).then((response) => {
@@ -93,7 +95,7 @@ describe('Admin API - List Uploads', () => {
   });
 
   it('should handle invalid parameters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/uploads?page=-1&limit=0`,
       failOnStatusCode: false

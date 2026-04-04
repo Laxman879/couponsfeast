@@ -1,4 +1,6 @@
 describe('Admin API - Import Data', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
 
@@ -20,7 +22,7 @@ describe('Admin API - Import Data', () => {
       }
     ];
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/bulk-import/stores`,
       body: importData,
@@ -36,7 +38,7 @@ describe('Admin API - Import Data', () => {
   });
 
   it('should return 400 for missing data', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/bulk-import/stores`,
       body: {},
@@ -47,7 +49,7 @@ describe('Admin API - Import Data', () => {
   });
 
   it('should handle empty data array', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/bulk-import/stores`,
       body: [],
@@ -58,7 +60,7 @@ describe('Admin API - Import Data', () => {
   });
 
   it('should validate data structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/bulk-import/stores`,
       body: [
@@ -85,7 +87,7 @@ describe('Admin API - Import Data', () => {
       }
     ];
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/bulk-import/stores`,
       body: duplicateData,
@@ -97,7 +99,7 @@ describe('Admin API - Import Data', () => {
 
   it('should import coupons data', () => {
     // First create a store
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/stores/create`,
       body: {
@@ -122,7 +124,7 @@ describe('Admin API - Import Data', () => {
             }
           ];
 
-          cy.request({
+          cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
             method: 'POST',
             url: `${baseUrl}/data/bulk-import/coupons`,
             body: couponData,
@@ -147,7 +149,7 @@ describe('Admin API - Import Data', () => {
       description: `Bulk imported store ${i}`
     }));
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/bulk-import/stores`,
       body: largeData,
@@ -171,7 +173,7 @@ describe('Admin API - Import Data', () => {
       }
     ];
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/bulk-import/stores`,
       body: importData,
@@ -184,7 +186,7 @@ describe('Admin API - Import Data', () => {
   });
 
   it('should handle malformed JSON', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/bulk-import/stores`,
       body: 'invalid json',
@@ -207,7 +209,7 @@ describe('Admin API - Import Data', () => {
       }
     ];
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/bulk-import/stores`,
       body: importData,
@@ -222,7 +224,7 @@ describe('Admin API - Import Data', () => {
   });
 
   it('should validate content-type', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/bulk-import/stores`,
       body: [
@@ -247,7 +249,7 @@ describe('Admin API - Import Data', () => {
       }
     ];
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/bulk-import/stores`,
       body: unicodeData,
@@ -266,7 +268,7 @@ describe('Admin API - Import Data', () => {
       }
     ];
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/bulk-import/stores`,
       body: importData,
@@ -293,7 +295,7 @@ describe('Admin API - Import Data', () => {
       }
     ];
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/bulk-import/stores`,
       body: mixedData,

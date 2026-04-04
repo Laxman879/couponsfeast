@@ -161,10 +161,15 @@ export const seedCMSData = async () => {
         sections: [
           { id: "section-1", order: 1, type: "heroBanner", title: "Best Coupons Today", image: "/uploads/hero.jpg" },
           { id: "section-2", order: 2, type: "featuredCoupons", title: "Featured Deals" },
-          { id: "section-3", order: 3, type: "trendingCoupons", title: "Trending Coupons", limit: 8 },
-          { id: "section-4", order: 4, type: "topStores", title: "Top Stores", limit: 6 },
-          { id: "section-5", order: 5, type: "latestCoupons", title: "Latest Coupons", limit: 10 },
-          { id: "section-6", order: 6, type: "categories", title: "Shop by Category" }
+          { id: "section-3", order: 3, type: "popularOffers", title: "Popular Offers of the Day", limit: 4 },
+          { id: "section-4", order: 4, type: "popularStores", title: "Popular Stores", limit: 12 },
+          { id: "section-5", order: 5, type: "topCoupons", title: "Today's Top Coupons & Offers", limit: 6 },
+          { id: "section-6", order: 6, type: "dealsOfDay", title: "Deals Of The Day", limit: 4 },
+          { id: "section-7", order: 7, type: "collections", title: "CouponsFeast Collections", limit: 4 },
+          { id: "section-8", order: 8, type: "trendingCoupons", title: "Trending Coupons", limit: 8 },
+          { id: "section-9", order: 9, type: "topStores", title: "Top Stores", limit: 6 },
+          { id: "section-10", order: 10, type: "latestCoupons", title: "Latest Coupons", limit: 10 },
+          { id: "section-11", order: 11, type: "categories", title: "Shop by Category" }
         ]
       });
       console.log("Homepage seeded");

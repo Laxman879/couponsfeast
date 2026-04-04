@@ -111,7 +111,7 @@ export const createStore = async (req, res) => {
   
   try {
     const existing = await Store.findOne({ slug: req.body.slug });
-    if (existing) return res.status(409).json({ error: 'Store already exists with this slug' });
+    if (existing) return res.status(400).json({ error: 'Store already exists with this slug' });
 
     const store = await Store.create(req.body);
     
@@ -143,7 +143,7 @@ export const updateStore = async (req, res) => {
   try {
     if (req.body.slug) {
       const existing = await Store.findOne({ slug: req.body.slug, _id: { $ne: req.params.id } });
-      if (existing) return res.status(409).json({ error: 'Store already exists with this slug' });
+      if (existing) return res.status(400).json({ error: 'Store already exists with this slug' });
     }
 
     const store = await Store.findByIdAndUpdate(req.params.id, req.body, { new: true });

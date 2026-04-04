@@ -1,4 +1,6 @@
 describe('Admin API - Update Category', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   let testCategoryId;
 
@@ -6,7 +8,7 @@ describe('Admin API - Update Category', () => {
     cy.task('clearDatabase');
     
     const timestamp = Date.now() + Math.random().toString(36).substr(2, 9);
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/categories/create`,
       body: {
@@ -21,7 +23,7 @@ describe('Admin API - Update Category', () => {
 
   it('should update category successfully with valid data', () => {
     const timestamp = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/categories/update/${testCategoryId}`,
       body: {
@@ -37,7 +39,7 @@ describe('Admin API - Update Category', () => {
 
   it('should return 404 for non-existent category ID', () => {
     const timestamp = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/categories/update/507f1f77bcf86cd799439011`,
       body: {
@@ -52,7 +54,7 @@ describe('Admin API - Update Category', () => {
 
   it('should return 400 for invalid category ID format', () => {
     const timestamp = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/categories/update/invalid-id`,
       body: {
@@ -67,7 +69,7 @@ describe('Admin API - Update Category', () => {
 
   it('should update only provided fields', () => {
     const timestamp = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/categories/update/${testCategoryId}`,
       body: {
@@ -81,7 +83,7 @@ describe('Admin API - Update Category', () => {
 
   it('should validate updated slug uniqueness', () => {
     const timestamp = Date.now() + Math.random().toString(36).substr(2, 9);
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/categories/create`,
       body: {
@@ -89,7 +91,7 @@ describe('Admin API - Update Category', () => {
         slug: `another-${timestamp}`
       }
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'PUT',
         url: `${baseUrl}/categories/update/${testCategoryId}`,
         body: {
@@ -105,7 +107,7 @@ describe('Admin API - Update Category', () => {
 
   it('should handle unicode characters in updates', () => {
     const timestamp = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/categories/update/${testCategoryId}`,
       body: {
@@ -119,7 +121,7 @@ describe('Admin API - Update Category', () => {
   });
 
   it('should reject empty name updates', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/categories/update/${testCategoryId}`,
       body: {
@@ -133,7 +135,7 @@ describe('Admin API - Update Category', () => {
   });
 
   it('should handle very long field updates', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/categories/update/${testCategoryId}`,
       body: {
@@ -149,7 +151,7 @@ describe('Admin API - Update Category', () => {
     const beforeUpdate = new Date();
     const timestamp = Date.now();
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/categories/update/${testCategoryId}`,
       body: {
@@ -164,7 +166,7 @@ describe('Admin API - Update Category', () => {
 
   it('should handle concurrent updates', () => {
     const requests = Array.from({length: 3}, (_, i) => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'PUT',
         url: `${baseUrl}/categories/update/${testCategoryId}`,
         body: {
@@ -183,7 +185,7 @@ describe('Admin API - Update Category', () => {
   it('should respond within acceptable time', () => {
     const startTime = Date.now();
     const timestamp = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/categories/update/${testCategoryId}`,
       body: {
@@ -197,7 +199,7 @@ describe('Admin API - Update Category', () => {
   });
 
   it('should handle malformed JSON in updates', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/categories/update/${testCategoryId}`,
       body: 'invalid json',
@@ -209,7 +211,7 @@ describe('Admin API - Update Category', () => {
   });
 
   it('should validate slug format in updates', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/categories/update/${testCategoryId}`,
       body: {
@@ -223,7 +225,7 @@ describe('Admin API - Update Category', () => {
 
   it('should return complete updated object', () => {
     const timestamp = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/categories/update/${testCategoryId}`,
       body: {
@@ -244,7 +246,7 @@ describe('Admin API - Update Category', () => {
       description: 'Updated for integrity test'
     };
 
-    cy.request('PUT', `${baseUrl}/categories/update/${testCategoryId}`, updateData).then(() => {
+    cy.authRequest('PUT', `${baseUrl}/categories/update/${testCategoryId}`, updateData).then(() => {
       cy.request(`${baseUrl}/categories/list`).then((getResponse) => {
         const updatedCategory = getResponse.body.find(cat => cat._id === testCategoryId);
         expect(updatedCategory.name).to.eq(updateData.name);

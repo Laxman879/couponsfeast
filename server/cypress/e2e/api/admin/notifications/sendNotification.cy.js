@@ -1,4 +1,6 @@
 describe('Admin API - Send Notification', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
 
@@ -7,7 +9,7 @@ describe('Admin API - Send Notification', () => {
   });
 
   it('should send notification successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/notifications/send`,
       body: {
@@ -26,7 +28,7 @@ describe('Admin API - Send Notification', () => {
   });
 
   it('should return 400 for missing fields', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/notifications/send`,
       body: {},
@@ -37,7 +39,7 @@ describe('Admin API - Send Notification', () => {
   });
 
   it('should validate notification type', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/notifications/send`,
       body: {
@@ -53,7 +55,7 @@ describe('Admin API - Send Notification', () => {
   });
 
   it('should validate email addresses', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/notifications/send`,
       body: {
@@ -69,7 +71,7 @@ describe('Admin API - Send Notification', () => {
   });
 
   it('should handle multiple recipients', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/notifications/send`,
       body: {
@@ -85,7 +87,7 @@ describe('Admin API - Send Notification', () => {
   });
 
   it('should handle unicode content', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/notifications/send`,
       body: {
@@ -103,7 +105,7 @@ describe('Admin API - Send Notification', () => {
   it('should handle different notification types', () => {
     const types = ['info', 'warning', 'error', 'success'];
     types.forEach(type => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/notifications/send`,
         body: {
@@ -121,7 +123,7 @@ describe('Admin API - Send Notification', () => {
 
   it('should respond within time limit', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/notifications/send`,
       body: {
@@ -140,7 +142,7 @@ describe('Admin API - Send Notification', () => {
 
   it('should handle concurrent sends', () => {
     const requests = Array.from({length: 3}, (_, i) => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/notifications/send`,
         body: {
@@ -160,7 +162,7 @@ describe('Admin API - Send Notification', () => {
   });
 
   it('should handle malformed JSON', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/notifications/send`,
       body: 'invalid json',
@@ -172,7 +174,7 @@ describe('Admin API - Send Notification', () => {
   });
 
   it('should return proper structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/notifications/send`,
       body: {
@@ -192,7 +194,7 @@ describe('Admin API - Send Notification', () => {
   });
 
   it('should handle empty recipients array', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/notifications/send`,
       body: {
@@ -208,7 +210,7 @@ describe('Admin API - Send Notification', () => {
   });
 
   it('should include priority option', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/notifications/send`,
       body: {
@@ -226,7 +228,7 @@ describe('Admin API - Send Notification', () => {
 
   it('should handle scheduled notifications', () => {
     const futureDate = new Date(Date.now() + 60000).toISOString();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/notifications/send`,
       body: {
@@ -249,7 +251,7 @@ describe('Admin API - Send Notification', () => {
       type: 'info',
       recipients: ['integrity@test.com']
     };
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/notifications/send`,
       body: notificationData,

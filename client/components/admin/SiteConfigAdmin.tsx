@@ -367,14 +367,14 @@ export default function SiteConfigAdmin() {
           </Alert>
           <Grid container spacing={2}>
             {[
-              { name: 'purple', label: 'Purple',  colors: ['#7c3aed','#9333ea','#f59e0b'] },
-              { name: 'blue',   label: 'Blue',    colors: ['#2563eb','#1d4ed8','#38bdf8'] },
-              { name: 'green',  label: 'Green',   colors: ['#16a34a','#15803d','#84cc16'] },
-              { name: 'orange', label: 'Orange',  colors: ['#ea580c','#c2410c','#fbbf24'] },
-              { name: 'red',    label: 'Red',     colors: ['#dc2626','#b91c1c','#fb923c'] },
-              { name: 'rose',   label: 'Rose',    colors: ['#e11d48','#be123c','#fb7185'] },
-              { name: 'teal',   label: 'Teal',    colors: ['#0d9488','#0f766e','#2dd4bf'] },
-              { name: 'dark',   label: 'Dark',    colors: ['#8b5cf6','#a78bfa','#fbbf24'] },
+              { name: 'purple', label: 'Purple',  colors: ['#a78bfa','#c084fc','#fcd34d'] },
+              { name: 'blue',   label: 'Blue',    colors: ['#60a5fa','#818cf8','#7dd3fc'] },
+              { name: 'green',  label: 'Green',   colors: ['#4ade80','#86efac','#bef264'] },
+              { name: 'orange', label: 'Orange',  colors: ['#fb923c','#fdba74','#fde68a'] },
+              { name: 'red',    label: 'Red',     colors: ['#f87171','#fca5a5','#fdba74'] },
+              { name: 'rose',   label: 'Rose',    colors: ['#fb7185','#fda4af','#fecdd3'] },
+              { name: 'teal',   label: 'Teal',    colors: ['#2dd4bf','#5eead4','#99f6e4'] },
+              { name: 'dark',   label: 'Dark',    colors: ['#a78bfa','#c4b5fd','#fde68a'] },
             ].map((t) => {
               const selected = (config.themeName || 'purple') === t.name;
               return (

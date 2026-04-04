@@ -1,4 +1,6 @@
 describe('Admin API - Dashboard Analytics', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   let testStoreId;
 
@@ -7,7 +9,7 @@ describe('Admin API - Dashboard Analytics', () => {
     
     // Create test data with analytics
     const timestamp = Date.now() + Math.random().toString(36).substr(2, 9);
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/stores/create`,
       body: {
@@ -19,7 +21,7 @@ describe('Admin API - Dashboard Analytics', () => {
     }).then((storeResponse) => {
       testStoreId = storeResponse.body._id;
       
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/coupons/create`,
         body: {
@@ -34,7 +36,7 @@ describe('Admin API - Dashboard Analytics', () => {
   });
 
   it('should get dashboard analytics successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/dashboard/analytics`,
       failOnStatusCode: false
@@ -49,7 +51,7 @@ describe('Admin API - Dashboard Analytics', () => {
   });
 
   it('should include traffic analytics', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/dashboard/analytics`,
       failOnStatusCode: false
@@ -63,7 +65,7 @@ describe('Admin API - Dashboard Analytics', () => {
   });
 
   it('should include conversion metrics', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/dashboard/analytics`,
       failOnStatusCode: false
@@ -77,7 +79,7 @@ describe('Admin API - Dashboard Analytics', () => {
   });
 
   it('should include click analytics', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/dashboard/analytics`,
       failOnStatusCode: false
@@ -91,7 +93,7 @@ describe('Admin API - Dashboard Analytics', () => {
   });
 
   it('should filter by time period', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/dashboard/analytics?period=7d`,
       failOnStatusCode: false
@@ -101,7 +103,7 @@ describe('Admin API - Dashboard Analytics', () => {
   });
 
   it('should include trending data', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/dashboard/analytics`,
       failOnStatusCode: false
@@ -116,7 +118,7 @@ describe('Admin API - Dashboard Analytics', () => {
 
   it('should respond within time limit', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/dashboard/analytics`,
       failOnStatusCode: false
@@ -129,7 +131,7 @@ describe('Admin API - Dashboard Analytics', () => {
 
   it('should handle concurrent requests', () => {
     const requests = Array.from({length: 3}, () => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/dashboard/analytics`,
         failOnStatusCode: false
@@ -143,7 +145,7 @@ describe('Admin API - Dashboard Analytics', () => {
   });
 
   it('should include geographic data', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/dashboard/analytics`,
       failOnStatusCode: false
@@ -157,7 +159,7 @@ describe('Admin API - Dashboard Analytics', () => {
   });
 
   it('should include device analytics', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/dashboard/analytics`,
       failOnStatusCode: false
@@ -171,7 +173,7 @@ describe('Admin API - Dashboard Analytics', () => {
   });
 
   it('should return proper structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/dashboard/analytics`,
       failOnStatusCode: false
@@ -185,7 +187,7 @@ describe('Admin API - Dashboard Analytics', () => {
   });
 
   it('should include referrer data', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/dashboard/analytics`,
       failOnStatusCode: false
@@ -201,7 +203,7 @@ describe('Admin API - Dashboard Analytics', () => {
   it('should handle custom date ranges', () => {
     const startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
     const endDate = new Date().toISOString().split('T')[0];
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/dashboard/analytics?startDate=${startDate}&endDate=${endDate}`,
       failOnStatusCode: false
@@ -211,7 +213,7 @@ describe('Admin API - Dashboard Analytics', () => {
   });
 
   it('should include bounce rate', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/dashboard/analytics`,
       failOnStatusCode: false
@@ -225,13 +227,13 @@ describe('Admin API - Dashboard Analytics', () => {
   });
 
   it('should maintain data consistency', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/dashboard/analytics`,
       failOnStatusCode: false
     }).then((first) => {
       if (first.status === 200) {
-        cy.request({
+        cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
           method: 'GET',
           url: `${baseUrl}/dashboard/analytics`,
           failOnStatusCode: false

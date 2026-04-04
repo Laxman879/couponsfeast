@@ -1,4 +1,6 @@
 describe('Admin - Get Coupon Details API', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = Cypress.env('apiUrl') || 'http://localhost:5000';
   const endpoint = '/api/admin/coupons/details';
   let testCouponId;
@@ -10,7 +12,7 @@ describe('Admin - Get Coupon Details API', () => {
     
     // Create a test store first
     const timestamp = Date.now() + Math.random().toString(36).substr(2, 9);
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/api/admin/stores/create`,
       body: {
@@ -31,7 +33,7 @@ describe('Admin - Get Coupon Details API', () => {
         category: 'Electronics'
       };
       
-      cy.request('POST', `${baseUrl}/api/admin/coupons/create`, couponData)
+      cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, couponData)
         .then((response) => {
           testCouponId = response.body._id;
         });
@@ -45,7 +47,7 @@ describe('Admin - Get Coupon Details API', () => {
 
   // Test Case 1: Success case - Valid coupon ID
   it('should return coupon details for valid ID', () => {
-    cy.request('GET', `${baseUrl}${endpoint}/${testCouponId}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}/${testCouponId}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.be.an('object');
@@ -59,7 +61,7 @@ describe('Admin - Get Coupon Details API', () => {
 
   // Test Case 2: Invalid ID format
   it('should return 400 for invalid ID format', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}/invalid-id-format`,
       failOnStatusCode: false
@@ -73,7 +75,7 @@ describe('Admin - Get Coupon Details API', () => {
   it('should return 404 for non-existent coupon ID', () => {
     const nonExistentId = '507f1f77bcf86cd799439011';
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}/${nonExistentId}`,
       failOnStatusCode: false
@@ -85,7 +87,7 @@ describe('Admin - Get Coupon Details API', () => {
 
   // Test Case 4: Response structure validation
   it('should return coupon with correct data structure', () => {
-    cy.request('GET', `${baseUrl}${endpoint}/${testCouponId}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}/${testCouponId}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         const coupon = response.body;
@@ -110,7 +112,7 @@ describe('Admin - Get Coupon Details API', () => {
   it('should respond within acceptable time limit', () => {
     const startTime = Date.now();
     
-    cy.request('GET', `${baseUrl}${endpoint}/${testCouponId}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}/${testCouponId}`)
       .then((response) => {
         const responseTime = Date.now() - startTime;
         expect(response.status).to.eq(200);
@@ -121,17 +123,17 @@ describe('Admin - Get Coupon Details API', () => {
   // Test Case 6: Concurrent requests for same coupon
   it('should handle concurrent requests for same coupon', () => {
     // Sequential requests to avoid Promise.all timeout
-    cy.request('GET', `${baseUrl}${endpoint}/${testCouponId}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}/${testCouponId}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body._id).to.eq(testCouponId);
     });
     
-    cy.request('GET', `${baseUrl}${endpoint}/${testCouponId}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}/${testCouponId}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body._id).to.eq(testCouponId);
     });
     
-    cy.request('GET', `${baseUrl}${endpoint}/${testCouponId}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}/${testCouponId}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body._id).to.eq(testCouponId);
     });
@@ -139,7 +141,7 @@ describe('Admin - Get Coupon Details API', () => {
 
   // Test Case 7: Empty string ID
   it('should return 400 for empty string ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}/`,
       failOnStatusCode: false
@@ -150,7 +152,7 @@ describe('Admin - Get Coupon Details API', () => {
 
   // Test Case 8: Special characters in ID
   it('should return 400 for ID with special characters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}/coupon@#$%`,
       failOnStatusCode: false
@@ -164,7 +166,7 @@ describe('Admin - Get Coupon Details API', () => {
   it('should return 400 for excessively long ID', () => {
     const longId = 'a'.repeat(100);
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}/${longId}`,
       failOnStatusCode: false
@@ -176,7 +178,7 @@ describe('Admin - Get Coupon Details API', () => {
 
   // Test Case 10: Content-Type validation
   it('should return JSON content type', () => {
-    cy.request('GET', `${baseUrl}${endpoint}/${testCouponId}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}/${testCouponId}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.headers).to.have.property('content-type');
@@ -196,9 +198,9 @@ describe('Admin - Get Coupon Details API', () => {
       category: 'Electronics'
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/coupons/create`, fullCouponData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, fullCouponData)
       .then((createResponse) => {
-        cy.request('GET', `${baseUrl}${endpoint}/${createResponse.body._id}`)
+        cy.authRequest('GET', `${baseUrl}${endpoint}/${createResponse.body._id}`)
           .then((response) => {
             expect(response.status).to.eq(200);
             const coupon = response.body;
@@ -213,7 +215,7 @@ describe('Admin - Get Coupon Details API', () => {
 
   // Test Case 12: Coupon with minimal fields
   it('should return coupon with minimal required fields', () => {
-    cy.request('GET', `${baseUrl}${endpoint}/${testCouponId}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}/${testCouponId}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         const coupon = response.body;
@@ -229,7 +231,7 @@ describe('Admin - Get Coupon Details API', () => {
   it('should be case sensitive for coupon ID', () => {
     const uppercaseId = testCouponId.toUpperCase();
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}/${uppercaseId}`,
       failOnStatusCode: false
@@ -243,7 +245,7 @@ describe('Admin - Get Coupon Details API', () => {
 
   // Test Case 14: Database connection handling
   it('should handle database connection issues gracefully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}/${testCouponId}`,
       failOnStatusCode: false
@@ -266,9 +268,9 @@ describe('Admin - Get Coupon Details API', () => {
       category: 'Electronics'
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/coupons/create`, unicodeCouponData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, unicodeCouponData)
       .then((createResponse) => {
-        cy.request('GET', `${baseUrl}${endpoint}/${createResponse.body._id}`)
+        cy.authRequest('GET', `${baseUrl}${endpoint}/${createResponse.body._id}`)
           .then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body.title).to.include('测试');

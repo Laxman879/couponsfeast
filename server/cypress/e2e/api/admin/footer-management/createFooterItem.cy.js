@@ -1,4 +1,6 @@
 describe('Admin API - Create Footer Item', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
 
@@ -7,7 +9,7 @@ describe('Admin API - Create Footer Item', () => {
   });
 
   it('should create footer item successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/footer/create`,
       body: {
@@ -27,7 +29,7 @@ describe('Admin API - Create Footer Item', () => {
   });
 
   it('should return 400 for missing fields', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/footer/create`,
       body: {},
@@ -41,7 +43,7 @@ describe('Admin API - Create Footer Item', () => {
   });
 
   it('should validate title requirements', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/footer/create`,
       body: {
@@ -56,7 +58,7 @@ describe('Admin API - Create Footer Item', () => {
   });
 
   it('should validate section values', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/footer/create`,
       body: {
@@ -71,7 +73,7 @@ describe('Admin API - Create Footer Item', () => {
   });
 
   it('should set default values', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/footer/create`,
       body: {
@@ -90,7 +92,7 @@ describe('Admin API - Create Footer Item', () => {
   });
 
   it('should handle unicode characters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/footer/create`,
       body: {
@@ -108,7 +110,7 @@ describe('Admin API - Create Footer Item', () => {
   });
 
   it('should validate URL format', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/footer/create`,
       body: {
@@ -130,14 +132,14 @@ describe('Admin API - Create Footer Item', () => {
       order: 5
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/footer/create`,
       body: itemData,
       failOnStatusCode: false
     });
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/footer/create`,
       body: {
@@ -153,7 +155,7 @@ describe('Admin API - Create Footer Item', () => {
   });
 
   it('should auto-increment order', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/footer/create`,
       body: {
@@ -172,7 +174,7 @@ describe('Admin API - Create Footer Item', () => {
 
   it('should handle concurrent creation', () => {
     const requests = Array.from({length: 3}, (_, i) => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/footer/create`,
         body: {
@@ -197,7 +199,7 @@ describe('Admin API - Create Footer Item', () => {
 
   it('should respond within time limit', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/footer/create`,
       body: {
@@ -214,7 +216,7 @@ describe('Admin API - Create Footer Item', () => {
   });
 
   it('should handle malformed JSON', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/footer/create`,
       body: 'invalid json',
@@ -226,7 +228,7 @@ describe('Admin API - Create Footer Item', () => {
   });
 
   it('should validate content-type', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/footer/create`,
       body: {
@@ -242,7 +244,7 @@ describe('Admin API - Create Footer Item', () => {
   });
 
   it('should handle external URLs', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/footer/create`,
       body: {
@@ -264,7 +266,7 @@ describe('Admin API - Create Footer Item', () => {
       order: 99
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/footer/create`,
       body: itemData,
@@ -275,7 +277,7 @@ describe('Admin API - Create Footer Item', () => {
       if (createResponse.status === 201) {
         const itemId = createResponse.body.data._id;
 
-        cy.request({
+        cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
           url: `${baseUrl}/footer/${itemId}`,
           failOnStatusCode: false
         }).then((getResponse) => {

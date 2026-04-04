@@ -1,4 +1,6 @@
 describe('Admin API - Delete Page', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
   let testPageId;
@@ -6,7 +8,7 @@ describe('Admin API - Delete Page', () => {
   beforeEach(() => {
     cy.task('clearDatabase');
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/pages`,
       body: {
@@ -26,7 +28,7 @@ describe('Admin API - Delete Page', () => {
   });
 
   it('should delete page successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/pages/${testPageId}`,
       failOnStatusCode: false
@@ -40,7 +42,7 @@ describe('Admin API - Delete Page', () => {
   });
 
   it('should return 404 for non-existent ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/pages/507f1f77bcf86cd799439011`,
       failOnStatusCode: false
@@ -50,7 +52,7 @@ describe('Admin API - Delete Page', () => {
   });
 
   it('should return 400 for invalid ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/pages/invalid-id`,
       failOnStatusCode: false
@@ -60,12 +62,12 @@ describe('Admin API - Delete Page', () => {
   });
 
   it('should verify page is deleted', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/pages/${testPageId}`,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/pages/${testPageId}`,
         failOnStatusCode: false
@@ -76,12 +78,12 @@ describe('Admin API - Delete Page', () => {
   });
 
   it('should remove from pages list', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/pages/${testPageId}`,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/pages`,
         failOnStatusCode: false
@@ -98,12 +100,12 @@ describe('Admin API - Delete Page', () => {
   });
 
   it('should handle already deleted page', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/pages/${testPageId}`,
       failOnStatusCode: false
     });
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/pages/${testPageId}`,
       failOnStatusCode: false
@@ -114,7 +116,7 @@ describe('Admin API - Delete Page', () => {
 
   it('should handle concurrent deletion', () => {
     const requests = Array.from({length: 3}, () => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'DELETE',
         url: `${baseUrl}/pages/${testPageId}`,
         failOnStatusCode: false
@@ -140,7 +142,7 @@ describe('Admin API - Delete Page', () => {
 
   it('should respond within time limit', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/pages/${testPageId}`,
       failOnStatusCode: false
@@ -152,7 +154,7 @@ describe('Admin API - Delete Page', () => {
   });
 
   it('should return proper structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/pages/${testPageId}`,
       failOnStatusCode: false
@@ -168,7 +170,7 @@ describe('Admin API - Delete Page', () => {
 
   it('should handle case-insensitive ID', () => {
     const upperCaseId = testPageId.toUpperCase();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/pages/${upperCaseId}`,
       failOnStatusCode: false
@@ -178,12 +180,12 @@ describe('Admin API - Delete Page', () => {
   });
 
   it('should clean up related data', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/pages/${testPageId}`,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/pages`,
         failOnStatusCode: false
@@ -200,7 +202,7 @@ describe('Admin API - Delete Page', () => {
   });
 
   it('should handle special characters in ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/pages/special!@#$%`,
       failOnStatusCode: false
@@ -210,12 +212,12 @@ describe('Admin API - Delete Page', () => {
   });
 
   it('should maintain referential integrity', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/pages/${testPageId}`,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/pages`,
         failOnStatusCode: false
@@ -232,7 +234,7 @@ describe('Admin API - Delete Page', () => {
   });
 
   it('should handle empty ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/pages/`,
       failOnStatusCode: false
@@ -242,7 +244,7 @@ describe('Admin API - Delete Page', () => {
   });
 
   it('should log deletion activity', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/pages/${testPageId}`,
       failOnStatusCode: false

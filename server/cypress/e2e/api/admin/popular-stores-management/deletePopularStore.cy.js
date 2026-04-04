@@ -1,4 +1,6 @@
 describe('Admin API - Delete Popular Store', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
   let testStoreId;
@@ -6,7 +8,7 @@ describe('Admin API - Delete Popular Store', () => {
   beforeEach(() => {
     cy.task('clearDatabase');
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/popular-stores/create`,
       body: {
@@ -26,7 +28,7 @@ describe('Admin API - Delete Popular Store', () => {
   });
 
   it('should delete popular store successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       failOnStatusCode: false
@@ -40,7 +42,7 @@ describe('Admin API - Delete Popular Store', () => {
   });
 
   it('should return 404 for non-existent store ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/popular-stores/507f1f77bcf86cd799439011`,
       failOnStatusCode: false
@@ -53,7 +55,7 @@ describe('Admin API - Delete Popular Store', () => {
   });
 
   it('should return 400 for invalid store ID format', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/popular-stores/invalid-id`,
       failOnStatusCode: false
@@ -66,12 +68,12 @@ describe('Admin API - Delete Popular Store', () => {
   });
 
   it('should verify store is actually deleted', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/stores/${testStoreId}`,
         failOnStatusCode: false
@@ -82,12 +84,12 @@ describe('Admin API - Delete Popular Store', () => {
   });
 
   it('should remove from popular stores list', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/popular-stores`,
         failOnStatusCode: false
@@ -104,13 +106,13 @@ describe('Admin API - Delete Popular Store', () => {
   });
 
   it('should handle deletion of already deleted store', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       failOnStatusCode: false
     });
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       failOnStatusCode: false
@@ -124,7 +126,7 @@ describe('Admin API - Delete Popular Store', () => {
 
   it('should handle concurrent deletion attempts', () => {
     const requests = Array.from({length: 3}, () => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'DELETE',
         url: `${baseUrl}/popular-stores/${testStoreId}`,
         failOnStatusCode: false
@@ -150,7 +152,7 @@ describe('Admin API - Delete Popular Store', () => {
 
   it('should respond within acceptable time', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       failOnStatusCode: false
@@ -162,7 +164,7 @@ describe('Admin API - Delete Popular Store', () => {
   });
 
   it('should return proper response structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       failOnStatusCode: false
@@ -178,7 +180,7 @@ describe('Admin API - Delete Popular Store', () => {
 
   it('should handle case-insensitive ObjectId', () => {
     const upperCaseId = testStoreId.toUpperCase();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/popular-stores/${upperCaseId}`,
       failOnStatusCode: false
@@ -188,12 +190,12 @@ describe('Admin API - Delete Popular Store', () => {
   });
 
   it('should clean up related data', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/stores`,
         failOnStatusCode: false
@@ -210,7 +212,7 @@ describe('Admin API - Delete Popular Store', () => {
   });
 
   it('should handle deletion with special characters in ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/popular-stores/special!@#$%`,
       failOnStatusCode: false
@@ -220,12 +222,12 @@ describe('Admin API - Delete Popular Store', () => {
   });
 
   it('should maintain referential integrity', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/popular-stores`,
         failOnStatusCode: false
@@ -242,7 +244,7 @@ describe('Admin API - Delete Popular Store', () => {
   });
 
   it('should handle empty store ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/popular-stores/`,
       failOnStatusCode: false
@@ -252,7 +254,7 @@ describe('Admin API - Delete Popular Store', () => {
   });
 
   it('should log deletion activity', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       failOnStatusCode: false

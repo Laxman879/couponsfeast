@@ -90,43 +90,48 @@ async function seed() {
   }
   console.log(`✅ Created ${couponData.length} coupons\n`);
 
-  // 4. Create 20 deals
-  const dealData = [
-    { title: 'iPhone 15 Pro — Lowest Price Ever', discount: '₹15000 Off', image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400&h=300&fit=crop' },
-    { title: 'Samsung Galaxy S24 Ultra Deal', discount: '₹12000 Off', image: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=400&h=300&fit=crop' },
-    { title: 'Nike Air Max 90 — Limited Edition', discount: '40% Off', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop' },
-    { title: 'Sony WH-1000XM5 Headphones', discount: '30% Off', image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop' },
-    { title: 'MacBook Air M3 — Student Offer', discount: '₹10000 Off', image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=300&fit=crop' },
-    { title: 'Adidas Ultraboost — Flash Sale', discount: '50% Off', image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=300&fit=crop' },
-    { title: 'Home Decor Essentials Bundle', discount: '35% Off', image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop' },
-    { title: 'Kitchen Appliances Mega Sale', discount: 'Up to 60% Off', image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop' },
-    { title: 'Fitness Tracker — Best Price', discount: '₹2000 Off', image: 'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=400&h=300&fit=crop' },
-    { title: 'Designer Sunglasses Collection', discount: '45% Off', image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=300&fit=crop' },
-    { title: 'Gaming Console Bundle Deal', discount: '₹8000 Off', image: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400&h=300&fit=crop' },
-    { title: 'Organic Skincare Set', discount: '25% Off', image: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&h=300&fit=crop' },
-    { title: 'Smart Watch — Premium Edition', discount: '₹5000 Off', image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop' },
-    { title: 'Travel Luggage Set — Durable', discount: '30% Off', image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=300&fit=crop' },
-    { title: 'Wireless Earbuds — Top Rated', discount: '₹1500 Off', image: 'https://images.unsplash.com/photo-1590658268037-6bf12f032f55?w=400&h=300&fit=crop' },
-    { title: 'Running Shoes — All Terrain', discount: '40% Off', image: 'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=400&h=300&fit=crop' },
-    { title: 'Coffee Machine — Barista Quality', discount: '₹3000 Off', image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop' },
-    { title: 'Backpack Collection — Trendy', discount: '20% Off', image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=300&fit=crop' },
-    { title: 'Tablet — Best for Students', discount: '₹7000 Off', image: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=300&fit=crop' },
-    { title: 'Premium Perfume Gift Set', discount: '35% Off', image: 'https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&h=300&fit=crop' },
+  // 4. Create deals for each homepage section
+  const sectionDeals = [
+    // Popular Offers of the Day
+    { title: 'iPhone 15 Pro — Lowest Price Ever', discount: '₹15000 Off', image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400&h=300&fit=crop', section: 'popular_offers' },
+    { title: 'Samsung Galaxy S24 Ultra Deal', discount: '₹12000 Off', image: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=400&h=300&fit=crop', section: 'popular_offers' },
+    { title: 'Nike Air Max 90 — Limited Edition', discount: '40% Off', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop', section: 'popular_offers' },
+    { title: 'Sony WH-1000XM5 Headphones', discount: '30% Off', image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop', section: 'popular_offers' },
+    // Deals Of The Day
+    { title: 'MacBook Air M3 — Student Offer', discount: '₹10000 Off', image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=300&fit=crop', section: 'deals_of_day' },
+    { title: 'Adidas Ultraboost — Flash Sale', discount: '50% Off', image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=300&fit=crop', section: 'deals_of_day' },
+    { title: 'Home Decor Essentials Bundle', discount: '35% Off', image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop', section: 'deals_of_day' },
+    { title: 'Kitchen Appliances Mega Sale', discount: 'Up to 60% Off', image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop', section: 'deals_of_day' },
+    // Collections
+    { title: 'Fitness Tracker — Best Price', discount: '₹2000 Off', image: 'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=400&h=300&fit=crop', section: 'collections' },
+    { title: 'Designer Sunglasses Collection', discount: '45% Off', image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=300&fit=crop', section: 'collections' },
+    { title: 'Gaming Console Bundle Deal', discount: '₹8000 Off', image: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400&h=300&fit=crop', section: 'collections' },
+    { title: 'Organic Skincare Set', discount: '25% Off', image: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&h=300&fit=crop', section: 'collections' },
+    // Trending Deals
+    { title: 'Smart Watch — Premium Edition', discount: '₹5000 Off', image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop', section: 'trending_deals' },
+    { title: 'Travel Luggage Set — Durable', discount: '30% Off', image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=300&fit=crop', section: 'trending_deals' },
+    { title: 'Wireless Earbuds — Top Rated', discount: '₹1500 Off', image: 'https://images.unsplash.com/photo-1590658268037-6bf12f032f55?w=400&h=300&fit=crop', section: 'trending_deals' },
+    { title: 'Running Shoes — All Terrain', discount: '40% Off', image: 'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=400&h=300&fit=crop', section: 'trending_deals' },
+    // General deals (no section)
+    { title: 'Coffee Machine — Barista Quality', discount: '₹3000 Off', image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop', section: '' },
+    { title: 'Backpack Collection — Trendy', discount: '20% Off', image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=300&fit=crop', section: '' },
+    { title: 'Tablet — Best for Students', discount: '₹7000 Off', image: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=300&fit=crop', section: '' },
+    { title: 'Premium Perfume Gift Set', discount: '35% Off', image: 'https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&h=300&fit=crop', section: '' },
   ];
 
-  for (let i = 0; i < dealData.length; i++) {
+  for (let i = 0; i < sectionDeals.length; i++) {
     const store = stores[i % stores.length];
-    const d = dealData[i];
+    const d = sectionDeals[i];
     await post('/admin/deals/create', {
-      title: d.title, discount: d.discount, image: d.image,
+      title: d.title, discount: d.discount, image: d.image, section: d.section,
       store: store._id, isActive: true, isFeatured: i < 5,
-      type: i % 3 === 0 ? 'deal' : i % 3 === 1 ? 'offer' : 'coupon',
+      type: i % 3 === 0 ? 'deal' : i % 3 === 1 ? 'offer' : 'flash',
       link: store.websiteUrl || `https://${store.slug}.com`,
       description: `Amazing deal on ${d.title} from ${store.storeName}!`,
     });
-    console.log(`  🔥 Deal: ${d.title} → ${store.storeName}`);
+    console.log(`  🔥 Deal: ${d.title} → ${store.storeName} [${d.section || 'general'}]`);
   }
-  console.log(`✅ Created ${dealData.length} deals\n`);
+  console.log(`✅ Created ${sectionDeals.length} deals\n`);
 
   // 5. Create 20 blog articles
   const blogData = [

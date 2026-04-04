@@ -1,4 +1,6 @@
 describe('Admin - List Coupons API', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = Cypress.env('apiUrl') || 'http://localhost:5000';
   const endpoint = '/api/admin/coupons/list';
   let testStoreId;
@@ -9,7 +11,7 @@ describe('Admin - List Coupons API', () => {
     
     // Create a test store for all coupon tests
     const timestamp = Date.now() + Math.random().toString(36).substr(2, 9);
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/api/admin/stores/create`,
       body: {
@@ -39,9 +41,9 @@ describe('Admin - List Coupons API', () => {
       category: 'Electronics'
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/coupons/create`, couponData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, couponData)
       .then(() => {
-        cy.request('GET', `${baseUrl}${endpoint}`)
+        cy.authRequest('GET', `${baseUrl}${endpoint}`)
           .then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body).to.be.an('array');
@@ -55,7 +57,7 @@ describe('Admin - List Coupons API', () => {
 
   // Test Case 2: Empty database scenario
   it('should return empty array when no coupons exist', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.be.an('array');
@@ -74,9 +76,9 @@ describe('Admin - List Coupons API', () => {
       category: 'Electronics'
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/coupons/create`, couponData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, couponData)
       .then(() => {
-        cy.request('GET', `${baseUrl}${endpoint}`)
+        cy.authRequest('GET', `${baseUrl}${endpoint}`)
           .then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body).to.be.an('array');
@@ -100,7 +102,7 @@ describe('Admin - List Coupons API', () => {
   it('should respond within acceptable time limit', () => {
     const startTime = Date.now();
     
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         const responseTime = Date.now() - startTime;
         expect(response.status).to.eq(200);
@@ -112,28 +114,28 @@ describe('Admin - List Coupons API', () => {
   it('should handle large number of coupons', () => {
     const timestamp = Date.now();
     
-    cy.request('POST', `${baseUrl}/api/admin/coupons/create`, {
+    cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, {
       title: `Test Coupon 1 ${timestamp}`,
       code: `TEST1${timestamp}`,
       discount: '10%',
       store: testStoreId,
       category: 'Electronics'
     }).then(() => {
-      cy.request('POST', `${baseUrl}/api/admin/coupons/create`, {
+      cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, {
         title: `Test Coupon 2 ${timestamp}`,
         code: `TEST2${timestamp}`,
         discount: '20%',
         store: testStoreId,
         category: 'Electronics'
       }).then(() => {
-        cy.request('POST', `${baseUrl}/api/admin/coupons/create`, {
+        cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, {
           title: `Test Coupon 3 ${timestamp}`,
           code: `TEST3${timestamp}`,
           discount: '30%',
           store: testStoreId,
           category: 'Electronics'
         }).then(() => {
-          cy.request('GET', `${baseUrl}${endpoint}`)
+          cy.authRequest('GET', `${baseUrl}${endpoint}`)
             .then((response) => {
               expect(response.status).to.eq(200);
               expect(response.body).to.be.an('array');
@@ -155,20 +157,20 @@ describe('Admin - List Coupons API', () => {
       category: 'Electronics'
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/coupons/create`, couponData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, couponData)
       .then(() => {
         // Sequential requests to avoid Promise.all timeout
-        cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+        cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.be.an('array');
         });
         
-        cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+        cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.be.an('array');
         });
         
-        cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+        cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.be.an('array');
         });
@@ -177,7 +179,7 @@ describe('Admin - List Coupons API', () => {
 
   // Test Case 7: Invalid endpoint method
   it('should return 404 for invalid HTTP method', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -188,7 +190,7 @@ describe('Admin - List Coupons API', () => {
 
   // Test Case 8: Server error simulation
   it('should handle server errors gracefully', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.be.oneOf([200, 500]);
       });
@@ -196,7 +198,7 @@ describe('Admin - List Coupons API', () => {
 
   // Test Case 9: Content-Type validation
   it('should return JSON content type', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.headers).to.have.property('content-type');
@@ -208,7 +210,7 @@ describe('Admin - List Coupons API', () => {
   it('should return coupons in consistent order', () => {
     const timestamp = Date.now();
     
-    cy.request('POST', `${baseUrl}/api/admin/coupons/create`, {
+    cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, {
       title: `Coupon A ${timestamp}`,
       code: `COUPA${timestamp}`,
       discount: '10%',
@@ -216,14 +218,14 @@ describe('Admin - List Coupons API', () => {
       category: 'Electronics'
     }).then(() => {
       cy.wait(100);
-      cy.request('POST', `${baseUrl}/api/admin/coupons/create`, {
+      cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, {
         title: `Coupon B ${timestamp}`,
         code: `COUPB${timestamp}`,
         discount: '20%',
         store: testStoreId,
         category: 'Electronics'
       }).then(() => {
-        cy.request('GET', `${baseUrl}${endpoint}`)
+        cy.authRequest('GET', `${baseUrl}${endpoint}`)
           .then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body).to.be.an('array');
@@ -240,7 +242,7 @@ describe('Admin - List Coupons API', () => {
 
   // Test Case 11: Database connection validation
   it('should handle database connection issues', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.be.oneOf([200, 500]);
         if (response.status === 200) {
@@ -253,28 +255,28 @@ describe('Admin - List Coupons API', () => {
   it('should handle memory efficiently with large datasets', () => {
     const timestamp = Date.now();
     
-    cy.request('POST', `${baseUrl}/api/admin/coupons/create`, {
+    cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, {
       title: `Memory Test Coupon 1 ${timestamp}`,
       code: `MEM1${timestamp}`,
       discount: '10%',
       store: testStoreId,
       category: 'Electronics'
     }).then(() => {
-      cy.request('POST', `${baseUrl}/api/admin/coupons/create`, {
+      cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, {
         title: `Memory Test Coupon 2 ${timestamp}`,
         code: `MEM2${timestamp}`,
         discount: '20%',
         store: testStoreId,
         category: 'Electronics'
       }).then(() => {
-        cy.request('POST', `${baseUrl}/api/admin/coupons/create`, {
+        cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, {
           title: `Memory Test Coupon 3 ${timestamp}`,
           code: `MEM3${timestamp}`,
           discount: '30%',
           store: testStoreId,
           category: 'Electronics'
         }).then(() => {
-          cy.request('GET', `${baseUrl}${endpoint}`)
+          cy.authRequest('GET', `${baseUrl}${endpoint}`)
             .then((response) => {
               expect(response.status).to.eq(200);
               expect(response.body).to.be.an('array');
@@ -295,14 +297,14 @@ describe('Admin - List Coupons API', () => {
   it('should handle coupons with special characters', () => {
     const timestamp = Date.now();
     
-    cy.request('POST', `${baseUrl}/api/admin/coupons/create`, {
+    cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, {
       title: `Coupon & Co. (Special) ${timestamp}`,
       code: `SPEC${timestamp}`,
       discount: '15%',
       store: testStoreId,
       category: 'Electronics'
     }).then(() => {
-      cy.request('GET', `${baseUrl}${endpoint}`)
+      cy.authRequest('GET', `${baseUrl}${endpoint}`)
         .then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.be.an('array');
@@ -316,14 +318,14 @@ describe('Admin - List Coupons API', () => {
   it('should handle coupons with unicode characters', () => {
     const timestamp = Date.now();
     
-    cy.request('POST', `${baseUrl}/api/admin/coupons/create`, {
+    cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, {
       title: `Coupon 测试 🎯 ${timestamp}`,
       code: `UNI${timestamp}`,
       discount: '25%',
       store: testStoreId,
       category: 'Electronics'
     }).then(() => {
-      cy.request('GET', `${baseUrl}${endpoint}`)
+      cy.authRequest('GET', `${baseUrl}${endpoint}`)
         .then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.be.an('array');
@@ -344,9 +346,9 @@ describe('Admin - List Coupons API', () => {
       category: 'Electronics'
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/coupons/create`, couponData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, couponData)
       .then(() => {
-        cy.request('GET', `${baseUrl}${endpoint}`)
+        cy.authRequest('GET', `${baseUrl}${endpoint}`)
           .then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body).to.be.an('array');

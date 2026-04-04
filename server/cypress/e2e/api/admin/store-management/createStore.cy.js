@@ -1,4 +1,6 @@
 describe('Admin - Create Store API', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = Cypress.env('apiUrl') || 'http://localhost:5000';
   const endpoint = '/api/admin/stores/create';
 
@@ -23,7 +25,7 @@ describe('Admin - Create Store API', () => {
       logo: 'https://teststore.com/logo.png'
     };
 
-    cy.request('POST', `${baseUrl}${endpoint}`, storeData)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, storeData)
       .then((response) => {
         expect(response.status).to.eq(201);
         expect(response.body).to.be.an('object');
@@ -49,7 +51,7 @@ describe('Admin - Create Store API', () => {
       description: 'Missing required fields'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: incompleteData,
@@ -69,7 +71,7 @@ describe('Admin - Create Store API', () => {
     };
 
     // Create first store
-    cy.request('POST', `${baseUrl}${endpoint}`, storeData)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, storeData)
       .then((response) => {
         expect(response.status).to.eq(201);
 
@@ -79,7 +81,7 @@ describe('Admin - Create Store API', () => {
           slug: `duplicate-slug-${timestamp}`
         };
 
-        cy.request({
+        cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
           method: 'POST',
           url: `${baseUrl}${endpoint}`,
           body: duplicateStore,
@@ -100,7 +102,7 @@ describe('Admin - Create Store API', () => {
       website: {}     // Should be string
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: invalidData,
@@ -119,7 +121,7 @@ describe('Admin - Create Store API', () => {
       slug: `minimal-store-${timestamp}`
     };
 
-    cy.request('POST', `${baseUrl}${endpoint}`, minimalData)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, minimalData)
       .then((response) => {
         expect(response.status).to.eq(201);
         expect(response.body).to.have.property('storeName', minimalData.storeName);
@@ -138,7 +140,7 @@ describe('Admin - Create Store API', () => {
       logo: 'https://example.com/logo/' + 'b'.repeat(100) + '.png'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: maxLengthData,
@@ -161,7 +163,7 @@ describe('Admin - Create Store API', () => {
       logo: ''
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: emptyData,
@@ -181,7 +183,7 @@ describe('Admin - Create Store API', () => {
       description: 'Store with special chars: @#$%^&*()'
     };
 
-    cy.request('POST', `${baseUrl}${endpoint}`, specialCharData)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, specialCharData)
       .then((response) => {
         expect(response.status).to.eq(201);
         expect(response.body.storeName).to.include('Special');
@@ -198,7 +200,7 @@ describe('Admin - Create Store API', () => {
       description: 'Unicode description 测试 🛍️'
     };
 
-    cy.request('POST', `${baseUrl}${endpoint}`, unicodeData)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, unicodeData)
       .then((response) => {
         expect(response.status).to.eq(201);
         expect(response.body.storeName).to.include('测试');
@@ -216,7 +218,7 @@ describe('Admin - Create Store API', () => {
       logo: 'also-not-a-url'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: invalidUrlData,
@@ -238,7 +240,7 @@ describe('Admin - Create Store API', () => {
       logo: null
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: nullData,
@@ -261,7 +263,7 @@ describe('Admin - Create Store API', () => {
 
     const startTime = Date.now();
     
-    cy.request('POST', `${baseUrl}${endpoint}`, storeData)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, storeData)
       .then((response) => {
         const responseTime = Date.now() - startTime;
         expect(response.status).to.eq(201);
@@ -274,7 +276,7 @@ describe('Admin - Create Store API', () => {
     const timestamp = Date.now();
     
     // Sequential requests to avoid Promise.all timeout
-    cy.request('POST', `${baseUrl}${endpoint}`, {
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, {
       storeName: `Concurrent Store 1 ${timestamp}`,
       slug: `concurrent-store-1-${timestamp}`
     }).then((response) => {
@@ -282,7 +284,7 @@ describe('Admin - Create Store API', () => {
       expect(response.body.storeName).to.include('1');
     });
     
-    cy.request('POST', `${baseUrl}${endpoint}`, {
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, {
       storeName: `Concurrent Store 2 ${timestamp}`,
       slug: `concurrent-store-2-${timestamp}`
     }).then((response) => {
@@ -290,7 +292,7 @@ describe('Admin - Create Store API', () => {
       expect(response.body.storeName).to.include('2');
     });
     
-    cy.request('POST', `${baseUrl}${endpoint}`, {
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, {
       storeName: `Concurrent Store 3 ${timestamp}`,
       slug: `concurrent-store-3-${timestamp}`
     }).then((response) => {
@@ -310,7 +312,7 @@ describe('Admin - Create Store API', () => {
       additionalData: 'X'.repeat(5000) // Large additional field
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: largeData,
@@ -327,7 +329,7 @@ describe('Admin - Create Store API', () => {
       slug: 'content-type-test'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: storeData,

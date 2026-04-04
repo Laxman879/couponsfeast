@@ -1,4 +1,6 @@
 describe('Admin - List Categories API', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = Cypress.env('apiUrl') || 'http://localhost:5000';
   const endpoint = '/api/admin/categories/list';
 
@@ -19,9 +21,9 @@ describe('Admin - List Categories API', () => {
       description: 'A test category'
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/categories/create`, categoryData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/categories/create`, categoryData)
       .then(() => {
-        cy.request('GET', `${baseUrl}${endpoint}`)
+        cy.authRequest('GET', `${baseUrl}${endpoint}`)
           .then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body).to.be.an('array');
@@ -35,7 +37,7 @@ describe('Admin - List Categories API', () => {
 
   // Test Case 2: Empty database scenario
   it('should return empty array when no categories exist', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.be.an('array');
@@ -52,9 +54,9 @@ describe('Admin - List Categories API', () => {
       description: 'Structure test category'
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/categories/create`, categoryData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/categories/create`, categoryData)
       .then(() => {
-        cy.request('GET', `${baseUrl}${endpoint}`)
+        cy.authRequest('GET', `${baseUrl}${endpoint}`)
           .then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body).to.be.an('array');
@@ -78,7 +80,7 @@ describe('Admin - List Categories API', () => {
   it('should respond within acceptable time limit', () => {
     const startTime = Date.now();
     
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         const responseTime = Date.now() - startTime;
         expect(response.status).to.eq(200);
@@ -90,19 +92,19 @@ describe('Admin - List Categories API', () => {
   it('should handle large number of categories', () => {
     const timestamp = Date.now();
     
-    cy.request('POST', `${baseUrl}/api/admin/categories/create`, {
+    cy.authRequest('POST', `${baseUrl}/api/admin/categories/create`, {
       name: `Test Category 1 ${timestamp}`,
       slug: `test-category-1-${timestamp}`
     }).then(() => {
-      cy.request('POST', `${baseUrl}/api/admin/categories/create`, {
+      cy.authRequest('POST', `${baseUrl}/api/admin/categories/create`, {
         name: `Test Category 2 ${timestamp}`,
         slug: `test-category-2-${timestamp}`
       }).then(() => {
-        cy.request('POST', `${baseUrl}/api/admin/categories/create`, {
+        cy.authRequest('POST', `${baseUrl}/api/admin/categories/create`, {
           name: `Test Category 3 ${timestamp}`,
           slug: `test-category-3-${timestamp}`
         }).then(() => {
-          cy.request('GET', `${baseUrl}${endpoint}`)
+          cy.authRequest('GET', `${baseUrl}${endpoint}`)
             .then((response) => {
               expect(response.status).to.eq(200);
               expect(response.body).to.be.an('array');
@@ -121,19 +123,19 @@ describe('Admin - List Categories API', () => {
       slug: `concurrent-test-${timestamp}`
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/categories/create`, categoryData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/categories/create`, categoryData)
       .then(() => {
-        cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+        cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.be.an('array');
         });
         
-        cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+        cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.be.an('array');
         });
         
-        cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+        cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.be.an('array');
         });
@@ -142,7 +144,7 @@ describe('Admin - List Categories API', () => {
 
   // Test Case 7: Invalid endpoint method
   it('should return 404 for invalid HTTP method', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -153,7 +155,7 @@ describe('Admin - List Categories API', () => {
 
   // Test Case 8: Server error simulation
   it('should handle server errors gracefully', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.be.oneOf([200, 500]);
       });
@@ -161,7 +163,7 @@ describe('Admin - List Categories API', () => {
 
   // Test Case 9: Content-Type validation
   it('should return JSON content type', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.headers).to.have.property('content-type');
@@ -173,16 +175,16 @@ describe('Admin - List Categories API', () => {
   it('should return categories in consistent order', () => {
     const timestamp = Date.now();
     
-    cy.request('POST', `${baseUrl}/api/admin/categories/create`, {
+    cy.authRequest('POST', `${baseUrl}/api/admin/categories/create`, {
       name: `Category A ${timestamp}`,
       slug: `category-a-${timestamp}`
     }).then(() => {
       cy.wait(100);
-      cy.request('POST', `${baseUrl}/api/admin/categories/create`, {
+      cy.authRequest('POST', `${baseUrl}/api/admin/categories/create`, {
         name: `Category B ${timestamp}`,
         slug: `category-b-${timestamp}`
       }).then(() => {
-        cy.request('GET', `${baseUrl}${endpoint}`)
+        cy.authRequest('GET', `${baseUrl}${endpoint}`)
           .then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body).to.be.an('array');
@@ -199,7 +201,7 @@ describe('Admin - List Categories API', () => {
 
   // Test Case 11: Database connection validation
   it('should handle database connection issues', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.be.oneOf([200, 500]);
         if (response.status === 200) {
@@ -212,19 +214,19 @@ describe('Admin - List Categories API', () => {
   it('should handle memory efficiently with large datasets', () => {
     const timestamp = Date.now();
     
-    cy.request('POST', `${baseUrl}/api/admin/categories/create`, {
+    cy.authRequest('POST', `${baseUrl}/api/admin/categories/create`, {
       name: `Memory Test Category 1 ${timestamp}`,
       slug: `memory-test-1-${timestamp}`
     }).then(() => {
-      cy.request('POST', `${baseUrl}/api/admin/categories/create`, {
+      cy.authRequest('POST', `${baseUrl}/api/admin/categories/create`, {
         name: `Memory Test Category 2 ${timestamp}`,
         slug: `memory-test-2-${timestamp}`
       }).then(() => {
-        cy.request('POST', `${baseUrl}/api/admin/categories/create`, {
+        cy.authRequest('POST', `${baseUrl}/api/admin/categories/create`, {
           name: `Memory Test Category 3 ${timestamp}`,
           slug: `memory-test-3-${timestamp}`
         }).then(() => {
-          cy.request('GET', `${baseUrl}${endpoint}`)
+          cy.authRequest('GET', `${baseUrl}${endpoint}`)
             .then((response) => {
               expect(response.status).to.eq(200);
               expect(response.body).to.be.an('array');
@@ -245,11 +247,11 @@ describe('Admin - List Categories API', () => {
   it('should handle categories with special characters', () => {
     const timestamp = Date.now();
     
-    cy.request('POST', `${baseUrl}/api/admin/categories/create`, {
+    cy.authRequest('POST', `${baseUrl}/api/admin/categories/create`, {
       name: `Category & Co. (Special) ${timestamp}`,
       slug: `category-special-${timestamp}`
     }).then(() => {
-      cy.request('GET', `${baseUrl}${endpoint}`)
+      cy.authRequest('GET', `${baseUrl}${endpoint}`)
         .then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.be.an('array');
@@ -263,11 +265,11 @@ describe('Admin - List Categories API', () => {
   it('should handle categories with unicode characters', () => {
     const timestamp = Date.now();
     
-    cy.request('POST', `${baseUrl}/api/admin/categories/create`, {
+    cy.authRequest('POST', `${baseUrl}/api/admin/categories/create`, {
       name: `Category 测试 📂 ${timestamp}`,
       slug: `category-unicode-${timestamp}`
     }).then(() => {
-      cy.request('GET', `${baseUrl}${endpoint}`)
+      cy.authRequest('GET', `${baseUrl}${endpoint}`)
         .then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.be.an('array');
@@ -285,9 +287,9 @@ describe('Admin - List Categories API', () => {
       slug: `compatibility-test-${timestamp}`
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/categories/create`, categoryData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/categories/create`, categoryData)
       .then(() => {
-        cy.request('GET', `${baseUrl}${endpoint}`)
+        cy.authRequest('GET', `${baseUrl}${endpoint}`)
           .then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body).to.be.an('array');

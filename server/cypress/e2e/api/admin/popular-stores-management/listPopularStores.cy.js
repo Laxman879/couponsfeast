@@ -1,4 +1,6 @@
 describe('Admin API - List Popular Stores', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
 
@@ -7,7 +9,7 @@ describe('Admin API - List Popular Stores', () => {
     
     // Create test stores (skip if endpoint not implemented)
     Array.from({length: 5}, (_, i) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/popular-stores/create`,
         body: {
@@ -24,7 +26,7 @@ describe('Admin API - List Popular Stores', () => {
   });
 
   it('should list popular stores successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/popular-stores`,
       failOnStatusCode: false
@@ -38,7 +40,7 @@ describe('Admin API - List Popular Stores', () => {
   });
 
   it('should return only popular stores', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/popular-stores`,
       failOnStatusCode: false
@@ -58,7 +60,7 @@ describe('Admin API - List Popular Stores', () => {
   });
 
   it('should handle pagination parameters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/popular-stores?page=1&limit=2`,
       failOnStatusCode: false
@@ -74,7 +76,7 @@ describe('Admin API - List Popular Stores', () => {
   });
 
   it('should sort stores by popularity metrics', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/popular-stores?sortBy=clickCount&order=desc`,
       failOnStatusCode: false
@@ -96,7 +98,7 @@ describe('Admin API - List Popular Stores', () => {
   it('should handle empty popular stores list', () => {
     cy.task('clearDatabase');
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/popular-stores`,
       failOnStatusCode: false
@@ -111,7 +113,7 @@ describe('Admin API - List Popular Stores', () => {
   });
 
   it('should include store statistics', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/popular-stores`,
       failOnStatusCode: false
@@ -131,7 +133,7 @@ describe('Admin API - List Popular Stores', () => {
   });
 
   it('should handle invalid pagination parameters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/popular-stores?page=-1&limit=0`,
       failOnStatusCode: false
@@ -141,7 +143,7 @@ describe('Admin API - List Popular Stores', () => {
   });
 
   it('should filter by category if provided', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/popular-stores?category=electronics`,
       failOnStatusCode: false
@@ -152,7 +154,7 @@ describe('Admin API - List Popular Stores', () => {
 
   it('should respond within acceptable time', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/popular-stores`,
       failOnStatusCode: false
@@ -165,7 +167,7 @@ describe('Admin API - List Popular Stores', () => {
 
   it('should handle concurrent requests', () => {
     const requests = Array.from({length: 5}, () => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/popular-stores`,
         failOnStatusCode: false
@@ -183,7 +185,7 @@ describe('Admin API - List Popular Stores', () => {
   });
 
   it('should include total count in response', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/popular-stores`,
       failOnStatusCode: false
@@ -198,7 +200,7 @@ describe('Admin API - List Popular Stores', () => {
   });
 
   it('should handle search query parameter', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/popular-stores?search=Popular`,
       failOnStatusCode: false
@@ -216,7 +218,7 @@ describe('Admin API - List Popular Stores', () => {
   });
 
   it('should return proper response structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/popular-stores`,
       failOnStatusCode: false
@@ -233,7 +235,7 @@ describe('Admin API - List Popular Stores', () => {
   it('should handle large dataset efficiently', () => {
     // Create many popular stores (skip if endpoint not implemented)
     Array.from({length: 50}, (_, i) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/popular-stores/create`,
         body: {
@@ -248,7 +250,7 @@ describe('Admin API - List Popular Stores', () => {
 
     cy.then(() => {
       const startTime = Date.now();
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/popular-stores?limit=20`,
         failOnStatusCode: false
@@ -261,12 +263,12 @@ describe('Admin API - List Popular Stores', () => {
   });
 
   it('should maintain data consistency', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/popular-stores`,
       failOnStatusCode: false
     }).then((firstResponse) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/popular-stores`,
         failOnStatusCode: false

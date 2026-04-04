@@ -1,4 +1,6 @@
 describe('Admin API - System Status', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
 
   beforeEach(() => {
@@ -6,7 +8,7 @@ describe('Admin API - System Status', () => {
   });
 
   it('should handle system status endpoint (may be unimplemented)', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/system/status`,
       failOnStatusCode: false
@@ -16,7 +18,7 @@ describe('Admin API - System Status', () => {
   });
 
   it('should handle system cleanup operations', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/system/cleanup/expired-coupons`,
       failOnStatusCode: false
@@ -31,7 +33,7 @@ describe('Admin API - System Status', () => {
   });
 
   it('should handle database optimization', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/system/optimize/database`,
       failOnStatusCode: false
@@ -47,7 +49,7 @@ describe('Admin API - System Status', () => {
 
   it('should respond within time limit', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/system/cleanup/expired-coupons`,
       failOnStatusCode: false
@@ -59,7 +61,7 @@ describe('Admin API - System Status', () => {
   });
 
   it('should handle concurrent system operations', () => {
-    const requests = Array.from({length: 3}, () => cy.request({
+    const requests = Array.from({length: 3}, () => cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/system/cleanup/expired-coupons`,
       failOnStatusCode: false
@@ -72,7 +74,7 @@ describe('Admin API - System Status', () => {
   });
 
   it('should return proper structure for system operations', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/system/optimize/database`,
       failOnStatusCode: false
@@ -87,7 +89,7 @@ describe('Admin API - System Status', () => {
   });
 
   it('should handle system operation parameters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/system/cleanup/expired-coupons`,
       body: { force: true },
@@ -98,12 +100,12 @@ describe('Admin API - System Status', () => {
   });
 
   it('should maintain system operation consistency', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/system/cleanup/expired-coupons`,
       failOnStatusCode: false
     }).then((first) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/system/optimize/database`,
         failOnStatusCode: false
@@ -115,7 +117,7 @@ describe('Admin API - System Status', () => {
   });
 
   it('should handle system operation validation', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/system/optimize/database`,
       body: { mode: 'full' },
@@ -126,7 +128,7 @@ describe('Admin API - System Status', () => {
   });
 
   it('should not expose sensitive system info', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/system/cleanup/expired-coupons`,
       failOnStatusCode: false

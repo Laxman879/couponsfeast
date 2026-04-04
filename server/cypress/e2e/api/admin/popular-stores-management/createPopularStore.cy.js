@@ -1,4 +1,6 @@
 describe('Admin API - Create Popular Store', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
 
@@ -7,7 +9,7 @@ describe('Admin API - Create Popular Store', () => {
   });
 
   it('should create popular store successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/popular-stores/create`,
       body: {
@@ -30,7 +32,7 @@ describe('Admin API - Create Popular Store', () => {
   });
 
   it('should return 400 for missing required fields', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/popular-stores/create`,
       body: {},
@@ -44,7 +46,7 @@ describe('Admin API - Create Popular Store', () => {
   });
 
   it('should validate store name requirements', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/popular-stores/create`,
       body: {
@@ -69,14 +71,14 @@ describe('Admin API - Create Popular Store', () => {
       isPopular: true
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/popular-stores/create`,
       body: storeData,
       failOnStatusCode: false
     });
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/popular-stores/create`,
       body: storeData,
@@ -92,7 +94,7 @@ describe('Admin API - Create Popular Store', () => {
   });
 
   it('should auto-set isPopular to true', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/popular-stores/create`,
       body: {
@@ -112,7 +114,7 @@ describe('Admin API - Create Popular Store', () => {
   });
 
   it('should validate website URL format', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/popular-stores/create`,
       body: {
@@ -128,7 +130,7 @@ describe('Admin API - Create Popular Store', () => {
   });
 
   it('should handle unicode characters in store name', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/popular-stores/create`,
       body: {
@@ -147,7 +149,7 @@ describe('Admin API - Create Popular Store', () => {
   });
 
   it('should set default values for optional fields', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/popular-stores/create`,
       body: {
@@ -166,7 +168,7 @@ describe('Admin API - Create Popular Store', () => {
   });
 
   it('should validate slug format', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/popular-stores/create`,
       body: {
@@ -182,7 +184,7 @@ describe('Admin API - Create Popular Store', () => {
 
   it('should handle concurrent store creation', () => {
     const requests = Array.from({length: 3}, (_, i) => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/popular-stores/create`,
         body: {
@@ -207,7 +209,7 @@ describe('Admin API - Create Popular Store', () => {
 
   it('should respond within acceptable time', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/popular-stores/create`,
       body: {
@@ -224,7 +226,7 @@ describe('Admin API - Create Popular Store', () => {
   });
 
   it('should handle malformed JSON', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/popular-stores/create`,
       body: 'invalid json',
@@ -236,7 +238,7 @@ describe('Admin API - Create Popular Store', () => {
   });
 
   it('should validate content-type header', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/popular-stores/create`,
       body: {
@@ -252,7 +254,7 @@ describe('Admin API - Create Popular Store', () => {
   });
 
   it('should initialize click count and popularity metrics', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/popular-stores/create`,
       body: {
@@ -280,7 +282,7 @@ describe('Admin API - Create Popular Store', () => {
       website: 'https://integrity-test.com'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/popular-stores/create`,
       body: storeData,
@@ -290,7 +292,7 @@ describe('Admin API - Create Popular Store', () => {
       if (createResponse.status === 201 && typeof createResponse.body === 'object' && createResponse.body.data) {
         const storeId = createResponse.body.data._id;
 
-        cy.request({
+        cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
           method: 'GET',
           url: `${baseUrl}/stores/${storeId}`,
           failOnStatusCode: false

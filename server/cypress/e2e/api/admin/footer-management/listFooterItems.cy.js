@@ -1,4 +1,6 @@
 describe('Admin API - List Footer Items', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
 
@@ -6,7 +8,7 @@ describe('Admin API - List Footer Items', () => {
     cy.task('clearDatabase');
     
     Array.from({length: 5}, (_, i) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/footer/create`,
         body: {
@@ -21,7 +23,7 @@ describe('Admin API - List Footer Items', () => {
   });
 
   it('should list footer items successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/footer`,
       failOnStatusCode: false
@@ -35,7 +37,7 @@ describe('Admin API - List Footer Items', () => {
   });
 
   it('should filter by section', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/footer?section=links`,
       failOnStatusCode: false
@@ -53,7 +55,7 @@ describe('Admin API - List Footer Items', () => {
   });
 
   it('should return items in correct order', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/footer?sortBy=order`,
       failOnStatusCode: false
@@ -75,7 +77,7 @@ describe('Admin API - List Footer Items', () => {
   it('should handle empty footer list', () => {
     cy.task('clearDatabase').then(() => {
       cy.wait(500); // Wait for database clearing
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         url: `${baseUrl}/footer`,
         failOnStatusCode: false
       }).then((response) => {
@@ -96,7 +98,7 @@ describe('Admin API - List Footer Items', () => {
   });
 
   it('should include all footer properties', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/footer`,
       failOnStatusCode: false
     }).then((response) => {
@@ -114,7 +116,7 @@ describe('Admin API - List Footer Items', () => {
   });
 
   it('should handle pagination', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/footer?page=1&limit=3`,
       failOnStatusCode: false
     }).then((response) => {
@@ -127,7 +129,7 @@ describe('Admin API - List Footer Items', () => {
   });
 
   it('should search footer items', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/footer?search=Footer`,
       failOnStatusCode: false
@@ -138,7 +140,7 @@ describe('Admin API - List Footer Items', () => {
 
   it('should respond within acceptable time', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/footer`,
       failOnStatusCode: false
     }).then((response) => {
@@ -149,7 +151,7 @@ describe('Admin API - List Footer Items', () => {
   });
 
   it('should handle concurrent requests', () => {
-    const requests = Array.from({length: 5}, () => cy.request({
+    const requests = Array.from({length: 5}, () => cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/footer`,
       failOnStatusCode: false
     }));
@@ -164,7 +166,7 @@ describe('Admin API - List Footer Items', () => {
   });
 
   it('should include total count', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/footer`,
       failOnStatusCode: false
     }).then((response) => {
@@ -175,7 +177,7 @@ describe('Admin API - List Footer Items', () => {
   });
 
   it('should return proper structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/footer`,
       failOnStatusCode: false
     }).then((response) => {
@@ -191,7 +193,7 @@ describe('Admin API - List Footer Items', () => {
   it('should handle large dataset', () => {
     // Reduce dataset size to prevent server overload
     Array.from({length: 20}, (_, i) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/footer/create`,
         body: {
@@ -205,7 +207,7 @@ describe('Admin API - List Footer Items', () => {
     });
 
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/footer?limit=10`, // Reduced limit
       failOnStatusCode: false
     }).then((response) => {
@@ -216,11 +218,11 @@ describe('Admin API - List Footer Items', () => {
   });
 
   it('should maintain consistency', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/footer`,
       failOnStatusCode: false
     }).then((first) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         url: `${baseUrl}/footer`,
         failOnStatusCode: false
       }).then((second) => {
@@ -232,7 +234,7 @@ describe('Admin API - List Footer Items', () => {
   });
 
   it('should handle invalid parameters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/footer?page=-1&limit=0`,
       failOnStatusCode: false
@@ -242,7 +244,7 @@ describe('Admin API - List Footer Items', () => {
   });
 
   it('should group by section', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/footer?groupBy=section`,
       failOnStatusCode: false

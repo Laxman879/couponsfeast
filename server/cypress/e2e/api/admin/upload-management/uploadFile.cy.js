@@ -1,4 +1,6 @@
 describe('Admin API - Upload File', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
 
@@ -7,7 +9,7 @@ describe('Admin API - Upload File', () => {
   });
 
   it('should return 400 for missing file', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/upload/logo`,
       body: {},
@@ -27,7 +29,7 @@ describe('Admin API - Upload File', () => {
     formData.append('logo', blob, 'test.txt');
     formData.append('logoType', 'logo');
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/upload/logo`,
       body: formData,
@@ -44,7 +46,7 @@ describe('Admin API - Upload File', () => {
     formData.append('logo', blob, 'large-file.jpg');
     formData.append('logoType', 'logo');
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/upload/logo`,
       body: formData,
@@ -63,7 +65,7 @@ describe('Admin API - Upload File', () => {
       formData.append('logo', blob, `test.${type}`);
       formData.append('logoType', 'logo');
 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/upload/logo`,
         body: formData,
@@ -83,13 +85,13 @@ describe('Admin API - Upload File', () => {
     formData2.append('logo', blob, 'duplicate.jpg');
     formData2.append('logoType', 'logo');
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/upload/logo`,
       body: formData1,
       failOnStatusCode: false
     }).then((response1) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/upload/logo`,
         body: formData2,
@@ -110,7 +112,7 @@ describe('Admin API - Upload File', () => {
     formData.append('logo', blob, `测试文件-${timestamp}.jpg`);
     formData.append('logoType', 'logo');
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/upload/logo`,
       body: formData,
@@ -127,7 +129,7 @@ describe('Admin API - Upload File', () => {
     formData.append('logo', blob, 'performance.jpg');
     formData.append('logoType', 'logo');
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/upload/logo`,
       body: formData,
@@ -145,7 +147,7 @@ describe('Admin API - Upload File', () => {
     formData.append('logo', blob, 'empty.jpg');
     formData.append('logoType', 'logo');
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/upload/logo`,
       body: formData,
@@ -156,7 +158,7 @@ describe('Admin API - Upload File', () => {
   });
 
   it('should validate content-type header', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/upload/logo`,
       body: 'not-form-data',
@@ -173,7 +175,7 @@ describe('Admin API - Upload File', () => {
     formData.append('logo', blob, 'special!@#$%^&*().jpg');
     formData.append('logoType', 'logo');
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/upload/logo`,
       body: formData,
@@ -190,7 +192,7 @@ describe('Admin API - Upload File', () => {
     formData.append('logo', blob, 'integrity.jpg');
     formData.append('logoType', 'logo');
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/upload/logo`,
       body: formData,
@@ -202,7 +204,7 @@ describe('Admin API - Upload File', () => {
         
         // Verify file can be accessed
         if (response.body.logoUrl.startsWith('http')) {
-          cy.request({
+          cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
             url: response.body.logoUrl,
             failOnStatusCode: false
           }).then((fileResponse) => {

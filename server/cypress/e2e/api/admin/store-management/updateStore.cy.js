@@ -1,4 +1,6 @@
 describe('Admin - Update Store API', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = Cypress.env('apiUrl') || 'http://localhost:5000';
   const endpoint = '/api/admin/stores/update';
   let testStoreId;
@@ -14,7 +16,7 @@ describe('Admin - Update Store API', () => {
       slug: `original-store-${timestamp}`
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/stores/create`, storeData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, storeData)
       .then((response) => {
         testStoreId = response.body._id;
       });
@@ -33,7 +35,7 @@ describe('Admin - Update Store API', () => {
       website: 'https://updated-store.com'
     };
 
-    cy.request('PUT', `${baseUrl}${endpoint}/${testStoreId}`, updateData)
+    cy.authRequest('PUT', `${baseUrl}${endpoint}/${testStoreId}`, updateData)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.be.an('object');
@@ -54,7 +56,7 @@ describe('Admin - Update Store API', () => {
       storeName: 'Updated Store'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}${endpoint}/invalid-id`,
       body: updateData,
@@ -72,7 +74,7 @@ describe('Admin - Update Store API', () => {
       storeName: 'Updated Store'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}${endpoint}/${nonExistentId}`,
       body: updateData,
@@ -89,7 +91,7 @@ describe('Admin - Update Store API', () => {
       storeName: 'Partially Updated Store'
     };
 
-    cy.request('PUT', `${baseUrl}${endpoint}/${testStoreId}`, updateData)
+    cy.authRequest('PUT', `${baseUrl}${endpoint}/${testStoreId}`, updateData)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body.storeName).to.eq(updateData.storeName);
@@ -102,7 +104,7 @@ describe('Admin - Update Store API', () => {
   it('should handle empty update data', () => {
     const updateData = {};
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}${endpoint}/${testStoreId}`,
       body: updateData,
@@ -123,7 +125,7 @@ describe('Admin - Update Store API', () => {
       website: {}
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}${endpoint}/${testStoreId}`,
       body: invalidData,
@@ -143,13 +145,13 @@ describe('Admin - Update Store API', () => {
       slug: `second-store-${timestamp}`
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/stores/create`, secondStoreData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, secondStoreData)
       .then(() => {
         const updateData = {
           slug: `second-store-${timestamp}` // Try to use existing slug
         };
 
-        cy.request({
+        cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
           method: 'PUT',
           url: `${baseUrl}${endpoint}/${testStoreId}`,
           body: updateData,
@@ -168,7 +170,7 @@ describe('Admin - Update Store API', () => {
       description: 'Special chars: @#$%^&*()'
     };
 
-    cy.request('PUT', `${baseUrl}${endpoint}/${testStoreId}`, updateData)
+    cy.authRequest('PUT', `${baseUrl}${endpoint}/${testStoreId}`, updateData)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body.storeName).to.include('Special');
@@ -183,7 +185,7 @@ describe('Admin - Update Store API', () => {
       description: 'Unicode update 测试 🛍️'
     };
 
-    cy.request('PUT', `${baseUrl}${endpoint}/${testStoreId}`, updateData)
+    cy.authRequest('PUT', `${baseUrl}${endpoint}/${testStoreId}`, updateData)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body.storeName).to.include('测试');
@@ -199,7 +201,7 @@ describe('Admin - Update Store API', () => {
       website: 'https://example.com/' + 'a'.repeat(100)
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}${endpoint}/${testStoreId}`,
       body: updateData,
@@ -220,7 +222,7 @@ describe('Admin - Update Store API', () => {
       logo: null
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}${endpoint}/${testStoreId}`,
       body: updateData,
@@ -241,7 +243,7 @@ describe('Admin - Update Store API', () => {
 
     const startTime = Date.now();
     
-    cy.request('PUT', `${baseUrl}${endpoint}/${testStoreId}`, updateData)
+    cy.authRequest('PUT', `${baseUrl}${endpoint}/${testStoreId}`, updateData)
       .then((response) => {
         const responseTime = Date.now() - startTime;
         expect(response.status).to.eq(200);
@@ -252,21 +254,21 @@ describe('Admin - Update Store API', () => {
   // Test Case 13: Concurrent updates to same store
   it('should handle concurrent updates to same store', () => {
     // Sequential requests to avoid Promise.all timeout
-    cy.request('PUT', `${baseUrl}${endpoint}/${testStoreId}`, {
+    cy.authRequest('PUT', `${baseUrl}${endpoint}/${testStoreId}`, {
       description: 'Concurrent update 1'
     }).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body._id).to.eq(testStoreId);
     });
     
-    cy.request('PUT', `${baseUrl}${endpoint}/${testStoreId}`, {
+    cy.authRequest('PUT', `${baseUrl}${endpoint}/${testStoreId}`, {
       description: 'Concurrent update 2'
     }).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body._id).to.eq(testStoreId);
     });
     
-    cy.request('PUT', `${baseUrl}${endpoint}/${testStoreId}`, {
+    cy.authRequest('PUT', `${baseUrl}${endpoint}/${testStoreId}`, {
       description: 'Concurrent update 3'
     }).then((response) => {
       expect(response.status).to.eq(200);
@@ -277,7 +279,7 @@ describe('Admin - Update Store API', () => {
   // Test Case 14: Update timestamp validation
   it('should update the updatedAt timestamp', () => {
     // Get original timestamp
-    cy.request('GET', `${baseUrl}/api/admin/stores/details/${testStoreId}`)
+    cy.authRequest('GET', `${baseUrl}/api/admin/stores/details/${testStoreId}`)
       .then((originalResponse) => {
         const originalUpdatedAt = originalResponse.body.updatedAt;
         
@@ -288,7 +290,7 @@ describe('Admin - Update Store API', () => {
           storeName: 'Timestamp Test Store'
         };
 
-        cy.request('PUT', `${baseUrl}${endpoint}/${testStoreId}`, updateData)
+        cy.authRequest('PUT', `${baseUrl}${endpoint}/${testStoreId}`, updateData)
           .then((updateResponse) => {
             expect(updateResponse.status).to.eq(200);
             expect(updateResponse.body.updatedAt).to.not.eq(originalUpdatedAt);
@@ -304,7 +306,7 @@ describe('Admin - Update Store API', () => {
       logo: 'also-not-a-url'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}${endpoint}/${testStoreId}`,
       body: updateData,

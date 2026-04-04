@@ -7,6 +7,7 @@ import { getDeals, getStores, getCoupons } from '@/services/api';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
 import PromoModal from '@/components/coupon/PromoModal';
+import ColumnSwitcher from '@/components/common/ColumnSwitcher';
 
 export default function DealsPage() {
   const { siteConfig, darkPalette } = useDynamicTheme();
@@ -27,6 +28,7 @@ export default function DealsPage() {
   const [countdown, setCountdown] = useState('');
   const [activeStore, setActiveStore] = useState('All');
   const [modalData, setModalData] = useState<any>(null);
+  const [dealCols, setDealCols] = useState(4);
 
   const serverUrl = 'http://localhost:5000';
 
@@ -196,7 +198,12 @@ export default function DealsPage() {
 
             {/* Deals Grid */}
             {gridDeals.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              <>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold" style={{ color: textMain }}>All Deals</h2>
+                <ColumnSwitcher columns={dealCols} onChange={setDealCols} mobileOptions={[1, 2]} desktopOptions={[3, 4, 5]} />
+              </div>
+              <div className={`grid gap-5 ${dealCols === 1 ? 'grid-cols-1' : dealCols === 2 ? 'grid-cols-2' : dealCols === 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : dealCols === 5 ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}`}>
                 {gridDeals.map((deal: any) => {
                   const image = getImage(deal);
                   const storeName = deal.store?.storeName || 'Store';
@@ -239,6 +246,7 @@ export default function DealsPage() {
                   );
                 })}
               </div>
+              </>
             )}
           </>
         )}

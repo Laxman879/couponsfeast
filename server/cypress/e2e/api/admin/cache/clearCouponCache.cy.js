@@ -1,4 +1,6 @@
 describe('Admin - Clear Coupon Cache API', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = Cypress.env('apiUrl') || 'http://localhost:5000';
   const endpoint = '/api/admin/cache/clear/coupons';
 
@@ -14,7 +16,7 @@ describe('Admin - Clear Coupon Cache API', () => {
 
   // Test Case 1: Success case - Valid coupon cache clear request
   it('should clear coupon cache successfully', () => {
-    cy.request('POST', `${baseUrl}${endpoint}`)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.be.an('object');
@@ -27,7 +29,7 @@ describe('Admin - Clear Coupon Cache API', () => {
 
   // Test Case 2: Response structure validation
   it('should return response with correct structure', () => {
-    cy.request('POST', `${baseUrl}${endpoint}`)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         
@@ -53,7 +55,7 @@ describe('Admin - Clear Coupon Cache API', () => {
   it('should respond within acceptable time limit', () => {
     const startTime = Date.now();
     
-    cy.request('POST', `${baseUrl}${endpoint}`)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`)
       .then((response) => {
         const responseTime = Date.now() - startTime;
         expect(response.status).to.eq(200);
@@ -63,7 +65,7 @@ describe('Admin - Clear Coupon Cache API', () => {
 
   // Test Case 4: Content-Type validation
   it('should return JSON content type', () => {
-    cy.request('POST', `${baseUrl}${endpoint}`)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.headers).to.have.property('content-type');
@@ -76,7 +78,7 @@ describe('Admin - Clear Coupon Cache API', () => {
     const invalidMethods = ['GET', 'PUT', 'DELETE', 'PATCH'];
     
     invalidMethods.forEach((method) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: method,
         url: `${baseUrl}${endpoint}`,
         failOnStatusCode: false
@@ -88,19 +90,19 @@ describe('Admin - Clear Coupon Cache API', () => {
 
   // Test Case 6: Concurrent requests handling
   it('should handle concurrent coupon cache clear requests', () => {
-    cy.request('POST', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('POST', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body).to.have.property('message', 'Coupon cache cleared successfully');
       expect(response.body).to.have.property('timestamp');
     });
     
-    cy.request('POST', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('POST', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body).to.have.property('message', 'Coupon cache cleared successfully');
       expect(response.body).to.have.property('timestamp');
     });
     
-    cy.request('POST', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('POST', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body).to.have.property('message', 'Coupon cache cleared successfully');
       expect(response.body).to.have.property('timestamp');
@@ -109,7 +111,7 @@ describe('Admin - Clear Coupon Cache API', () => {
 
   // Test Case 7: Empty request body handling
   it('should handle empty request body', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: {}
@@ -127,7 +129,7 @@ describe('Admin - Clear Coupon Cache API', () => {
       reason: 'Manual coupon cache clear'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: requestData
@@ -141,7 +143,7 @@ describe('Admin - Clear Coupon Cache API', () => {
   it('should return accurate current timestamp', () => {
     const beforeRequest = new Date();
     
-    cy.request('POST', `${baseUrl}${endpoint}`)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`)
       .then((response) => {
         const afterRequest = new Date();
         const responseTimestamp = new Date(response.body.timestamp);
@@ -158,13 +160,13 @@ describe('Admin - Clear Coupon Cache API', () => {
 
   // Test Case 10: Multiple consecutive requests
   it('should handle multiple consecutive coupon cache clear requests', () => {
-    cy.request('POST', `${baseUrl}${endpoint}`)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`)
       .then((firstResponse) => {
         expect(firstResponse.status).to.eq(200);
         
         cy.wait(50); // Small delay
         
-        cy.request('POST', `${baseUrl}${endpoint}`)
+        cy.authRequest('POST', `${baseUrl}${endpoint}`)
           .then((secondResponse) => {
             expect(secondResponse.status).to.eq(200);
             expect(secondResponse.body.message).to.eq(firstResponse.body.message);
@@ -186,7 +188,7 @@ describe('Admin - Clear Coupon Cache API', () => {
     ];
 
     contentTypes.forEach((contentType) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}${endpoint}`,
         headers: {
@@ -203,19 +205,19 @@ describe('Admin - Clear Coupon Cache API', () => {
   // Test Case 12: High load concurrent testing
   it('should handle high concurrent load efficiently', () => {
     // Sequential requests to avoid Promise.all timeout
-    cy.request('POST', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('POST', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body.message).to.eq('Coupon cache cleared successfully');
       expect(response.body).to.have.property('timestamp');
     });
     
-    cy.request('POST', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('POST', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body.message).to.eq('Coupon cache cleared successfully');
       expect(response.body).to.have.property('timestamp');
     });
     
-    cy.request('POST', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('POST', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body.message).to.eq('Coupon cache cleared successfully');
       expect(response.body).to.have.property('timestamp');
@@ -224,7 +226,7 @@ describe('Admin - Clear Coupon Cache API', () => {
 
   // Test Case 13: Error handling simulation
   it('should handle potential server errors gracefully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -244,8 +246,8 @@ describe('Admin - Clear Coupon Cache API', () => {
 
   // Test Case 14: Response consistency validation
   it('should return consistent response structure across calls', () => {
-    cy.request('POST', `${baseUrl}${endpoint}`).then((firstResponse) => {
-      cy.request('POST', `${baseUrl}${endpoint}`).then((secondResponse) => {
+    cy.authRequest('POST', `${baseUrl}${endpoint}`).then((firstResponse) => {
+      cy.authRequest('POST', `${baseUrl}${endpoint}`).then((secondResponse) => {
         expect(secondResponse.status).to.eq(firstResponse.status);
         expect(secondResponse.body.message).to.eq(firstResponse.body.message);
         
@@ -265,7 +267,7 @@ describe('Admin - Clear Coupon Cache API', () => {
 
   // Test Case 15: API contract and backward compatibility
   it('should maintain API contract for backward compatibility', () => {
-    cy.request('POST', `${baseUrl}${endpoint}`)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         

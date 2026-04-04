@@ -1,6 +1,7 @@
 import Store from "../models/Store.js";
 import Coupon from "../models/Coupon.js";
 import Category from "../models/Category.js";
+import Deal from "../models/Deal.js";
 import PopularStore from "../models/PopularStore.js";
 import FeaturedCoupon from "../models/FeaturedCoupon.js";
 import FooterLink from "../models/FooterLink.js";
@@ -77,6 +78,38 @@ export const seedAllData = async () => {
       console.log("✅ Coupons seeded (15)");
     }
 
+    // ─── DEALS (with section assignments) ─────────────────────────
+    const dealCount = await Deal.countDocuments();
+    if (dealCount === 0) {
+      const allStores = await Store.find();
+      const sMap = {};
+      allStores.forEach(s => { sMap[s.slug] = s._id; });
+
+      await Deal.insertMany([
+        // Popular Offers of the Day
+        { title: "iPhone 15 Pro — Lowest Price Ever", discount: "₹15000 Off", image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400&h=300&fit=crop", store: sMap["amazon"], section: "popular_offers", isActive: true, isFeatured: true, type: "deal", link: "https://www.amazon.com", description: "Grab the iPhone 15 Pro at the lowest price this season!" },
+        { title: "Samsung Galaxy S24 Ultra Deal", discount: "₹12000 Off", image: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=400&h=300&fit=crop", store: sMap["flipkart"], section: "popular_offers", isActive: true, isFeatured: true, type: "deal", link: "https://www.flipkart.com", description: "Samsung Galaxy S24 Ultra at an unbeatable price!" },
+        { title: "Nike Air Max 90 — Limited Edition", discount: "40% Off", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop", store: sMap["nike"], section: "popular_offers", isActive: true, type: "offer", link: "https://www.nike.com", description: "Limited edition Nike Air Max 90 at 40% off!" },
+        { title: "Sony WH-1000XM5 Headphones", discount: "30% Off", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop", store: sMap["amazon"], section: "popular_offers", isActive: true, type: "deal", link: "https://www.amazon.com", description: "Premium noise-cancelling headphones at 30% off!" },
+        // Deals Of The Day
+        { title: "MacBook Air M3 — Student Offer", discount: "₹10000 Off", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=300&fit=crop", store: sMap["apple"], section: "deals_of_day", isActive: true, isFeatured: true, type: "deal", link: "https://www.apple.com", description: "MacBook Air M3 with exclusive student discount!" },
+        { title: "Adidas Ultraboost — Flash Sale", discount: "50% Off", image: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=300&fit=crop", store: sMap["adidas"], section: "deals_of_day", isActive: true, type: "flash", link: "https://www.adidas.com", description: "Adidas Ultraboost at half price — today only!" },
+        { title: "Home Decor Essentials Bundle", discount: "35% Off", image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop", store: sMap["ikea"], section: "deals_of_day", isActive: true, type: "deal", link: "https://www.ikea.com", description: "Transform your home with IKEA essentials at 35% off!" },
+        { title: "Kitchen Appliances Mega Sale", discount: "Up to 60% Off", image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop", store: sMap["amazon"], section: "deals_of_day", isActive: true, type: "deal", link: "https://www.amazon.com", description: "Mega sale on kitchen appliances — up to 60% off!" },
+        // Collections
+        { title: "Fitness Tracker — Best Price", discount: "₹2000 Off", image: "https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=400&h=300&fit=crop", store: sMap["amazon"], section: "collections", isActive: true, type: "deal", link: "https://www.amazon.com", description: "Top-rated fitness trackers at the best price!" },
+        { title: "Designer Sunglasses Collection", discount: "45% Off", image: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=300&fit=crop", store: sMap["myntra"], section: "collections", isActive: true, type: "offer", link: "https://www.myntra.com", description: "Premium designer sunglasses at 45% off!" },
+        { title: "Gaming Console Bundle Deal", discount: "₹8000 Off", image: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400&h=300&fit=crop", store: sMap["flipkart"], section: "collections", isActive: true, type: "deal", link: "https://www.flipkart.com", description: "Gaming console bundles at massive discounts!" },
+        { title: "Organic Skincare Set", discount: "25% Off", image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&h=300&fit=crop", store: sMap["nykaa"], section: "collections", isActive: true, type: "offer", link: "https://www.nykaa.com", description: "Organic skincare essentials at 25% off!" },
+        // Trending Deals
+        { title: "Smart Watch — Premium Edition", discount: "₹5000 Off", image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop", store: sMap["amazon"], section: "trending_deals", isActive: true, type: "deal", link: "https://www.amazon.com", description: "Premium smartwatch at ₹5000 off!" },
+        { title: "Travel Luggage Set — Durable", discount: "30% Off", image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=300&fit=crop", store: sMap["amazon"], section: "trending_deals", isActive: true, type: "offer", link: "https://www.amazon.com", description: "Durable travel luggage sets at 30% off!" },
+        { title: "Wireless Earbuds — Top Rated", discount: "₹1500 Off", image: "https://images.unsplash.com/photo-1590658268037-6bf12f032f55?w=400&h=300&fit=crop", store: sMap["flipkart"], section: "trending_deals", isActive: true, type: "deal", link: "https://www.flipkart.com", description: "Top-rated wireless earbuds at ₹1500 off!" },
+        { title: "Running Shoes — All Terrain", discount: "40% Off", image: "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=400&h=300&fit=crop", store: sMap["nike"], section: "trending_deals", isActive: true, type: "offer", link: "https://www.nike.com", description: "All-terrain running shoes at 40% off!" },
+      ]);
+      console.log("✅ Deals seeded (16) — popular_offers, deals_of_day, collections, trending_deals");
+    }
+
     // ─── POPULAR STORES ───────────────────────────────────────────
     const popCount = await PopularStore.countDocuments();
     if (popCount === 0) {
@@ -107,12 +140,17 @@ export const seedAllData = async () => {
     const bannerCount = await Banner.countDocuments();
     if (bannerCount === 0) {
       await Banner.insertMany([
-        { title: "Up to 70% Off — Big Season Sale", subtitle: "Limited Time Offer", image: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200&h=400&fit=crop", buttonText: "Shop Now", buttonLink: "/deals", isActive: true },
-        { title: "Earn Cash Back on Every Purchase", subtitle: "Join 10 million+ smart shoppers", image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&h=400&fit=crop", buttonText: "Get Cash Back", buttonLink: "/cashback", isActive: true },
-        { title: "New Member Bonus — Extra 15% Off", subtitle: "Your first order discount is waiting", image: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=1200&h=400&fit=crop", buttonText: "Sign Up Free", buttonLink: "/signup", isActive: true },
-        { title: "Travel Deals — Flights from ₹999", subtitle: "Book now, travel anytime", image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200&h=400&fit=crop", buttonText: "Book Now", buttonLink: "/stores/makemytrip", isActive: true },
+        // Left banners (hero_left)
+        { title: "Up to 70% Off — Big Season Sale", subtitle: "Limited Time Offer", label: "Amazon", discount: "70% OFF", cta: "SHOP THE DEALS", image: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200&h=400&fit=crop", buttonText: "Shop Now", buttonLink: "/deals", bannerType: "hero_left", isActive: true },
+        { title: "Earn Cash Back on Every Purchase", subtitle: "Join 10 million+ smart shoppers", label: "CouponsFeast", discount: "5% BACK", cta: "GET CASH BACK", image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&h=400&fit=crop", buttonText: "Get Cash Back", buttonLink: "/cashback", bannerType: "hero_left", isActive: true },
+        { title: "New Member Bonus — Extra 15% Off", subtitle: "Your first order discount is waiting", label: "Flipkart", discount: "15% OFF", cta: "SIGN UP FREE", image: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=1200&h=400&fit=crop", buttonText: "Sign Up Free", buttonLink: "/signup", bannerType: "hero_left", isActive: true },
+        { title: "Travel Deals — Flights from ₹999", subtitle: "Book now, travel anytime", label: "MakeMyTrip", discount: "₹999", cta: "BOOK NOW", image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200&h=400&fit=crop", buttonText: "Book Now", buttonLink: "/stores/makemytrip", bannerType: "hero_left", isActive: true },
+        // Right banners (hero_right)
+        { title: "Nike Flash Sale — Extra 40% Off All Shoes", label: "Nike", discount: "40% OFF", cta: "GRAB NOW", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop", buttonLink: "https://www.nike.com", storeUrl: "https://www.nike.com", couponCode: "NIKE40", bannerType: "hero_right", cardBgColor: "#1a1a2e", isActive: true },
+        { title: "Nykaa Beauty Fest — Up to 50% Off Skincare", label: "Nykaa", discount: "50% OFF", cta: "SHOP BEAUTY", image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&h=300&fit=crop", buttonLink: "https://www.nykaa.com", storeUrl: "https://www.nykaa.com", couponCode: "BEAUTY50", bannerType: "hero_right", cardBgColor: "#4a1942", isActive: true },
+        { title: "Swiggy — ₹100 Off First 3 Orders", label: "Swiggy", discount: "₹100 OFF", cta: "ORDER NOW", image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=300&fit=crop", buttonLink: "https://www.swiggy.com", storeUrl: "https://www.swiggy.com", couponCode: "SWIGGY100", bannerType: "hero_right", cardBgColor: "#fc8019", isActive: true },
       ]);
-      console.log("✅ Banners seeded (4)");
+      console.log("✅ Banners seeded (7)");
     }
 
     // ─── NAVIGATION ───────────────────────────────────────────────
@@ -228,10 +266,15 @@ export const seedAllData = async () => {
         sections: [
           { id: "s1", order: 1, type: "heroBanner", title: "Best Coupons & Deals Today" },
           { id: "s2", order: 2, type: "featuredCoupons", title: "The Best Coupons, Promo Codes & Cash Back Offers", limit: 4 },
-          { id: "s3", order: 3, type: "trendingCoupons", title: "Trending Deals Right Now", limit: 8 },
-          { id: "s4", order: 4, type: "topStores", title: "Shop at Top Stores", limit: 6 },
-          { id: "s5", order: 5, type: "categories", title: "Browse by Category" },
-          { id: "s6", order: 6, type: "latestCoupons", title: "Latest Coupons", limit: 10 },
+          { id: "s3", order: 3, type: "popularOffers", title: "Popular Offers of the Day", limit: 4 },
+          { id: "s4", order: 4, type: "popularStores", title: "Popular Stores", limit: 12 },
+          { id: "s5", order: 5, type: "topCoupons", title: "Today's Top Coupons & Offers", limit: 6 },
+          { id: "s6", order: 6, type: "dealsOfDay", title: "Deals Of The Day", limit: 4 },
+          { id: "s7", order: 7, type: "collections", title: "CouponsFeast Collections", limit: 4 },
+          { id: "s8", order: 8, type: "trendingCoupons", title: "Trending Deals Right Now", limit: 8 },
+          { id: "s9", order: 9, type: "topStores", title: "Shop at Top Stores", limit: 6 },
+          { id: "s10", order: 10, type: "categories", title: "Browse by Category" },
+          { id: "s11", order: 11, type: "latestCoupons", title: "Latest Coupons", limit: 10 },
         ]
       });
       console.log("✅ Home page seeded");

@@ -1,4 +1,6 @@
 describe('Admin API - Restore Data', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
   let testBackupId;
@@ -7,7 +9,7 @@ describe('Admin API - Restore Data', () => {
     cy.task('clearDatabase');
     
     // Create test data and backup
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/stores/create`,
       body: {
@@ -19,7 +21,7 @@ describe('Admin API - Restore Data', () => {
       failOnStatusCode: false
     }).then((storeResponse) => {
       if ([200, 201].includes(storeResponse.status)) {
-        cy.request({
+        cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
           method: 'POST',
           url: `${baseUrl}/data/backup`,
           body: {
@@ -40,7 +42,7 @@ describe('Admin API - Restore Data', () => {
   });
 
   it('should handle restore endpoint (may be unimplemented)', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/restore`,
       body: {
@@ -53,7 +55,7 @@ describe('Admin API - Restore Data', () => {
   });
 
   it('should handle restore validation (if implemented)', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/restore`,
       body: {},
@@ -64,7 +66,7 @@ describe('Admin API - Restore Data', () => {
   });
 
   it('should handle non-existent backup (if implemented)', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/restore`,
       body: {
@@ -77,7 +79,7 @@ describe('Admin API - Restore Data', () => {
   });
 
   it('should validate backup ID format', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/restore`,
       body: {
@@ -90,7 +92,7 @@ describe('Admin API - Restore Data', () => {
   });
 
   it('should handle selective restore', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/restore`,
       body: {
@@ -104,7 +106,7 @@ describe('Admin API - Restore Data', () => {
   });
 
   it('should handle restore with overwrite option', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/restore`,
       body: {
@@ -118,7 +120,7 @@ describe('Admin API - Restore Data', () => {
   });
 
   it('should validate table names for selective restore', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/restore`,
       body: {
@@ -133,7 +135,7 @@ describe('Admin API - Restore Data', () => {
 
   it('should respond within time limit', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/restore`,
       body: {
@@ -148,7 +150,7 @@ describe('Admin API - Restore Data', () => {
   });
 
   it('should handle concurrent restore attempts', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/restore`,
       body: {
@@ -156,7 +158,7 @@ describe('Admin API - Restore Data', () => {
       },
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/data/restore`,
         body: {
@@ -170,7 +172,7 @@ describe('Admin API - Restore Data', () => {
   });
 
   it('should handle malformed JSON', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/restore`,
       body: 'invalid json',
@@ -182,7 +184,7 @@ describe('Admin API - Restore Data', () => {
   });
 
   it('should return restore statistics', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/restore`,
       body: {
@@ -201,7 +203,7 @@ describe('Admin API - Restore Data', () => {
   });
 
   it('should return proper structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/restore`,
       body: {
@@ -219,7 +221,7 @@ describe('Admin API - Restore Data', () => {
   });
 
   it('should validate content-type', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/restore`,
       body: {
@@ -233,7 +235,7 @@ describe('Admin API - Restore Data', () => {
   });
 
   it('should handle dry run option', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/restore`,
       body: {
@@ -252,7 +254,7 @@ describe('Admin API - Restore Data', () => {
   it('should maintain data integrity', () => {
     // Clear database and restore
     cy.task('clearDatabase').then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/data/restore`,
         body: {
@@ -264,7 +266,7 @@ describe('Admin API - Restore Data', () => {
         
         if (restoreResponse.status === 200) {
           // Verify data was restored
-          cy.request({
+          cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
             url: `${baseUrl}/stores`,
             failOnStatusCode: false
           }).then((listResponse) => {

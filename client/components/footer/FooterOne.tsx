@@ -37,7 +37,7 @@ export default function FooterOne({ config }: FooterOneProps) {
       <div className="max-w-7xl mx-auto px-6 py-10 md:py-14">
         <div className="mb-8">
           {siteConfig?.logos?.footer ? (
-            <img src={siteConfig.logos.footer.startsWith('http') ? siteConfig.logos.footer : `http://localhost:5000${siteConfig.logos.footer}`} alt={siteConfig.siteName} className="h-12 w-auto mb-2" />
+            <img src={siteConfig.logos.footer.startsWith('http') ? siteConfig.logos.footer : `http://localhost:5000${siteConfig.logos.footer}`} alt={siteConfig.siteName} className="h-16 w-auto mb-2" />
           ) : (
             <h2 className="text-3xl md:text-4xl font-bold italic tracking-tight">
               {siteConfig?.siteName || 'CouponsFeast'}{' '}

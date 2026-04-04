@@ -17,6 +17,7 @@ export const login = async (req, res) => {
 
     const token = jwt.sign({ id: admin._id, email: admin.email }, JWT_SECRET, { expiresIn: JWT_EXPIRES });
 
+    res.cookie('token', token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
     res.json({ token, admin: { id: admin._id, email: admin.email, name: admin.name } });
   } catch (error) {
     res.status(500).json({ error: error.message });

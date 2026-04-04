@@ -39,14 +39,31 @@ module.exports = defineConfig({
             if (mongoose.connection.readyState !== 1) {
               await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/couponsfeast')
             }
-            // Clear all collections and wait for completion
             const collections = await mongoose.connection.db.listCollections().toArray()
             for (const collection of collections) {
+              // Skip admins collection so login keeps working
+              if (collection.name === 'admins') continue
               await mongoose.connection.db.collection(collection.name).deleteMany({})
             }
             return null
           } catch (error) {
             console.log('Clear database error:', error)
+            return null
+          }
+        },
+        async seedAdmin() {
+          try {
+            await ensureConnected()
+            const bcrypt = require('bcryptjs')
+            const col = mongoose.connection.db.collection('admins')
+            const exists = await col.findOne({ email: 'admin@couponsfeast.com' })
+            if (!exists) {
+              const hash = await bcrypt.hash('admin123', 10)
+              await col.insertOne({ email: 'admin@couponsfeast.com', password: hash, name: 'Admin', createdAt: new Date(), updatedAt: new Date() })
+            }
+            return null
+          } catch (error) {
+            console.log('Seed admin error:', error)
             return null
           }
         }

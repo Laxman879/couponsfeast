@@ -1,1 +1,101 @@
-import React from 'react';\nimport { Card, CardContent, CardMedia, Typography, Button, Box } from '@mui/material';\nimport { Store } from '@mui/icons-material';\nimport Link from 'next/link';\n\n// ==========================================\n// STORE CARD COMPONENT\n// ==========================================\n\ninterface StoreCardProps {\n  store: {\n    _id: string;\n    storeName: string;\n    slug: string;\n    description: string;\n    logoUrl: string;\n    websiteUrl: string;\n    isActive: boolean;\n  };\n  showAdminActions?: boolean;\n  onEdit?: (storeId: string) => void;\n  onDelete?: (storeId: string) => void;\n}\n\nconst StoreCard: React.FC<StoreCardProps> = ({ \n  store, \n  showAdminActions = false, \n  onEdit, \n  onDelete \n}) => {\n  return (\n    <Card \n      sx={{ \n        maxWidth: 345, \n        m: 2, \n        transition: 'transform 0.2s',\n        '&:hover': {\n          transform: 'translateY(-4px)',\n          boxShadow: 3\n        }\n      }}\n    >\n      <CardMedia\n        component=\"img\"\n        height=\"140\"\n        image={store.logoUrl || '/images/default-store.png'}\n        alt={store.storeName}\n        sx={{ objectFit: 'contain', p: 2 }}\n      />\n      \n      <CardContent>\n        <Typography gutterBottom variant=\"h6\" component=\"div\">\n          <Store sx={{ mr: 1, verticalAlign: 'middle' }} />\n          {store.storeName}\n        </Typography>\n        \n        <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 2 }}>\n          {store.description}\n        </Typography>\n        \n        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>\n          <Link href={`/view/${store.websiteUrl ? store.websiteUrl.replace(/https?:\/\/(www\.)?/, '').replace(/\/$/, '') : `${store.slug}.com`}`} passHref>\n            <Button variant=\"contained\" size=\"small\">\n              View Store\n            </Button>\n          </Link>\n          \n          <Button \n            variant=\"outlined\" \n            size=\"small\"\n            href={store.websiteUrl}\n            target=\"_blank\"\n            rel=\"noopener noreferrer\"\n          >\n            Visit Website\n          </Button>\n          \n          {showAdminActions && (\n            <>\n              <Button \n                variant=\"outlined\" \n                size=\"small\" \n                color=\"primary\"\n                onClick={() => onEdit?.(store._id)}\n              >\n                Edit\n              </Button>\n              \n              <Button \n                variant=\"outlined\" \n                size=\"small\" \n                color=\"error\"\n                onClick={() => onDelete?.(store._id)}\n              >\n                Delete\n              </Button>\n            </>\n          )}\n        </Box>\n      </CardContent>\n    </Card>\n  );\n};\n\nexport default StoreCard;
+import React from 'react';
+import { Card, CardContent, CardMedia, Typography, Button, Box } from '@mui/material';
+import { Store } from '@mui/icons-material';
+import Link from 'next/link';
+
+interface StoreCardProps {
+  store: {
+    _id: string;
+    storeName: string;
+    slug: string;
+    description: string;
+    logoUrl: string;
+    websiteUrl: string;
+    isActive: boolean;
+  };
+  showAdminActions?: boolean;
+  onEdit?: (storeId: string) => void;
+  onDelete?: (storeId: string) => void;
+}
+
+const StoreCard: React.FC<StoreCardProps> = ({
+  store,
+  showAdminActions = false,
+  onEdit,
+  onDelete
+}) => {
+  return (
+    <Card
+      sx={{
+        maxWidth: 345,
+        m: 2,
+        transition: 'transform 0.2s',
+        '&:hover': {
+          transform: 'translateY(-4px)',
+          boxShadow: 3
+        }
+      }}
+    >
+      <CardMedia
+        component="img"
+        height="140"
+        image={store.logoUrl || '/images/default-store.png'}
+        alt={store.storeName}
+        sx={{ objectFit: 'contain', p: 2 }}
+      />
+
+      <CardContent>
+        <Typography gutterBottom variant="h6" component="div">
+          <Store sx={{ mr: 1, verticalAlign: 'middle' }} />
+          {store.storeName}
+        </Typography>
+
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          {store.description}
+        </Typography>
+
+        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+          <Link href={`/view/${store.websiteUrl ? store.websiteUrl.replace(/https?:\/\/(www\.)?/, '').replace(/\/$/, '') : `${store.slug}.com`}`} passHref>
+            <Button variant="contained" size="small">
+              View Store
+            </Button>
+          </Link>
+
+          <Button
+            variant="outlined"
+            size="small"
+            href={store.websiteUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Visit Website
+          </Button>
+
+          {showAdminActions && (
+            <>
+              <Button
+                variant="outlined"
+                size="small"
+                color="primary"
+                onClick={() => onEdit?.(store._id)}
+              >
+                Edit
+              </Button>
+
+              <Button
+                variant="outlined"
+                size="small"
+                color="error"
+                onClick={() => onDelete?.(store._id)}
+              >
+                Delete
+              </Button>
+            </>
+          )}
+        </Box>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default StoreCard;

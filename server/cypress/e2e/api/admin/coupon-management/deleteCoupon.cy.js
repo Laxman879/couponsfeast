@@ -1,4 +1,6 @@
 describe('Admin - Delete Coupon API', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = Cypress.env('apiUrl') || 'http://localhost:5000';
   const endpoint = '/api/admin/coupons/delete';
   let testCouponId;
@@ -10,7 +12,7 @@ describe('Admin - Delete Coupon API', () => {
     
     // Create a test store first
     const timestamp = Date.now() + Math.random().toString(36).substr(2, 9);
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/api/admin/stores/create`,
       body: {
@@ -31,7 +33,7 @@ describe('Admin - Delete Coupon API', () => {
         category: 'Electronics'
       };
       
-      cy.request('POST', `${baseUrl}/api/admin/coupons/create`, couponData)
+      cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, couponData)
         .then((response) => {
           testCouponId = response.body._id;
         });
@@ -45,14 +47,14 @@ describe('Admin - Delete Coupon API', () => {
 
   // Test Case 1: Success case - Valid coupon deletion
   it('should delete coupon successfully with valid ID', () => {
-    cy.request('DELETE', `${baseUrl}${endpoint}/${testCouponId}`)
+    cy.authRequest('DELETE', `${baseUrl}${endpoint}/${testCouponId}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.have.property('message', 'Coupon deleted');
       });
 
     // Verify coupon is actually deleted
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/api/admin/coupons/details/${testCouponId}`,
       failOnStatusCode: false
@@ -63,7 +65,7 @@ describe('Admin - Delete Coupon API', () => {
 
   // Test Case 2: Invalid coupon ID format
   it('should return 400 for invalid coupon ID format', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}${endpoint}/invalid-id`,
       failOnStatusCode: false
@@ -77,7 +79,7 @@ describe('Admin - Delete Coupon API', () => {
   it('should return 404 for non-existent coupon ID', () => {
     const nonExistentId = '507f1f77bcf86cd799439011';
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}${endpoint}/${nonExistentId}`,
       failOnStatusCode: false
@@ -89,7 +91,7 @@ describe('Admin - Delete Coupon API', () => {
 
   // Test Case 4: Empty string ID
   it('should return 400 for empty string ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}${endpoint}/`,
       failOnStatusCode: false
@@ -100,7 +102,7 @@ describe('Admin - Delete Coupon API', () => {
 
   // Test Case 5: Special characters in ID
   it('should return 400 for ID with special characters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}${endpoint}/coupon@#$%`,
       failOnStatusCode: false
@@ -114,7 +116,7 @@ describe('Admin - Delete Coupon API', () => {
   it('should return 400 for excessively long ID', () => {
     const longId = 'a'.repeat(100);
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}${endpoint}/${longId}`,
       failOnStatusCode: false
@@ -127,12 +129,12 @@ describe('Admin - Delete Coupon API', () => {
   // Test Case 7: Double deletion attempt
   it('should return 404 for already deleted coupon', () => {
     // First deletion
-    cy.request('DELETE', `${baseUrl}${endpoint}/${testCouponId}`)
+    cy.authRequest('DELETE', `${baseUrl}${endpoint}/${testCouponId}`)
       .then((response) => {
         expect(response.status).to.eq(200);
 
         // Second deletion attempt
-        cy.request({
+        cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
           method: 'DELETE',
           url: `${baseUrl}${endpoint}/${testCouponId}`,
           failOnStatusCode: false
@@ -147,7 +149,7 @@ describe('Admin - Delete Coupon API', () => {
   it('should delete coupon within acceptable time', () => {
     const startTime = Date.now();
     
-    cy.request('DELETE', `${baseUrl}${endpoint}/${testCouponId}`)
+    cy.authRequest('DELETE', `${baseUrl}${endpoint}/${testCouponId}`)
       .then((response) => {
         const responseTime = Date.now() - startTime;
         expect(response.status).to.eq(200);
@@ -158,21 +160,21 @@ describe('Admin - Delete Coupon API', () => {
   // Test Case 9: Concurrent deletion attempts
   it('should handle concurrent deletion attempts', () => {
     // Sequential requests to avoid Promise.all timeout
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}${endpoint}/${testCouponId}`,
       failOnStatusCode: false
     }).then((response1) => {
       expect(response1.status).to.eq(200);
       
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'DELETE',
         url: `${baseUrl}${endpoint}/${testCouponId}`,
         failOnStatusCode: false
       }).then((response2) => {
         expect(response2.status).to.eq(404);
         
-        cy.request({
+        cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
           method: 'DELETE',
           url: `${baseUrl}${endpoint}/${testCouponId}`,
           failOnStatusCode: false
@@ -188,7 +190,7 @@ describe('Admin - Delete Coupon API', () => {
     const uppercaseId = testCouponId.toUpperCase();
     
     if (testCouponId !== uppercaseId) {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'DELETE',
         url: `${baseUrl}${endpoint}/${uppercaseId}`,
         failOnStatusCode: false
@@ -201,7 +203,7 @@ describe('Admin - Delete Coupon API', () => {
 
   // Test Case 11: Content-Type validation
   it('should not require Content-Type for DELETE request', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}${endpoint}/${testCouponId}`,
       headers: {
@@ -219,7 +221,7 @@ describe('Admin - Delete Coupon API', () => {
     const timestamp = Date.now();
     let coupon1Id, coupon2Id;
     
-    cy.request('POST', `${baseUrl}/api/admin/coupons/create`, {
+    cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, {
       title: `Coupon 1 ${timestamp}`,
       code: `CPN1${timestamp}`,
       discount: '10%',
@@ -228,7 +230,7 @@ describe('Admin - Delete Coupon API', () => {
     }).then((response1) => {
       coupon1Id = response1.body._id;
       
-      cy.request('POST', `${baseUrl}/api/admin/coupons/create`, {
+      cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, {
         title: `Coupon 2 ${timestamp}`,
         code: `CPN2${timestamp}`,
         discount: '20%',
@@ -238,12 +240,12 @@ describe('Admin - Delete Coupon API', () => {
         coupon2Id = response2.body._id;
         
         // Delete the original test coupon
-        cy.request('DELETE', `${baseUrl}${endpoint}/${testCouponId}`)
+        cy.authRequest('DELETE', `${baseUrl}${endpoint}/${testCouponId}`)
           .then((response) => {
             expect(response.status).to.eq(200);
 
             // Verify the deleted coupon no longer exists
-            cy.request({
+            cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
               method: 'GET',
               url: `${baseUrl}/api/admin/coupons/details/${testCouponId}`,
               failOnStatusCode: false
@@ -252,13 +254,13 @@ describe('Admin - Delete Coupon API', () => {
             });
             
             // Verify the other coupons still exist
-            cy.request('GET', `${baseUrl}/api/admin/coupons/details/${coupon1Id}`)
+            cy.authRequest('GET', `${baseUrl}/api/admin/coupons/details/${coupon1Id}`)
               .then((coupon1Response) => {
                 expect(coupon1Response.status).to.eq(200);
                 expect(coupon1Response.body.title).to.include('Coupon 1');
               });
               
-            cy.request('GET', `${baseUrl}/api/admin/coupons/details/${coupon2Id}`)
+            cy.authRequest('GET', `${baseUrl}/api/admin/coupons/details/${coupon2Id}`)
               .then((coupon2Response) => {
                 expect(coupon2Response.status).to.eq(200);
                 expect(coupon2Response.body.title).to.include('Coupon 2');
@@ -273,7 +275,7 @@ describe('Admin - Delete Coupon API', () => {
     // This test assumes there might be related clicks or other data
     // In a real scenario, you might need to handle cascade deletions
     
-    cy.request('DELETE', `${baseUrl}${endpoint}/${testCouponId}`)
+    cy.authRequest('DELETE', `${baseUrl}${endpoint}/${testCouponId}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.have.property('message', 'Coupon deleted');
@@ -283,7 +285,7 @@ describe('Admin - Delete Coupon API', () => {
   // Test Case 14: HTTP method validation
   it('should only accept DELETE method', () => {
     // Test with GET method
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}/${testCouponId}`,
       failOnStatusCode: false
@@ -292,7 +294,7 @@ describe('Admin - Delete Coupon API', () => {
     });
 
     // Test with POST method
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}/${testCouponId}`,
       failOnStatusCode: false
@@ -303,7 +305,7 @@ describe('Admin - Delete Coupon API', () => {
 
   // Test Case 15: Response format validation
   it('should return proper JSON response format', () => {
-    cy.request('DELETE', `${baseUrl}${endpoint}/${testCouponId}`)
+    cy.authRequest('DELETE', `${baseUrl}${endpoint}/${testCouponId}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.headers).to.have.property('content-type');

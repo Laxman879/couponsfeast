@@ -1,4 +1,6 @@
 describe('Admin - List Banners API', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = Cypress.env('apiUrl') || 'http://localhost:5000';
   const endpoint = '/api/admin/banner';
 
@@ -14,7 +16,7 @@ describe('Admin - List Banners API', () => {
 
   // Test Case 1: Success case - Valid request
   it('should return list of active banners successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -35,7 +37,7 @@ describe('Admin - List Banners API', () => {
 
   // Test Case 2: Empty database scenario
   it('should return empty array when no banners exist', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -52,7 +54,7 @@ describe('Admin - List Banners API', () => {
 
   // Test Case 3: Response structure validation
   it('should return banners with correct structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -79,7 +81,7 @@ describe('Admin - List Banners API', () => {
 
   // Test Case 4: Only active banners returned
   it('should return only active banners', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -102,7 +104,7 @@ describe('Admin - List Banners API', () => {
   it('should respond within acceptable time limit', () => {
     const startTime = Date.now();
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -115,7 +117,7 @@ describe('Admin - List Banners API', () => {
 
   // Test Case 6: Large dataset handling
   it('should handle large number of banners efficiently', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -133,7 +135,7 @@ describe('Admin - List Banners API', () => {
   // Test Case 7: Concurrent requests handling
   it('should handle concurrent requests properly', () => {
     // Make concurrent requests using Cypress commands
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -145,7 +147,7 @@ describe('Admin - List Banners API', () => {
       }
     });
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -157,7 +159,7 @@ describe('Admin - List Banners API', () => {
       }
     });
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -175,7 +177,7 @@ describe('Admin - List Banners API', () => {
     const invalidMethods = ['PUT', 'DELETE', 'PATCH'];
     
     invalidMethods.forEach((method) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: method,
         url: `${baseUrl}${endpoint}`,
         failOnStatusCode: false
@@ -187,7 +189,7 @@ describe('Admin - List Banners API', () => {
 
   // Test Case 9: Content-Type validation
   it('should return JSON content type', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -202,7 +204,7 @@ describe('Admin - List Banners API', () => {
 
   // Test Case 10: Banner ordering validation
   it('should return banners in consistent order', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -213,7 +215,7 @@ describe('Admin - List Banners API', () => {
         expect(response.body.data).to.be.an('array');
         
         // Verify consistent ordering by making another request
-        cy.request({
+        cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
           method: 'GET',
           url: `${baseUrl}${endpoint}`,
           failOnStatusCode: false
@@ -228,7 +230,7 @@ describe('Admin - List Banners API', () => {
 
   // Test Case 11: Database connection validation
   it('should handle database connection issues gracefully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -248,7 +250,7 @@ describe('Admin - List Banners API', () => {
 
   // Test Case 12: Special characters in banner content
   it('should handle banners with special characters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -269,7 +271,7 @@ describe('Admin - List Banners API', () => {
 
   // Test Case 13: Unicode character support
   it('should handle banners with unicode characters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -290,7 +292,7 @@ describe('Admin - List Banners API', () => {
 
   // Test Case 14: Banner with all optional fields
   it('should return banners with all optional fields when present', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -312,7 +314,7 @@ describe('Admin - List Banners API', () => {
 
   // Test Case 15: API versioning and backward compatibility
   it('should maintain backward compatibility', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false

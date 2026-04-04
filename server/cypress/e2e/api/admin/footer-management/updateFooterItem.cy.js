@@ -1,4 +1,6 @@
 describe('Admin API - Update Footer Item', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
   let testItemId;
@@ -6,7 +8,7 @@ describe('Admin API - Update Footer Item', () => {
   beforeEach(() => {
     cy.task('clearDatabase');
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/footer/create`,
       body: {
@@ -26,7 +28,7 @@ describe('Admin API - Update Footer Item', () => {
   });
 
   it('should update footer item successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/footer/${testItemId}`,
       body: {
@@ -44,7 +46,7 @@ describe('Admin API - Update Footer Item', () => {
   });
 
   it('should return 404 for non-existent ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/footer/507f1f77bcf86cd799439011`,
       body: { title: `Non-existent ${timestamp}` },
@@ -55,7 +57,7 @@ describe('Admin API - Update Footer Item', () => {
   });
 
   it('should return 400 for invalid ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/footer/invalid-id`,
       body: { title: `Invalid ${timestamp}` },
@@ -66,7 +68,7 @@ describe('Admin API - Update Footer Item', () => {
   });
 
   it('should update only provided fields', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/footer/${testItemId}`,
       body: { order: 10 },
@@ -80,7 +82,7 @@ describe('Admin API - Update Footer Item', () => {
   });
 
   it('should validate section updates', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/footer/${testItemId}`,
       body: { section: 'social' },
@@ -94,7 +96,7 @@ describe('Admin API - Update Footer Item', () => {
   });
 
   it('should handle unicode updates', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/footer/${testItemId}`,
       body: { title: `更新页脚 ${timestamp}` },
@@ -108,7 +110,7 @@ describe('Admin API - Update Footer Item', () => {
   });
 
   it('should validate URL updates', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/footer/${testItemId}`,
       body: { url: `https://updated-${timestamp}.com` },
@@ -120,7 +122,7 @@ describe('Admin API - Update Footer Item', () => {
 
   it('should update timestamps', () => {
     const beforeUpdate = new Date();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/footer/${testItemId}`,
       body: { title: `Timestamp ${timestamp}` },
@@ -136,7 +138,7 @@ describe('Admin API - Update Footer Item', () => {
 
   it('should handle concurrent updates', () => {
     const requests = Array.from({length: 3}, (_, i) => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'PUT',
         url: `${baseUrl}/footer/${testItemId}`,
         body: { description: `Concurrent ${i} at ${Date.now()}` },
@@ -153,7 +155,7 @@ describe('Admin API - Update Footer Item', () => {
 
   it('should respond within time limit', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/footer/${testItemId}`,
       body: { title: `Performance ${timestamp}` },
@@ -166,7 +168,7 @@ describe('Admin API - Update Footer Item', () => {
   });
 
   it('should handle malformed JSON', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/footer/${testItemId}`,
       body: 'invalid json',
@@ -178,7 +180,7 @@ describe('Admin API - Update Footer Item', () => {
   });
 
   it('should validate order conflicts', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/footer`,
       body: {
@@ -189,7 +191,7 @@ describe('Admin API - Update Footer Item', () => {
       },
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'PUT',
         url: `${baseUrl}/footer/${testItemId}`,
         body: { order: 20 },
@@ -201,7 +203,7 @@ describe('Admin API - Update Footer Item', () => {
   });
 
   it('should return complete object', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/footer/${testItemId}`,
       body: { title: `Complete ${timestamp}` },
@@ -223,13 +225,13 @@ describe('Admin API - Update Footer Item', () => {
       order: 50
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/footer/${testItemId}`,
       body: updateData,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         url: `${baseUrl}/footer/${testItemId}`,
         failOnStatusCode: false
       }).then((getResponse) => {
@@ -242,7 +244,7 @@ describe('Admin API - Update Footer Item', () => {
   });
 
   it('should handle empty updates', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/footer/${testItemId}`,
       body: {},

@@ -1,4 +1,6 @@
 describe('Admin - Coupon Performance Analytics API', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = Cypress.env('apiUrl') || 'http://localhost:5000';
   const endpoint = '/api/admin/analytics/coupon-performance';
 
@@ -14,7 +16,7 @@ describe('Admin - Coupon Performance Analytics API', () => {
 
   // Test Case 1: Success case - Valid request
   it('should return coupon performance analytics successfully', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.be.an('object');
@@ -29,7 +31,7 @@ describe('Admin - Coupon Performance Analytics API', () => {
 
   // Test Case 2: Response structure validation
   it('should return analytics with correct data structure', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         const { data } = response.body;
@@ -51,7 +53,7 @@ describe('Admin - Coupon Performance Analytics API', () => {
   it('should respond within acceptable time limit', () => {
     const startTime = Date.now();
     
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         const responseTime = Date.now() - startTime;
         expect(response.status).to.eq(200);
@@ -61,7 +63,7 @@ describe('Admin - Coupon Performance Analytics API', () => {
 
   // Test Case 4: Content-Type validation
   it('should return JSON content type', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.headers).to.have.property('content-type');
@@ -71,7 +73,7 @@ describe('Admin - Coupon Performance Analytics API', () => {
 
   // Test Case 5: Invalid HTTP method
   it('should return 404 for invalid HTTP method', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -82,11 +84,11 @@ describe('Admin - Coupon Performance Analytics API', () => {
 
   // Test Case 6: Concurrent requests handling
   it('should handle concurrent requests properly', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`).then(() => {
-      cy.request('GET', `${baseUrl}${endpoint}`).then(() => {
-        cy.request('GET', `${baseUrl}${endpoint}`).then(() => {
-          cy.request('GET', `${baseUrl}${endpoint}`).then(() => {
-            cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then(() => {
+      cy.authRequest('GET', `${baseUrl}${endpoint}`).then(() => {
+        cy.authRequest('GET', `${baseUrl}${endpoint}`).then(() => {
+          cy.authRequest('GET', `${baseUrl}${endpoint}`).then(() => {
+            cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
               expect(response.status).to.eq(200);
               expect(response.body).to.have.property('message', 'Coupon performance analytics');
             });
@@ -98,7 +100,7 @@ describe('Admin - Coupon Performance Analytics API', () => {
 
   // Test Case 7: Empty data arrays validation
   it('should return empty arrays when no data exists', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         const { data } = response.body;
@@ -116,7 +118,7 @@ describe('Admin - Coupon Performance Analytics API', () => {
   it('should return current timestamp', () => {
     const beforeRequest = new Date();
     
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         const afterRequest = new Date();
         const responseTimestamp = new Date(response.body.timestamp);
@@ -129,7 +131,7 @@ describe('Admin - Coupon Performance Analytics API', () => {
 
   // Test Case 9: Query parameters handling
   it('should handle query parameters gracefully', () => {
-    cy.request('GET', `${baseUrl}${endpoint}?limit=10&period=30days`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}?limit=10&period=30days`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.have.property('message', 'Coupon performance analytics');
@@ -139,7 +141,7 @@ describe('Admin - Coupon Performance Analytics API', () => {
 
   // Test Case 10: Invalid query parameters
   it('should handle invalid query parameters', () => {
-    cy.request('GET', `${baseUrl}${endpoint}?invalid=parameter&test=123`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}?invalid=parameter&test=123`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.have.property('message', 'Coupon performance analytics');
@@ -149,17 +151,17 @@ describe('Admin - Coupon Performance Analytics API', () => {
   // Test Case 11: Large concurrent load testing
   it('should handle high concurrent load', () => {
     // Sequential requests to avoid Promise.all timeout issues
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body.data).to.have.property('topPerformingCoupons');
     });
     
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body.data).to.have.property('topPerformingCoupons');
     });
     
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body.data).to.have.property('topPerformingCoupons');
     });
@@ -167,9 +169,9 @@ describe('Admin - Coupon Performance Analytics API', () => {
 
   // Test Case 12: Response consistency validation
   it('should return consistent response structure across multiple calls', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((firstResponse) => {
-        cy.request('GET', `${baseUrl}${endpoint}`)
+        cy.authRequest('GET', `${baseUrl}${endpoint}`)
           .then((secondResponse) => {
             expect(firstResponse.status).to.eq(secondResponse.status);
             expect(firstResponse.body.message).to.eq(secondResponse.body.message);
@@ -184,7 +186,7 @@ describe('Admin - Coupon Performance Analytics API', () => {
   // Test Case 13: Error handling simulation
   it('should handle server errors gracefully', () => {
     // This test assumes the endpoint might fail under certain conditions
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -203,17 +205,17 @@ describe('Admin - Coupon Performance Analytics API', () => {
   // Test Case 14: Memory usage validation
   it('should not cause memory leaks with repeated requests', () => {
     // Sequential requests instead of Promise.all to avoid timeout
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body).to.have.property('message', 'Coupon performance analytics');
     });
     
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body.data).to.have.property('topPerformingCoupons');
     });
     
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body.data).to.have.property('topPerformingCoupons');
     });
@@ -221,7 +223,7 @@ describe('Admin - Coupon Performance Analytics API', () => {
 
   // Test Case 15: API versioning and backward compatibility
   it('should maintain backward compatibility', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         

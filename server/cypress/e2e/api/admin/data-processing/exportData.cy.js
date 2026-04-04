@@ -1,4 +1,6 @@
 describe('Admin API - Export Data', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   let testStoreIds = [];
 
@@ -8,7 +10,7 @@ describe('Admin API - Export Data', () => {
     // Create test data
     const timestamp = Date.now() + Math.random().toString(36).substr(2, 9);
     Array.from({length: 3}, (_, i) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/stores/create`,
         body: {
@@ -24,7 +26,7 @@ describe('Admin API - Export Data', () => {
   });
 
   it('should export stores data successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/data/export/stores`,
       failOnStatusCode: false
@@ -40,7 +42,7 @@ describe('Admin API - Export Data', () => {
   });
 
   it('should export coupons data successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/data/export/coupons`,
       failOnStatusCode: false
@@ -56,7 +58,7 @@ describe('Admin API - Export Data', () => {
   });
 
   it('should handle query parameters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/data/export/stores?format=csv`,
       failOnStatusCode: false
@@ -68,7 +70,7 @@ describe('Admin API - Export Data', () => {
   it('should export in different formats', () => {
     const formats = ['json', 'csv'];
     formats.forEach(format => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/data/export/stores?format=${format}`,
         failOnStatusCode: false
@@ -80,7 +82,7 @@ describe('Admin API - Export Data', () => {
 
   it('should handle empty data export', () => {
     cy.task('clearDatabase');
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/data/export/stores`,
       failOnStatusCode: false
@@ -93,7 +95,7 @@ describe('Admin API - Export Data', () => {
   });
 
   it('should filter export data', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/data/export/stores?filter=active`,
       failOnStatusCode: false
@@ -103,7 +105,7 @@ describe('Admin API - Export Data', () => {
   });
 
   it('should limit export results', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/data/export/stores?limit=2`,
       failOnStatusCode: false
@@ -116,7 +118,7 @@ describe('Admin API - Export Data', () => {
   });
 
   it('should include metadata in export', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/data/export/stores?includeMetadata=true`,
       failOnStatusCode: false
@@ -130,7 +132,7 @@ describe('Admin API - Export Data', () => {
 
   it('should respond within time limit', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/data/export/stores`,
       failOnStatusCode: false
@@ -143,7 +145,7 @@ describe('Admin API - Export Data', () => {
 
   it('should handle concurrent exports', () => {
     const requests = Array.from({length: 3}, () => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/data/export/stores`,
         failOnStatusCode: false
@@ -162,7 +164,7 @@ describe('Admin API - Export Data', () => {
 
   it('should export with date range', () => {
     const today = new Date().toISOString().split('T')[0];
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/data/export/stores?startDate=${today}`,
       failOnStatusCode: false
@@ -172,7 +174,7 @@ describe('Admin API - Export Data', () => {
   });
 
   it('should return proper structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/data/export/stores`,
       failOnStatusCode: false
@@ -189,7 +191,7 @@ describe('Admin API - Export Data', () => {
   it('should handle large exports', () => {
     const timestamp = Date.now();
     Array.from({length: 10}, (_, i) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/stores/create`,
         body: {
@@ -201,7 +203,7 @@ describe('Admin API - Export Data', () => {
       });
     });
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/data/export/stores`,
       timeout: 10000,
@@ -215,7 +217,7 @@ describe('Admin API - Export Data', () => {
   });
 
   it('should maintain data integrity', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/data/export/stores`,
       failOnStatusCode: false
@@ -229,7 +231,7 @@ describe('Admin API - Export Data', () => {
   });
 
   it('should handle invalid parameters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/data/export/stores?limit=-1`,
       failOnStatusCode: false

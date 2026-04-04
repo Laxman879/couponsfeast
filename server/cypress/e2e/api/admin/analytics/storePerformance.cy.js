@@ -1,4 +1,6 @@
 describe('Admin - Store Performance Analytics API', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = Cypress.env('apiUrl') || 'http://localhost:5000';
   const endpoint = '/api/admin/analytics/store-performance';
 
@@ -14,7 +16,7 @@ describe('Admin - Store Performance Analytics API', () => {
 
   // Test Case 1: Success case - Valid request
   it('should return store performance analytics successfully', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.be.an('object');
@@ -29,7 +31,7 @@ describe('Admin - Store Performance Analytics API', () => {
 
   // Test Case 2: Response structure validation
   it('should return analytics with correct data structure', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         const { data } = response.body;
@@ -51,7 +53,7 @@ describe('Admin - Store Performance Analytics API', () => {
   it('should respond within acceptable time limit', () => {
     const startTime = Date.now();
     
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         const responseTime = Date.now() - startTime;
         expect(response.status).to.eq(200);
@@ -61,7 +63,7 @@ describe('Admin - Store Performance Analytics API', () => {
 
   // Test Case 4: Content-Type validation
   it('should return JSON content type', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.headers).to.have.property('content-type');
@@ -71,7 +73,7 @@ describe('Admin - Store Performance Analytics API', () => {
 
   // Test Case 5: Invalid HTTP method
   it('should return 404/405 for invalid HTTP method', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -79,7 +81,7 @@ describe('Admin - Store Performance Analytics API', () => {
       expect(response.status).to.be.oneOf([404, 405]);
     });
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -90,19 +92,19 @@ describe('Admin - Store Performance Analytics API', () => {
 
   // Test Case 6: Concurrent requests handling
   it('should handle concurrent requests properly', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body).to.have.property('message', 'Store performance analytics');
       expect(response.body.data).to.have.property('topPerformingStores');
     });
     
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body).to.have.property('message', 'Store performance analytics');
       expect(response.body.data).to.have.property('topPerformingStores');
     });
     
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body).to.have.property('message', 'Store performance analytics');
       expect(response.body.data).to.have.property('topPerformingStores');
@@ -111,7 +113,7 @@ describe('Admin - Store Performance Analytics API', () => {
 
   // Test Case 7: Empty data arrays validation
   it('should return empty arrays when no data exists', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         const { data } = response.body;
@@ -129,7 +131,7 @@ describe('Admin - Store Performance Analytics API', () => {
   it('should return current timestamp within reasonable range', () => {
     const beforeRequest = new Date();
     
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         const afterRequest = new Date();
         const responseTimestamp = new Date(response.body.timestamp);
@@ -146,7 +148,7 @@ describe('Admin - Store Performance Analytics API', () => {
 
   // Test Case 9: Query parameters handling
   it('should handle query parameters gracefully', () => {
-    cy.request('GET', `${baseUrl}${endpoint}?period=7days&limit=20`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}?period=7days&limit=20`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.have.property('message', 'Store performance analytics');
@@ -156,7 +158,7 @@ describe('Admin - Store Performance Analytics API', () => {
 
   // Test Case 10: Invalid query parameters
   it('should handle invalid query parameters without errors', () => {
-    cy.request('GET', `${baseUrl}${endpoint}?invalid=test&random=123&special=@#$%`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}?invalid=test&random=123&special=@#$%`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.have.property('message', 'Store performance analytics');
@@ -167,17 +169,17 @@ describe('Admin - Store Performance Analytics API', () => {
   // Test Case 11: High load concurrent testing
   it('should handle high concurrent load efficiently', () => {
     // Sequential requests to avoid Promise.all timeout
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body.data).to.have.property('storeEngagement');
     });
     
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body.data).to.have.property('storeEngagement');
     });
     
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body.data).to.have.property('storeEngagement');
     });
@@ -185,10 +187,10 @@ describe('Admin - Store Performance Analytics API', () => {
 
   // Test Case 12: Response consistency validation
   it('should return consistent response structure across multiple calls', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((firstResponse) => {
         cy.wait(100); // Small delay
-        cy.request('GET', `${baseUrl}${endpoint}`)
+        cy.authRequest('GET', `${baseUrl}${endpoint}`)
           .then((secondResponse) => {
             expect(firstResponse.status).to.eq(secondResponse.status);
             expect(firstResponse.body.message).to.eq(secondResponse.body.message);
@@ -206,7 +208,7 @@ describe('Admin - Store Performance Analytics API', () => {
 
   // Test Case 13: Error handling and recovery
   it('should handle potential server errors gracefully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -227,19 +229,19 @@ describe('Admin - Store Performance Analytics API', () => {
   // Test Case 14: Memory and resource management
   it('should handle repeated requests without memory issues', () => {
     // Sequential requests instead of Promise.all to avoid timeout
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body.data).to.be.an('object');
       expect(response.body.timestamp).to.be.a('string');
     });
     
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body.data).to.be.an('object');
       expect(response.body.timestamp).to.be.a('string');
     });
     
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body.data).to.be.an('object');
       expect(response.body.timestamp).to.be.a('string');
@@ -248,7 +250,7 @@ describe('Admin - Store Performance Analytics API', () => {
 
   // Test Case 15: API contract and backward compatibility
   it('should maintain API contract for backward compatibility', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         

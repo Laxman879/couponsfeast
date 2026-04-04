@@ -30,7 +30,7 @@ export default function FooterThree({ config }: FooterThreeProps) {
         {/* Brand + social */}
         <div className="max-w-80">
           {logoUrl ? (
-            <img src={logoUrl.startsWith('http') ? logoUrl : `http://localhost:5000${logoUrl}`} alt={siteName} className="mb-4 h-9 w-auto" />
+            <img src={logoUrl.startsWith('http') ? logoUrl : `http://localhost:5000${logoUrl}`} alt={siteName} className="mb-4 h-16 w-auto" />
           ) : (
             <span className="text-2xl font-extrabold tracking-tight mb-4 block" style={{ color: accent }}>{siteName}</span>
           )}

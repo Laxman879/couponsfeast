@@ -1,4 +1,6 @@
 describe('Admin API - List Pages', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
 
@@ -6,7 +8,7 @@ describe('Admin API - List Pages', () => {
     cy.task('clearDatabase');
     
     Array.from({length: 5}, (_, i) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/pages/create`,
         body: {
@@ -22,7 +24,7 @@ describe('Admin API - List Pages', () => {
   });
 
   it('should list pages successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/pages`,
       failOnStatusCode: false
@@ -36,7 +38,7 @@ describe('Admin API - List Pages', () => {
   });
 
   it('should filter by published status', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/pages?published=true`,
       failOnStatusCode: false
@@ -56,7 +58,7 @@ describe('Admin API - List Pages', () => {
   });
 
   it('should filter by page type', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/pages?type=static`,
       failOnStatusCode: false
@@ -76,7 +78,7 @@ describe('Admin API - List Pages', () => {
   });
 
   it('should handle pagination', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/pages?page=1&limit=3`,
       failOnStatusCode: false
@@ -92,7 +94,7 @@ describe('Admin API - List Pages', () => {
   });
 
   it('should sort pages by creation date', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/pages?sortBy=createdAt&order=desc`,
       failOnStatusCode: false
@@ -112,7 +114,7 @@ describe('Admin API - List Pages', () => {
   });
 
   it('should include all page properties', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/pages`,
       failOnStatusCode: false
@@ -132,7 +134,7 @@ describe('Admin API - List Pages', () => {
   });
 
   it('should search pages by title', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/pages?search=Page`,
       failOnStatusCode: false
@@ -151,7 +153,7 @@ describe('Admin API - List Pages', () => {
 
   it('should respond within acceptable time', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/pages`,
       failOnStatusCode: false
@@ -163,7 +165,7 @@ describe('Admin API - List Pages', () => {
   });
 
   it('should handle concurrent requests', () => {
-    const requests = Array.from({length: 5}, () => cy.request({
+    const requests = Array.from({length: 5}, () => cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/pages`,
       failOnStatusCode: false
@@ -179,7 +181,7 @@ describe('Admin API - List Pages', () => {
   });
 
   it('should include total count', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/pages`,
       failOnStatusCode: false
@@ -194,7 +196,7 @@ describe('Admin API - List Pages', () => {
   });
 
   it('should return proper structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/pages`,
       failOnStatusCode: false
@@ -209,7 +211,7 @@ describe('Admin API - List Pages', () => {
   });
 
   it('should handle invalid parameters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/pages?page=-1&limit=0`,
       failOnStatusCode: false
@@ -219,7 +221,7 @@ describe('Admin API - List Pages', () => {
   });
 
   it('should filter by multiple criteria', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/pages?type=static&published=true`,
       failOnStatusCode: false
@@ -229,12 +231,12 @@ describe('Admin API - List Pages', () => {
   });
 
   it('should maintain consistency', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/pages`,
       failOnStatusCode: false
     }).then((first) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/pages`,
         failOnStatusCode: false

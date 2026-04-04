@@ -1,4 +1,6 @@
 describe('Admin API - Delete Category', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   let testCategoryId;
 
@@ -6,7 +8,7 @@ describe('Admin API - Delete Category', () => {
     cy.task('clearDatabase');
     
     const timestamp = Date.now() + Math.random().toString(36).substr(2, 9);
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/categories/create`,
       body: {
@@ -20,7 +22,7 @@ describe('Admin API - Delete Category', () => {
   });
 
   it('should delete category successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/categories/delete/${testCategoryId}`
     }).then((response) => {
@@ -30,7 +32,7 @@ describe('Admin API - Delete Category', () => {
   });
 
   it('should return 404 for non-existent category ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/categories/delete/507f1f77bcf86cd799439011`,
       failOnStatusCode: false
@@ -41,7 +43,7 @@ describe('Admin API - Delete Category', () => {
   });
 
   it('should return 400 for invalid category ID format', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/categories/delete/invalid-id`,
       failOnStatusCode: false
@@ -52,8 +54,8 @@ describe('Admin API - Delete Category', () => {
   });
 
   it('should verify category is actually deleted', () => {
-    cy.request('DELETE', `${baseUrl}/categories/delete/${testCategoryId}`).then(() => {
-      cy.request({
+    cy.authRequest('DELETE', `${baseUrl}/categories/delete/${testCategoryId}`).then(() => {
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/categories/list`,
         failOnStatusCode: false
@@ -66,9 +68,9 @@ describe('Admin API - Delete Category', () => {
   });
 
   it('should handle deletion of already deleted category', () => {
-    cy.request('DELETE', `${baseUrl}/categories/delete/${testCategoryId}`);
+    cy.authRequest('DELETE', `${baseUrl}/categories/delete/${testCategoryId}`);
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/categories/delete/${testCategoryId}`,
       failOnStatusCode: false
@@ -80,7 +82,7 @@ describe('Admin API - Delete Category', () => {
 
   it('should handle concurrent deletion attempts', () => {
     const requests = Array.from({length: 3}, () => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'DELETE',
         url: `${baseUrl}/categories/delete/${testCategoryId}`,
         failOnStatusCode: false
@@ -105,7 +107,7 @@ describe('Admin API - Delete Category', () => {
 
   it('should respond within acceptable time', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/categories/delete/${testCategoryId}`
     }).then((response) => {
@@ -116,7 +118,7 @@ describe('Admin API - Delete Category', () => {
   });
 
   it('should return proper response structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/categories/delete/${testCategoryId}`
     }).then((response) => {
@@ -126,7 +128,7 @@ describe('Admin API - Delete Category', () => {
 
   it('should handle case-insensitive ObjectId', () => {
     const upperCaseId = testCategoryId.toUpperCase();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/categories/delete/${upperCaseId}`,
       failOnStatusCode: false
@@ -136,7 +138,7 @@ describe('Admin API - Delete Category', () => {
   });
 
   it('should prevent deletion with invalid authentication', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/categories/delete/${testCategoryId}`,
       headers: { 'Authorization': 'Bearer invalid-token' },
@@ -147,7 +149,7 @@ describe('Admin API - Delete Category', () => {
   });
 
   it('should handle deletion with special characters in ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/categories/delete/special!@#$%`,
       failOnStatusCode: false
@@ -157,7 +159,7 @@ describe('Admin API - Delete Category', () => {
   });
 
   it('should maintain referential integrity', () => {
-    cy.request('DELETE', `${baseUrl}/categories/delete/${testCategoryId}`).then(() => {
+    cy.authRequest('DELETE', `${baseUrl}/categories/delete/${testCategoryId}`).then(() => {
       cy.request(`${baseUrl}/categories/list`).then((response) => {
         const categories = response.body;
         const deletedCategory = categories.find(cat => cat._id === testCategoryId);
@@ -167,7 +169,7 @@ describe('Admin API - Delete Category', () => {
   });
 
   it('should handle empty category ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/categories/delete/`,
       failOnStatusCode: false
@@ -177,7 +179,7 @@ describe('Admin API - Delete Category', () => {
   });
 
   it('should log deletion activity', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/categories/delete/${testCategoryId}`
     }).then((response) => {
@@ -191,7 +193,7 @@ describe('Admin API - Delete Category', () => {
     const bulkTimestamp = Date.now() + Math.random().toString(36).substr(2, 9);
     
     Array.from({length: 3}, (_, i) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/categories/create`,
         body: {
@@ -205,7 +207,7 @@ describe('Admin API - Delete Category', () => {
 
     cy.then(() => {
       categoryIds.forEach(id => {
-        cy.request('DELETE', `${baseUrl}/categories/delete/${id}`).then((response) => {
+        cy.authRequest('DELETE', `${baseUrl}/categories/delete/${id}`).then((response) => {
           expect(response.status).to.eq(200);
         });
       });

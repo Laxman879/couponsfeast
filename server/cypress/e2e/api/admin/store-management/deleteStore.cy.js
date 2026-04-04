@@ -1,4 +1,6 @@
 describe('Admin - Delete Store API', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = Cypress.env('apiUrl') || 'http://localhost:5000';
   const endpoint = '/api/admin/stores/delete';
   let testStoreId;
@@ -14,7 +16,7 @@ describe('Admin - Delete Store API', () => {
       slug: `store-to-delete-${timestamp}`
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/stores/create`, storeData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, storeData)
       .then((response) => {
         testStoreId = response.body._id;
       });
@@ -27,14 +29,14 @@ describe('Admin - Delete Store API', () => {
 
   // Test Case 1: Success case - Valid store deletion
   it('should delete store successfully with valid ID', () => {
-    cy.request('DELETE', `${baseUrl}${endpoint}/${testStoreId}`)
+    cy.authRequest('DELETE', `${baseUrl}${endpoint}/${testStoreId}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.have.property('message', 'Store deleted');
       });
 
     // Verify store is actually deleted
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/api/admin/stores/details/${testStoreId}`,
       failOnStatusCode: false
@@ -45,7 +47,7 @@ describe('Admin - Delete Store API', () => {
 
   // Test Case 2: Invalid store ID format
   it('should return 400 for invalid store ID format', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}${endpoint}/invalid-id`,
       failOnStatusCode: false
@@ -59,7 +61,7 @@ describe('Admin - Delete Store API', () => {
   it('should return 404 for non-existent store ID', () => {
     const nonExistentId = '507f1f77bcf86cd799439011';
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}${endpoint}/${nonExistentId}`,
       failOnStatusCode: false
@@ -71,7 +73,7 @@ describe('Admin - Delete Store API', () => {
 
   // Test Case 4: Empty string ID
   it('should return 400 for empty string ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}${endpoint}/`,
       failOnStatusCode: false
@@ -82,7 +84,7 @@ describe('Admin - Delete Store API', () => {
 
   // Test Case 5: Special characters in ID
   it('should return 400 for ID with special characters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}${endpoint}/store@#$%`,
       failOnStatusCode: false
@@ -96,7 +98,7 @@ describe('Admin - Delete Store API', () => {
   it('should return 400 for excessively long ID', () => {
     const longId = 'a'.repeat(100);
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}${endpoint}/${longId}`,
       failOnStatusCode: false
@@ -109,12 +111,12 @@ describe('Admin - Delete Store API', () => {
   // Test Case 7: Double deletion attempt
   it('should return 404 for already deleted store', () => {
     // First deletion
-    cy.request('DELETE', `${baseUrl}${endpoint}/${testStoreId}`)
+    cy.authRequest('DELETE', `${baseUrl}${endpoint}/${testStoreId}`)
       .then((response) => {
         expect(response.status).to.eq(200);
 
         // Second deletion attempt
-        cy.request({
+        cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
           method: 'DELETE',
           url: `${baseUrl}${endpoint}/${testStoreId}`,
           failOnStatusCode: false
@@ -129,7 +131,7 @@ describe('Admin - Delete Store API', () => {
   it('should delete store within acceptable time', () => {
     const startTime = Date.now();
     
-    cy.request('DELETE', `${baseUrl}${endpoint}/${testStoreId}`)
+    cy.authRequest('DELETE', `${baseUrl}${endpoint}/${testStoreId}`)
       .then((response) => {
         const responseTime = Date.now() - startTime;
         expect(response.status).to.eq(200);
@@ -140,21 +142,21 @@ describe('Admin - Delete Store API', () => {
   // Test Case 9: Concurrent deletion attempts
   it('should handle concurrent deletion attempts', () => {
     // Sequential requests to avoid Promise.all timeout
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}${endpoint}/${testStoreId}`,
       failOnStatusCode: false
     }).then((response1) => {
       expect(response1.status).to.eq(200);
       
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'DELETE',
         url: `${baseUrl}${endpoint}/${testStoreId}`,
         failOnStatusCode: false
       }).then((response2) => {
         expect(response2.status).to.eq(404);
         
-        cy.request({
+        cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
           method: 'DELETE',
           url: `${baseUrl}${endpoint}/${testStoreId}`,
           failOnStatusCode: false
@@ -170,7 +172,7 @@ describe('Admin - Delete Store API', () => {
     const uppercaseId = testStoreId.toUpperCase();
     
     if (testStoreId !== uppercaseId) {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'DELETE',
         url: `${baseUrl}${endpoint}/${uppercaseId}`,
         failOnStatusCode: false
@@ -183,7 +185,7 @@ describe('Admin - Delete Store API', () => {
 
   // Test Case 11: Content-Type validation
   it('should not require Content-Type for DELETE request', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}${endpoint}/${testStoreId}`,
       headers: {
@@ -201,25 +203,25 @@ describe('Admin - Delete Store API', () => {
     const timestamp = Date.now();
     let store1Id, store2Id;
     
-    cy.request('POST', `${baseUrl}/api/admin/stores/create`, {
+    cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, {
       storeName: `Store 1 ${timestamp}`,
       slug: `store-1-${timestamp}`
     }).then((response1) => {
       store1Id = response1.body._id;
       
-      cy.request('POST', `${baseUrl}/api/admin/stores/create`, {
+      cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, {
         storeName: `Store 2 ${timestamp}`,
         slug: `store-2-${timestamp}`
       }).then((response2) => {
         store2Id = response2.body._id;
         
         // Delete the original test store
-        cy.request('DELETE', `${baseUrl}${endpoint}/${testStoreId}`)
+        cy.authRequest('DELETE', `${baseUrl}${endpoint}/${testStoreId}`)
           .then((response) => {
             expect(response.status).to.eq(200);
 
             // Verify the deleted store no longer exists
-            cy.request({
+            cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
               method: 'GET',
               url: `${baseUrl}/api/admin/stores/details/${testStoreId}`,
               failOnStatusCode: false
@@ -228,13 +230,13 @@ describe('Admin - Delete Store API', () => {
             });
             
             // Verify the other stores still exist
-            cy.request('GET', `${baseUrl}/api/admin/stores/details/${store1Id}`)
+            cy.authRequest('GET', `${baseUrl}/api/admin/stores/details/${store1Id}`)
               .then((store1Response) => {
                 expect(store1Response.status).to.eq(200);
                 expect(store1Response.body.storeName).to.include('Store 1');
               });
               
-            cy.request('GET', `${baseUrl}/api/admin/stores/details/${store2Id}`)
+            cy.authRequest('GET', `${baseUrl}/api/admin/stores/details/${store2Id}`)
               .then((store2Response) => {
                 expect(store2Response.status).to.eq(200);
                 expect(store2Response.body.storeName).to.include('Store 2');
@@ -249,7 +251,7 @@ describe('Admin - Delete Store API', () => {
     // This test assumes there might be related coupons or other data
     // In a real scenario, you might need to handle cascade deletions
     
-    cy.request('DELETE', `${baseUrl}${endpoint}/${testStoreId}`)
+    cy.authRequest('DELETE', `${baseUrl}${endpoint}/${testStoreId}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.have.property('message', 'Store deleted');
@@ -259,7 +261,7 @@ describe('Admin - Delete Store API', () => {
   // Test Case 14: HTTP method validation
   it('should only accept DELETE method', () => {
     // Test with GET method
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}/${testStoreId}`,
       failOnStatusCode: false
@@ -268,7 +270,7 @@ describe('Admin - Delete Store API', () => {
     });
 
     // Test with POST method
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}/${testStoreId}`,
       failOnStatusCode: false
@@ -279,7 +281,7 @@ describe('Admin - Delete Store API', () => {
 
   // Test Case 15: Response format validation
   it('should return proper JSON response format', () => {
-    cy.request('DELETE', `${baseUrl}${endpoint}/${testStoreId}`)
+    cy.authRequest('DELETE', `${baseUrl}${endpoint}/${testStoreId}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.headers).to.have.property('content-type');

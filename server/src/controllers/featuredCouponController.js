@@ -86,6 +86,15 @@ export const createFeaturedCoupon = async (req, res) => {
       });
     }
 
+    // Check for duplicate coupon code
+    const existingCoupon = await Coupon.findOne({ code: req.body.code });
+    if (existingCoupon) {
+      return res.status(409).json({
+        success: false,
+        error: 'Coupon code already exists'
+      });
+    }
+
     // Create the coupon first
     const couponData = {
       title: req.body.title,

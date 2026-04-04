@@ -1,4 +1,6 @@
 describe('Admin API - Create Page', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
 
@@ -7,7 +9,7 @@ describe('Admin API - Create Page', () => {
   });
 
   it('should create page successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/pages/create`,
       body: {
@@ -28,7 +30,7 @@ describe('Admin API - Create Page', () => {
   });
 
   it('should return 400 for missing fields', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/pages/create`,
       body: {},
@@ -42,7 +44,7 @@ describe('Admin API - Create Page', () => {
   });
 
   it('should validate title requirements', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/pages/create`,
       body: {
@@ -63,14 +65,14 @@ describe('Admin API - Create Page', () => {
       content: 'Content'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/pages/create`,
       body: pageData,
       failOnStatusCode: false
     });
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/pages/create`,
       body: pageData,
@@ -81,7 +83,7 @@ describe('Admin API - Create Page', () => {
   });
 
   it('should validate page type', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/pages/create`,
       body: {
@@ -97,7 +99,7 @@ describe('Admin API - Create Page', () => {
   });
 
   it('should handle unicode characters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/pages/create`,
       body: {
@@ -115,7 +117,7 @@ describe('Admin API - Create Page', () => {
   });
 
   it('should set default values', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/pages/create`,
       body: {
@@ -134,7 +136,7 @@ describe('Admin API - Create Page', () => {
   });
 
   it('should validate slug format', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/pages/create`,
       body: {
@@ -149,7 +151,7 @@ describe('Admin API - Create Page', () => {
   });
 
   it('should handle large content', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/pages/create`,
       body: {
@@ -165,7 +167,7 @@ describe('Admin API - Create Page', () => {
 
   it('should handle concurrent creation', () => {
     const requests = Array.from({length: 3}, (_, i) => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/pages/create`,
         body: {
@@ -189,7 +191,7 @@ describe('Admin API - Create Page', () => {
 
   it('should respond within time limit', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/pages/create`,
       body: {
@@ -206,7 +208,7 @@ describe('Admin API - Create Page', () => {
   });
 
   it('should handle malformed JSON', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/pages/create`,
       body: 'invalid json',
@@ -218,7 +220,7 @@ describe('Admin API - Create Page', () => {
   });
 
   it('should validate content-type', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/pages/create`,
       body: {
@@ -234,7 +236,7 @@ describe('Admin API - Create Page', () => {
   });
 
   it('should handle meta data', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/pages/create`,
       body: {
@@ -263,7 +265,7 @@ describe('Admin API - Create Page', () => {
       type: 'static'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/pages/create`,
       body: pageData,
@@ -273,7 +275,7 @@ describe('Admin API - Create Page', () => {
       if (createResponse.status === 201 && typeof createResponse.body === 'object' && createResponse.body.data) {
         const pageId = createResponse.body.data._id;
 
-        cy.request({
+        cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
           method: 'GET',
           url: `${baseUrl}/pages/${pageId}`,
           failOnStatusCode: false

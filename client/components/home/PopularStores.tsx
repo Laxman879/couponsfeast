@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { FaArrowUpRightFromSquare } from 'react-icons/fa6';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
-import { getStores } from '@/services/api';
+import { getStores, getCoupons } from '@/services/api';
+import ColumnSwitcher from '@/components/common/ColumnSwitcher';
 
 const fallbackStores = [
   { _id: '1', name: 'Amazon', slug: 'amazon', logo: 'https://cdn.grabon.in/gograbon/images/merchant/1773381281318/amazon-logo.jpg', couponCount: 70 },
@@ -34,21 +36,58 @@ export default function PopularStores() {
   const borderClr = isDark ? `${darkPalette.text}15` : `${textColor}12`;
 
   const [stores, setStores] = useState<any[]>([]);
+  const [featuredStore, setFeaturedStore] = useState<any>(null);
   const [page, setPage] = useState(0);
+  const [columns, setColumns] = useState(4);
   const perPage = 12;
 
   useEffect(() => {
-    getStores()
-      .then(res => {
-        const data = res.data?.data || res.data || [];
-        setStores(data.length > 0 ? data : fallbackStores);
-      })
-      .catch(() => setStores(fallbackStores));
+    Promise.all([
+      getStores(),
+      getCoupons({ limit: 200, sort: 'clickCount' })
+    ]).then(([storeRes, couponRes]) => {
+      const storeData = storeRes.data?.data || storeRes.data || [];
+      const list = storeData.length > 0 ? storeData : fallbackStores;
+
+      // Aggregate click counts and coupon counts per store
+      const coupons = couponRes.data?.data || couponRes.data || [];
+      const clickMap: Record<string, number> = {};
+      const countMap: Record<string, number> = {};
+      (Array.isArray(coupons) ? coupons : []).forEach((c: any) => {
+        const sid = c.store?._id || c.store;
+        if (sid) {
+          clickMap[sid] = (clickMap[sid] || 0) + (c.clickCount || 0);
+          countMap[sid] = (countMap[sid] || 0) + 1;
+        }
+      });
+
+      // Attach coupon count to each store
+      list.forEach((s: any) => {
+        s.couponCount = countMap[s._id] || 0;
+        s.totalClicks = clickMap[s._id] || 0;
+      });
+
+      // Find the store with most clicks
+      let topId = '';
+      let topClicks = 0;
+      Object.entries(clickMap).forEach(([id, clicks]) => {
+        if (clicks > topClicks) { topId = id; topClicks = clicks; }
+      });
+
+      const topStore = list.find((s: any) => s._id === topId);
+      if (topStore) {
+        setFeaturedStore(topStore);
+      } else {
+        setFeaturedStore(list[0]);
+      }
+
+      setStores(list);
+    }).catch(() => setStores(fallbackStores));
   }, []);
 
   const totalPages = Math.ceil(stores.length / perPage);
   const visibleStores = stores.slice(page * perPage, page * perPage + perPage);
-  const featured = stores[0];
+  const featured = featuredStore;
 
   const prev = () => setPage(p => Math.max(0, p - 1));
   const next = () => setPage(p => Math.min(totalPages - 1, p + 1));
@@ -62,11 +101,12 @@ export default function PopularStores() {
   return (
     <section className="max-w-7xl mx-auto px-4 py-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl md:text-2xl font-bold" style={{ color: textColor }}>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl md:text-2xl font-bold leading-5" style={{ color: textColor }}>
           Popular Stores
         </h2>
         <div className="flex items-center gap-3">
+          <ColumnSwitcher columns={columns} onChange={setColumns} mobileOptions={[2, 3]} desktopOptions={[3, 4, 5]} />
           <button onClick={prev} className="w-8 h-8 rounded-full flex items-center justify-center border transition-colors" style={{ borderColor: borderClr, color: mutedText, backgroundColor: cardBg }}>
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -106,7 +146,7 @@ export default function PopularStores() {
                   className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity"
                 />
                 <div className="absolute top-4 left-4 z-10">
-                  <p className="font-bold text-xs" style={{ color: primary }}>MOST POPULAR</p>
+                  <p className="font-bold text-xs" style={{ color: primary }}>MOST CLICKED</p>
                   <h3 className="text-sm font-semibold text-white">Store Of The Month</h3>
                 </div>
               </div>
@@ -124,7 +164,7 @@ export default function PopularStores() {
                   {featured.name || featured.storeName}
                 </h3>
                 <p className="text-xs text-gray-400 mt-0.5">
-                  {featured.couponCount || featured.coupons?.length || 0} Coupons • {Math.max(1, Math.floor((featured.couponCount || 10) / 5))} Offers
+                  {featured.couponCount || featured.coupons?.length || 0} Coupons • {featured.totalClicks || 0} Clicks
                 </p>
 
                 <div className="flex-1" />
@@ -145,7 +185,12 @@ export default function PopularStores() {
         )}
 
         {/* Store Grid */}
-        <div className="lg:col-span-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div className={`lg:col-span-3 grid gap-5 ${
+          columns === 2 ? 'grid-cols-2' :
+          columns === 3 ? 'grid-cols-2 sm:grid-cols-3' :
+          columns === 5 ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5' :
+          'grid-cols-2 sm:grid-cols-3 md:grid-cols-4'
+        }`}>
           {visibleStores.map((store) => (
             <Link
               key={store._id}
@@ -153,14 +198,14 @@ export default function PopularStores() {
               className="no-underline group text-center"
             >
               <div
-                className="rounded-2xl border overflow-hidden flex items-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
-                style={{ backgroundColor: cardBg, borderColor: borderClr, height: 100 }}
+                className="rounded-2xl overflow-hidden flex items-center justify-center transition-all duration-300 hover:-translate-y-1"
+                style={{ backgroundColor: cardBg, height: 80, boxShadow: 'rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px' }}
               >
-                <img src={logoUrl(store)} alt={store.name || store.storeName} className="w-3/4 h-3/4 object-contain" />
+                <img src={logoUrl(store)} alt={store.name || store.storeName} className="w-full h-full object-cover" />
               </div>
-              <p className="mt-2 text-sm font-semibold flex items-center justify-center gap-1" style={{ color: textColor }}>
+              <p className="mt-2 text-base font-bold truncate flex items-center justify-center gap-1.5" style={{ color: textColor }}>
                 {store.name || store.storeName}
-                <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ color: primary }} />
+                <FaArrowUpRightFromSquare className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shrink-0" style={{ color: primary }} />
               </p>
             </Link>
           ))}

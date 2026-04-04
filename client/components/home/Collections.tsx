@@ -31,7 +31,10 @@ function CollectionCard({ item, primary, cardBg, borderClr, textColor, mutedText
             <img src={item.logo} alt={item.title} className="w-full h-full object-cover" />
           </div>
         )}
-        <p className="font-semibold text-sm" style={{ color: textColor }}>{item.title}</p>
+        <div className="min-w-0">
+          <p className="font-bold text-sm" style={{ color: primary }}>{item.discount || item.title}</p>
+          <p className="text-xs leading-snug line-clamp-2 mt-0.5" style={{ color: mutedText }}>{item.description || item.title}</p>
+        </div>
       </div>
       <div className="relative mx-4 mb-4 h-[300px] sm:h-[330px] md:h-[350px] rounded-xl overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center"
@@ -87,7 +90,7 @@ export default function Collections() {
         setCollections(deals.map((deal: any) => {
           const store = deal.store || {};
           return {
-            title: deal.title, logo: deal.logo || store.logo || '', bg: deal.image || '',
+            title: deal.title, description: deal.description || '', logo: deal.logo || store.logo || '', bg: deal.image || '',
             link: deal.link || store.websiteUrl || '', discount: deal.discount || '',
             storeName: store.storeName || '', code: deal.couponCode || '',
             details: deal.description || '', expiryDate: deal.expiryDate || '',

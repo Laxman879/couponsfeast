@@ -29,18 +29,21 @@ export default function PopularCategories() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-4 gap-x-12">
           {categories.map((column, colIndex) => (
             <div key={colIndex} className="flex flex-col gap-3">
-              {column.map((item, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="text-sm no-underline transition-colors"
-                  style={{ color: mutedText }}
-                  onMouseEnter={e => (e.currentTarget.style.color = primary)}
-                  onMouseLeave={e => (e.currentTarget.style.color = mutedText)}
-                >
-                  {item}
-                </a>
-              ))}
+              {column.map((item, i) => {
+                const slug = item.toLowerCase().replace(/ coupons$/i, '').replace(/[&\/]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
+                return (
+                  <a
+                    key={i}
+                    href={`/coupons/${slug}-coupons`}
+                    className="text-sm no-underline transition-colors"
+                    style={{ color: mutedText }}
+                    onMouseEnter={e => (e.currentTarget.style.color = primary)}
+                    onMouseLeave={e => (e.currentTarget.style.color = mutedText)}
+                  >
+                    {item}
+                  </a>
+                );
+              })}
             </div>
           ))}
         </div>

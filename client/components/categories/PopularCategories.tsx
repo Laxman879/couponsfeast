@@ -60,7 +60,7 @@ export default function PopularCategories() {
           const Icon = getIcon(cat.slug || '', cat.name || '');
           const count = couponCounts[(cat.name || '').toLowerCase()] || 0;
           return (
-            <Link key={cat._id} href={`/coupons/${cat.slug}-coupons`}
+            <Link key={cat._id} href={`/coupons/${(cat.slug || '').replace(/-coupons$/, '')}-coupons`}
               className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-primary/30 transition-all cursor-pointer group text-center no-underline block"
               style={{ boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px' }}>
               <div className="flex justify-center mb-3">

@@ -1,4 +1,6 @@
 describe('Admin - User Behavior Analytics API', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = Cypress.env('apiUrl') || 'http://localhost:5000';
   const endpoint = '/api/admin/analytics/user-behavior';
 
@@ -14,7 +16,7 @@ describe('Admin - User Behavior Analytics API', () => {
 
   // Test Case 1: Success case - Valid request
   it('should return user behavior analytics successfully', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.be.an('object');
@@ -30,7 +32,7 @@ describe('Admin - User Behavior Analytics API', () => {
 
   // Test Case 2: Response structure validation
   it('should return analytics with correct data structure', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         const { data } = response.body;
@@ -58,7 +60,7 @@ describe('Admin - User Behavior Analytics API', () => {
   it('should respond within acceptable time limit', () => {
     const startTime = Date.now();
     
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         const responseTime = Date.now() - startTime;
         expect(response.status).to.eq(200);
@@ -68,7 +70,7 @@ describe('Admin - User Behavior Analytics API', () => {
 
   // Test Case 4: Content-Type validation
   it('should return JSON content type', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.headers).to.have.property('content-type');
@@ -81,7 +83,7 @@ describe('Admin - User Behavior Analytics API', () => {
     const invalidMethods = ['POST', 'PUT', 'DELETE', 'PATCH'];
     
     invalidMethods.forEach((method) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: method,
         url: `${baseUrl}${endpoint}`,
         failOnStatusCode: false
@@ -93,21 +95,21 @@ describe('Admin - User Behavior Analytics API', () => {
 
   // Test Case 6: Concurrent requests handling
   it('should handle concurrent requests properly', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body).to.have.property('message', 'User behavior analytics');
       expect(response.body.data).to.have.property('bounceRate');
       expect(response.body.data).to.have.property('averageSessionDuration');
     });
     
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body).to.have.property('message', 'User behavior analytics');
       expect(response.body.data).to.have.property('bounceRate');
       expect(response.body.data).to.have.property('averageSessionDuration');
     });
     
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body).to.have.property('message', 'User behavior analytics');
       expect(response.body.data).to.have.property('bounceRate');
@@ -117,7 +119,7 @@ describe('Admin - User Behavior Analytics API', () => {
 
   // Test Case 7: Default values validation
   it('should return correct default values when no data exists', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         const { data } = response.body;
@@ -135,7 +137,7 @@ describe('Admin - User Behavior Analytics API', () => {
   it('should return accurate current timestamp', () => {
     const beforeRequest = new Date();
     
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         const afterRequest = new Date();
         const responseTimestamp = new Date(response.body.timestamp);
@@ -160,7 +162,7 @@ describe('Admin - User Behavior Analytics API', () => {
     ];
 
     queryParams.forEach((params) => {
-      cy.request('GET', `${baseUrl}${endpoint}${params}`)
+      cy.authRequest('GET', `${baseUrl}${endpoint}${params}`)
         .then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.have.property('message', 'User behavior analytics');
@@ -179,7 +181,7 @@ describe('Admin - User Behavior Analytics API', () => {
     ];
 
     invalidParams.forEach((params) => {
-      cy.request('GET', `${baseUrl}${endpoint}${params}`)
+      cy.authRequest('GET', `${baseUrl}${endpoint}${params}`)
         .then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.have.property('message', 'User behavior analytics');
@@ -191,21 +193,21 @@ describe('Admin - User Behavior Analytics API', () => {
   // Test Case 11: High load stress testing
   it('should handle high concurrent load without degradation', () => {
     // Sequential requests to avoid Promise.all timeout
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body.data).to.have.property('userSessions');
       expect(response.body.data.bounceRate).to.be.a('number');
       expect(response.body.data.averageSessionDuration).to.be.a('number');
     });
     
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body.data).to.have.property('userSessions');
       expect(response.body.data.bounceRate).to.be.a('number');
       expect(response.body.data.averageSessionDuration).to.be.a('number');
     });
     
-    cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body.data).to.have.property('userSessions');
       expect(response.body.data.bounceRate).to.be.a('number');
@@ -215,8 +217,8 @@ describe('Admin - User Behavior Analytics API', () => {
 
   // Test Case 12: Response consistency validation
   it('should return consistent response structure across calls', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`).then((firstResponse) => {
-      cy.request('GET', `${baseUrl}${endpoint}`).then((secondResponse) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}`).then((firstResponse) => {
+      cy.authRequest('GET', `${baseUrl}${endpoint}`).then((secondResponse) => {
         expect(secondResponse.status).to.eq(firstResponse.status);
         expect(secondResponse.body.message).to.eq(firstResponse.body.message);
         
@@ -233,7 +235,7 @@ describe('Admin - User Behavior Analytics API', () => {
 
   // Test Case 13: Error handling and recovery
   it('should handle server errors gracefully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -255,7 +257,7 @@ describe('Admin - User Behavior Analytics API', () => {
 
   // Test Case 14: Data validation and bounds checking
   it('should return data within expected bounds and formats', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         const { data } = response.body;
@@ -280,7 +282,7 @@ describe('Admin - User Behavior Analytics API', () => {
 
   // Test Case 15: API contract and backward compatibility
   it('should maintain API contract for long-term compatibility', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         

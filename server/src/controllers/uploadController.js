@@ -45,16 +45,28 @@ export const deleteLogo = async (req, res) => {
   try {
     const { filename } = req.params;
 
-    // filename can be a Cloudinary public_id (e.g. coupon-feast/logos/abc123)
-    // or a legacy local filename — try Cloudinary first
+    // Validate filename has a proper extension
+    if (!filename || !/\.[a-zA-Z0-9]+$/.test(filename)) {
+      return res.status(400).json({ error: 'Invalid filename' });
+    }
+
+    // Reject special characters that are not valid in filenames
+    if (/[!@#$%^&*()+=\[\]{}|;:'",<>?]/.test(filename)) {
+      return res.status(400).json({ error: 'Filename contains invalid characters' });
+    }
+
     const publicId = decodeURIComponent(filename);
     const result = await getCloudinary().uploader.destroy(publicId);
 
-    if (result.result === 'ok' || result.result === 'not found') {
+    if (result.result === 'ok') {
       return res.json({ message: 'Image deleted successfully' });
     }
 
-    res.status(400).json({ error: 'Failed to delete image', result });
+    if (result.result === 'not found') {
+      return res.status(404).json({ error: 'File not found' });
+    }
+
+    res.status(500).json({ error: 'Failed to delete image', result });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

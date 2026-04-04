@@ -1,4 +1,6 @@
 describe('Admin API - Update Featured Coupon', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
   let testStoreId, testCouponId;
@@ -6,7 +8,7 @@ describe('Admin API - Update Featured Coupon', () => {
   beforeEach(() => {
     cy.task('clearDatabase');
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/stores/create`,
       body: {
@@ -23,7 +25,7 @@ describe('Admin API - Update Featured Coupon', () => {
         testStoreId = 'test-store-id';
       }
       
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/featured-coupons/create`,
         body: {
@@ -45,7 +47,7 @@ describe('Admin API - Update Featured Coupon', () => {
   });
 
   it('should update featured coupon successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       body: {
@@ -64,7 +66,7 @@ describe('Admin API - Update Featured Coupon', () => {
   });
 
   it('should return 404 for non-existent coupon ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/featured-coupons/507f1f77bcf86cd799439011`,
       body: {
@@ -80,7 +82,7 @@ describe('Admin API - Update Featured Coupon', () => {
   });
 
   it('should return 400 for invalid coupon ID format', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/featured-coupons/invalid-id`,
       body: {
@@ -96,7 +98,7 @@ describe('Admin API - Update Featured Coupon', () => {
   });
 
   it('should update only provided fields', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       body: {
@@ -113,7 +115,7 @@ describe('Admin API - Update Featured Coupon', () => {
   });
 
   it('should maintain isFeatured status', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       body: {
@@ -130,7 +132,7 @@ describe('Admin API - Update Featured Coupon', () => {
   });
 
   it('should validate updated coupon code uniqueness', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/featured-coupons/create`,
       body: {
@@ -141,7 +143,7 @@ describe('Admin API - Update Featured Coupon', () => {
       },
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'PUT',
         url: `${baseUrl}/featured-coupons/${testCouponId}`,
         body: {
@@ -158,7 +160,7 @@ describe('Admin API - Update Featured Coupon', () => {
   });
 
   it('should handle unicode characters in updates', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       body: {
@@ -175,7 +177,7 @@ describe('Admin API - Update Featured Coupon', () => {
   });
 
   it('should validate discount value in updates', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       body: {
@@ -190,7 +192,7 @@ describe('Admin API - Update Featured Coupon', () => {
   it('should update timestamps correctly', () => {
     const beforeUpdate = new Date();
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       body: {
@@ -208,7 +210,7 @@ describe('Admin API - Update Featured Coupon', () => {
 
   it('should handle concurrent updates', () => {
     const requests = Array.from({length: 3}, (_, i) => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'PUT',
         url: `${baseUrl}/featured-coupons/${testCouponId}`,
         body: {
@@ -227,7 +229,7 @@ describe('Admin API - Update Featured Coupon', () => {
 
   it('should respond within acceptable time', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       body: {
@@ -242,7 +244,7 @@ describe('Admin API - Update Featured Coupon', () => {
   });
 
   it('should handle malformed JSON in updates', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       body: 'invalid json',
@@ -254,7 +256,7 @@ describe('Admin API - Update Featured Coupon', () => {
   });
 
   it('should preserve featured metrics', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       body: {
@@ -271,7 +273,7 @@ describe('Admin API - Update Featured Coupon', () => {
   });
 
   it('should return complete updated object', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       body: {
@@ -297,13 +299,13 @@ describe('Admin API - Update Featured Coupon', () => {
       description: 'Updated for integrity test'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       body: updateData,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         url: `${baseUrl}/coupons/${testCouponId}`,
         failOnStatusCode: false
       }).then((getResponse) => {

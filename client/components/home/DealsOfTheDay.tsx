@@ -25,7 +25,7 @@ function DealCard({ deal, primary, borderClr, cardBg, isDark, darkBg, buyLabel, 
   return (
     <div className="rounded-2xl overflow-hidden cursor-pointer group shadow-sm hover:shadow-xl transition-all duration-300 border"
       style={{ backgroundColor: cardBg, borderColor: borderClr, height: 320 }} onClick={handleBuy}>
-      <div className="relative overflow-hidden h-[170px] group-hover:h-[100px] transition-all duration-300 flex items-center justify-center"
+      <div className="relative overflow-hidden h-[170px] group-hover:h-[100px] transition-all duration-300"
         style={{ backgroundColor: isDark ? darkBg : '#f3f4f6' }}>
         {logo && (
           <div className="absolute top-3 left-3 w-12 h-12 rounded-full shadow-md z-10 overflow-hidden group-hover:w-9 group-hover:h-9 transition-all duration-300">
@@ -40,7 +40,7 @@ function DealCard({ deal, primary, borderClr, cardBg, isDark, darkBg, buyLabel, 
         </span>
       </div>
       <div className="px-4 pt-2 pb-3 text-center flex flex-col" style={{ height: 'calc(100% - 170px + 16px)' }}>
-        <p className="text-gray-800 dark:text-gray-200 text-sm font-medium leading-snug line-clamp-2">{deal.title}</p>
+        <p className="text-gray-800 dark:text-gray-200 text-sm font-medium leading-snug line-clamp-2">{deal.description || deal.title}</p>
         {store.storeName && <p className="text-gray-400 text-xs mt-1">By {store.storeName}</p>}
         <div className="mt-1.5 flex justify-center items-center gap-2">
           <span className="text-lg font-bold text-gray-900 dark:text-gray-100">{deal.price || deal.discount || ''}</span>
@@ -72,7 +72,7 @@ export default function DealsOfTheDay() {
   const [modalData, setModalData] = useState<any>(null);
 
   useEffect(() => {
-    getDeals({ limit: 4 })
+    getDeals({ section: 'deals_of_day', limit: 4 })
       .then(res => {
         const data = res.data?.data ?? res.data ?? [];
         setDeals((Array.isArray(data) ? data : []).filter((d: any) => d.isActive).slice(0, 4));

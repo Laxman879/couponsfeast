@@ -1,4 +1,6 @@
 describe('Admin API - Delete Footer Item', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
   let testItemId;
@@ -6,7 +8,7 @@ describe('Admin API - Delete Footer Item', () => {
   beforeEach(() => {
     cy.task('clearDatabase');
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/footer/create`,
       body: {
@@ -26,7 +28,7 @@ describe('Admin API - Delete Footer Item', () => {
   });
 
   it('should delete footer item successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/footer/${testItemId}`,
       failOnStatusCode: false
@@ -40,7 +42,7 @@ describe('Admin API - Delete Footer Item', () => {
   });
 
   it('should return 404 for non-existent ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/footer/507f1f77bcf86cd799439011`,
       failOnStatusCode: false
@@ -50,7 +52,7 @@ describe('Admin API - Delete Footer Item', () => {
   });
 
   it('should return 400 for invalid ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/footer/invalid-id`,
       failOnStatusCode: false
@@ -60,12 +62,12 @@ describe('Admin API - Delete Footer Item', () => {
   });
 
   it('should verify item is deleted', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/footer/${testItemId}`,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/footer/${testItemId}`,
         failOnStatusCode: false
@@ -76,12 +78,12 @@ describe('Admin API - Delete Footer Item', () => {
   });
 
   it('should remove from footer list', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/footer/${testItemId}`,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         url: `${baseUrl}/footer`,
         failOnStatusCode: false
       }).then((response) => {
@@ -95,12 +97,12 @@ describe('Admin API - Delete Footer Item', () => {
   });
 
   it('should handle already deleted item', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/footer/${testItemId}`,
       failOnStatusCode: false
     });
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/footer/${testItemId}`,
       failOnStatusCode: false
@@ -111,7 +113,7 @@ describe('Admin API - Delete Footer Item', () => {
 
   it('should handle concurrent deletion', () => {
     const requests = Array.from({length: 3}, () => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'DELETE',
         url: `${baseUrl}/footer/${testItemId}`,
         failOnStatusCode: false
@@ -136,7 +138,7 @@ describe('Admin API - Delete Footer Item', () => {
 
   it('should respond within time limit', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/footer/${testItemId}`,
       failOnStatusCode: false
@@ -148,7 +150,7 @@ describe('Admin API - Delete Footer Item', () => {
   });
 
   it('should return proper structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/footer/${testItemId}`,
       failOnStatusCode: false
@@ -164,7 +166,7 @@ describe('Admin API - Delete Footer Item', () => {
 
   it('should handle case-insensitive ID', () => {
     const upperCaseId = testItemId.toUpperCase();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/footer/${upperCaseId}`,
       failOnStatusCode: false
@@ -174,12 +176,12 @@ describe('Admin API - Delete Footer Item', () => {
   });
 
   it('should clean up related data', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/footer/${testItemId}`,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         url: `${baseUrl}/footer`,
         failOnStatusCode: false
       }).then((response) => {
@@ -193,7 +195,7 @@ describe('Admin API - Delete Footer Item', () => {
   });
 
   it('should handle special characters in ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/footer/special!@#$%`,
       failOnStatusCode: false
@@ -203,12 +205,12 @@ describe('Admin API - Delete Footer Item', () => {
   });
 
   it('should maintain referential integrity', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/footer/${testItemId}`,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         url: `${baseUrl}/footer`,
         failOnStatusCode: false
       }).then((response) => {
@@ -222,7 +224,7 @@ describe('Admin API - Delete Footer Item', () => {
   });
 
   it('should handle empty ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/footer/`,
       failOnStatusCode: false
@@ -232,7 +234,7 @@ describe('Admin API - Delete Footer Item', () => {
   });
 
   it('should log deletion activity', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/footer/${testItemId}`,
       failOnStatusCode: false

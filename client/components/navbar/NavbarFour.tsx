@@ -11,17 +11,17 @@ const currentMonth = months[new Date().getMonth()];
 const navLinks = [
   { label: 'Stores', href: '/stores', icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-store-icon-v2.png' },
   { label: 'Categories', href: '/category', icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-category-icon-v2.png' },
-  { label: `${currentMonth} Sales`, href: '/sales', icon: 'https://cdn.grabon.in/gograbon/v8/icons/calendar-v3.svg' },
-  { label: 'Blog', href: '/blog', icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-blog-icon-v2.png' },
+  { label: 'All Coupons', href: '/all-coupons', icon: 'https://cdn.grabon.in/gograbon/v8/icons/calendar-v3.svg' },
   { label: 'Deals', href: '/deals', icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-deals.png' },
+  { label: 'Blog', href: '/blog', icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-blog-icon-v2.png' },
 ];
 
 const mobilePageLinks = [
   { label: 'Stores', href: '/stores', icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-store-icon-v2.png' },
   { label: 'Categories', href: '/category', icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-category-icon-v2.png' },
-  { label: 'March Sales', href: '#', icon: 'https://cdn.grabon.in/gograbon/v8/icons/calendar-v3.svg' },
+  { label: 'All Coupons', href: '/all-coupons', icon: 'https://cdn.grabon.in/gograbon/v8/icons/calendar-v3.svg' },
+  { label: 'Deals', href: '/deals', icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-deals.png' },
   { label: 'Blog', href: '/blog', icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-blog-icon-v2.png' },
-  { label: 'Deals', href: '#', icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-deals.png' },
 ];
 
 const notifications = [
@@ -153,9 +153,9 @@ export default function NavbarFour() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-1 shrink-0 no-underline">
             {siteConfig?.logos?.navbar ? (
-              <img src={siteConfig.logos.navbar.startsWith('http') ? siteConfig.logos.navbar : `http://localhost:5000${siteConfig.logos.navbar}`} alt={siteName} className="h-8 w-auto object-contain" />
+              <img src={siteConfig.logos.navbar.startsWith('http') ? siteConfig.logos.navbar : `http://localhost:5000${siteConfig.logos.navbar}`} alt={siteName} className="hidden sm:block h-12 w-auto object-contain" />
             ) : (
-              <span className="text-2xl font-extrabold" style={{ color: isDark ? primary : '#ffffff' }}>{siteName}</span>
+              <span className="hidden sm:block text-2xl font-extrabold" style={{ color: isDark ? primary : '#ffffff' }}>{siteName}</span>
             )}
           </Link>
 
@@ -357,7 +357,7 @@ export default function NavbarFour() {
             <div className="flex items-center justify-between px-5 py-4 border-b shrink-0" style={{ borderColor: isDark ? borderColor : '#e5e7eb' }}>
               <Link href="/" onClick={closeDrawer} className="no-underline">
                 {siteConfig?.logos?.navbar ? (
-                  <img src={siteConfig.logos.navbar.startsWith('http') ? siteConfig.logos.navbar : `http://localhost:5000${siteConfig.logos.navbar}`} alt={siteName} className="h-7 w-auto object-contain" />
+                  <img src={siteConfig.logos.navbar.startsWith('http') ? siteConfig.logos.navbar : `http://localhost:5000${siteConfig.logos.navbar}`} alt={siteName} className="h-10 w-auto object-contain" />
                 ) : (
                   <span className="text-xl font-extrabold" style={{ color: primary }}>{siteName}</span>
                 )}
@@ -372,9 +372,9 @@ export default function NavbarFour() {
               {[
                 { label: 'Stores', href: '/stores', icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-store-icon-v2.png' },
                 { label: 'Categories', href: '/category', icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-category-icon-v2.png' },
-                { label: `${currentMonth} Sales`, href: '/sales', icon: 'https://cdn.grabon.in/gograbon/v8/icons/calendar-v3.svg' },
-                { label: 'Blog', href: '/blog', icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-blog-icon-v2.png' },
+                { label: 'All Coupons', href: '/all-coupons', icon: 'https://cdn.grabon.in/gograbon/v8/icons/calendar-v3.svg' },
                 { label: 'Deals', href: '/deals', icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-deals.png' },
+                { label: 'Blog', href: '/blog', icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-blog-icon-v2.png' },
                               ].map((link) => (
                 <Link key={link.label} href={link.href} onClick={closeDrawer}
                   className="flex items-center gap-3 px-5 py-4 text-base font-normal transition-colors no-underline border-b"

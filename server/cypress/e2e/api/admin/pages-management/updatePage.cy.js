@@ -1,4 +1,6 @@
 describe('Admin API - Update Page', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
   let testPageId;
@@ -6,7 +8,7 @@ describe('Admin API - Update Page', () => {
   beforeEach(() => {
     cy.task('clearDatabase');
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/pages`,
       body: {
@@ -27,7 +29,7 @@ describe('Admin API - Update Page', () => {
   });
 
   it('should update page successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/pages/${testPageId}`,
       body: {
@@ -45,7 +47,7 @@ describe('Admin API - Update Page', () => {
   });
 
   it('should return 404 for non-existent ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/pages/507f1f77bcf86cd799439011`,
       body: { title: `Non-existent ${timestamp}` },
@@ -56,7 +58,7 @@ describe('Admin API - Update Page', () => {
   });
 
   it('should return 400 for invalid ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/pages/invalid-id`,
       body: { title: `Invalid ${timestamp}` },
@@ -67,7 +69,7 @@ describe('Admin API - Update Page', () => {
   });
 
   it('should update only provided fields', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/pages/${testPageId}`,
       body: { content: 'Only content updated' },
@@ -82,7 +84,7 @@ describe('Admin API - Update Page', () => {
   });
 
   it('should validate slug uniqueness', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/pages`,
       body: {
@@ -92,7 +94,7 @@ describe('Admin API - Update Page', () => {
       },
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'PUT',
         url: `${baseUrl}/pages/${testPageId}`,
         body: { slug: `another-${timestamp}` },
@@ -104,7 +106,7 @@ describe('Admin API - Update Page', () => {
   });
 
   it('should handle unicode updates', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/pages/${testPageId}`,
       body: {
@@ -121,7 +123,7 @@ describe('Admin API - Update Page', () => {
   });
 
   it('should update publication status', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/pages/${testPageId}`,
       body: { isPublished: true },
@@ -138,7 +140,7 @@ describe('Admin API - Update Page', () => {
 
   it('should update timestamps', () => {
     const beforeUpdate = new Date();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/pages/${testPageId}`,
       body: { title: `Timestamp ${timestamp}` },
@@ -156,7 +158,7 @@ describe('Admin API - Update Page', () => {
 
   it('should handle concurrent updates', () => {
     const requests = Array.from({length: 3}, (_, i) => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'PUT',
         url: `${baseUrl}/pages/${testPageId}`,
         body: { content: `Concurrent update ${i} at ${Date.now()}` },
@@ -173,7 +175,7 @@ describe('Admin API - Update Page', () => {
 
   it('should respond within time limit', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/pages/${testPageId}`,
       body: { title: `Performance ${timestamp}` },
@@ -186,7 +188,7 @@ describe('Admin API - Update Page', () => {
   });
 
   it('should handle malformed JSON', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/pages/${testPageId}`,
       body: 'invalid json',
@@ -198,7 +200,7 @@ describe('Admin API - Update Page', () => {
   });
 
   it('should update meta information', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/pages/${testPageId}`,
       body: {
@@ -217,7 +219,7 @@ describe('Admin API - Update Page', () => {
   });
 
   it('should return complete object', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/pages/${testPageId}`,
       body: { title: `Complete ${timestamp}` },
@@ -239,13 +241,13 @@ describe('Admin API - Update Page', () => {
       isPublished: true
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/pages/${testPageId}`,
       body: updateData,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/pages/${testPageId}`,
         failOnStatusCode: false
@@ -259,7 +261,7 @@ describe('Admin API - Update Page', () => {
   });
 
   it('should handle empty updates', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/pages/${testPageId}`,
       body: {},

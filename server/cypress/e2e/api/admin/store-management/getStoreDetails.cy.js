@@ -1,4 +1,6 @@
 describe('Admin - Get Store Details API', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = Cypress.env('apiUrl') || 'http://localhost:5000';
   const endpoint = '/api/admin/stores/details';
   let testStoreId;
@@ -14,7 +16,7 @@ describe('Admin - Get Store Details API', () => {
       slug: `test-store-${timestamp}`
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/stores/create`, storeData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, storeData)
       .then((response) => {
         testStoreId = response.body._id;
       });
@@ -27,7 +29,7 @@ describe('Admin - Get Store Details API', () => {
 
   // Test Case 1: Success case - Valid store ID
   it('should return store details for valid ID', () => {
-    cy.request('GET', `${baseUrl}${endpoint}/${testStoreId}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}/${testStoreId}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.be.an('object');
@@ -41,7 +43,7 @@ describe('Admin - Get Store Details API', () => {
 
   // Test Case 2: Invalid ID format
   it('should return 400 for invalid ID format', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}/invalid-id-format`,
       failOnStatusCode: false
@@ -55,7 +57,7 @@ describe('Admin - Get Store Details API', () => {
   it('should return 404 for non-existent store ID', () => {
     const nonExistentId = '507f1f77bcf86cd799439011';
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}/${nonExistentId}`,
       failOnStatusCode: false
@@ -67,7 +69,7 @@ describe('Admin - Get Store Details API', () => {
 
   // Test Case 4: Response structure validation
   it('should return store with correct data structure', () => {
-    cy.request('GET', `${baseUrl}${endpoint}/${testStoreId}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}/${testStoreId}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         const store = response.body;
@@ -92,7 +94,7 @@ describe('Admin - Get Store Details API', () => {
   it('should respond within acceptable time limit', () => {
     const startTime = Date.now();
     
-    cy.request('GET', `${baseUrl}${endpoint}/${testStoreId}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}/${testStoreId}`)
       .then((response) => {
         const responseTime = Date.now() - startTime;
         expect(response.status).to.eq(200);
@@ -103,17 +105,17 @@ describe('Admin - Get Store Details API', () => {
   // Test Case 6: Concurrent requests for same store
   it('should handle concurrent requests for same store', () => {
     // Sequential requests to avoid Promise.all timeout
-    cy.request('GET', `${baseUrl}${endpoint}/${testStoreId}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}/${testStoreId}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body._id).to.eq(testStoreId);
     });
     
-    cy.request('GET', `${baseUrl}${endpoint}/${testStoreId}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}/${testStoreId}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body._id).to.eq(testStoreId);
     });
     
-    cy.request('GET', `${baseUrl}${endpoint}/${testStoreId}`).then((response) => {
+    cy.authRequest('GET', `${baseUrl}${endpoint}/${testStoreId}`).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body._id).to.eq(testStoreId);
     });
@@ -121,7 +123,7 @@ describe('Admin - Get Store Details API', () => {
 
   // Test Case 7: Empty string ID
   it('should return 400 for empty string ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}/`,
       failOnStatusCode: false
@@ -132,7 +134,7 @@ describe('Admin - Get Store Details API', () => {
 
   // Test Case 8: Special characters in ID
   it('should return 400 for ID with special characters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}/store@#$%`,
       failOnStatusCode: false
@@ -146,7 +148,7 @@ describe('Admin - Get Store Details API', () => {
   it('should return 400 for excessively long ID', () => {
     const longId = 'a'.repeat(100);
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}/${longId}`,
       failOnStatusCode: false
@@ -158,7 +160,7 @@ describe('Admin - Get Store Details API', () => {
 
   // Test Case 10: Content-Type validation
   it('should return JSON content type', () => {
-    cy.request('GET', `${baseUrl}${endpoint}/${testStoreId}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}/${testStoreId}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.headers).to.have.property('content-type');
@@ -177,9 +179,9 @@ describe('Admin - Get Store Details API', () => {
       logo: 'https://example.com/logo.png'
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/stores/create`, fullStoreData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, fullStoreData)
       .then((createResponse) => {
-        cy.request('GET', `${baseUrl}${endpoint}/${createResponse.body._id}`)
+        cy.authRequest('GET', `${baseUrl}${endpoint}/${createResponse.body._id}`)
           .then((response) => {
             expect(response.status).to.eq(200);
             const store = response.body;
@@ -194,7 +196,7 @@ describe('Admin - Get Store Details API', () => {
 
   // Test Case 12: Store with minimal fields
   it('should return store with minimal required fields', () => {
-    cy.request('GET', `${baseUrl}${endpoint}/${testStoreId}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}/${testStoreId}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         const store = response.body;
@@ -210,7 +212,7 @@ describe('Admin - Get Store Details API', () => {
   it('should be case sensitive for store ID', () => {
     const uppercaseId = testStoreId.toUpperCase();
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}/${uppercaseId}`,
       failOnStatusCode: false
@@ -224,7 +226,7 @@ describe('Admin - Get Store Details API', () => {
 
   // Test Case 14: Database connection handling
   it('should handle database connection issues gracefully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}${endpoint}/${testStoreId}`,
       failOnStatusCode: false
@@ -244,9 +246,9 @@ describe('Admin - Get Store Details API', () => {
       slug: `unicode-store-${timestamp}`
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/stores/create`, unicodeStoreData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, unicodeStoreData)
       .then((createResponse) => {
-        cy.request('GET', `${baseUrl}${endpoint}/${createResponse.body._id}`)
+        cy.authRequest('GET', `${baseUrl}${endpoint}/${createResponse.body._id}`)
           .then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body.storeName).to.include('测试');

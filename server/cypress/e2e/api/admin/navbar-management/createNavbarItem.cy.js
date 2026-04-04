@@ -1,4 +1,6 @@
 describe('Admin API - Create Navbar Item', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
 
@@ -7,7 +9,7 @@ describe('Admin API - Create Navbar Item', () => {
   });
 
   it('should create navbar item successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/navbar/create`,
       body: {
@@ -28,7 +30,7 @@ describe('Admin API - Create Navbar Item', () => {
   });
 
   it('should return 400 for missing required fields', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/navbar/create`,
       body: {},
@@ -42,7 +44,7 @@ describe('Admin API - Create Navbar Item', () => {
   });
 
   it('should validate navbar item title requirements', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/navbar/create`,
       body: {
@@ -59,7 +61,7 @@ describe('Admin API - Create Navbar Item', () => {
   });
 
   it('should validate URL format', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/navbar/create`,
       body: {
@@ -73,7 +75,7 @@ describe('Admin API - Create Navbar Item', () => {
   });
 
   it('should set default values for optional fields', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/navbar/create`,
       body: {
@@ -91,7 +93,7 @@ describe('Admin API - Create Navbar Item', () => {
   });
 
   it('should handle unicode characters in title', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/navbar/create`,
       body: {
@@ -109,7 +111,7 @@ describe('Admin API - Create Navbar Item', () => {
   });
 
   it('should validate order number', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/navbar/create`,
       body: {
@@ -130,14 +132,14 @@ describe('Admin API - Create Navbar Item', () => {
       order: 5
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/navbar/create`,
       body: itemData,
       failOnStatusCode: false
     });
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/navbar/create`,
       body: {
@@ -152,7 +154,7 @@ describe('Admin API - Create Navbar Item', () => {
   });
 
   it('should auto-increment order if not provided', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/navbar/create`,
       body: {
@@ -172,7 +174,7 @@ describe('Admin API - Create Navbar Item', () => {
 
   it('should handle concurrent item creation', () => {
     const requests = Array.from({length: 3}, (_, i) => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/navbar/create`,
         body: {
@@ -196,7 +198,7 @@ describe('Admin API - Create Navbar Item', () => {
 
   it('should respond within acceptable time', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/navbar/create`,
       body: {
@@ -212,7 +214,7 @@ describe('Admin API - Create Navbar Item', () => {
   });
 
   it('should handle malformed JSON', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/navbar/create`,
       body: 'invalid json',
@@ -224,7 +226,7 @@ describe('Admin API - Create Navbar Item', () => {
   });
 
   it('should validate content-type header', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/navbar/create`,
       body: {
@@ -239,7 +241,7 @@ describe('Admin API - Create Navbar Item', () => {
   });
 
   it('should handle special characters in URL', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/navbar/create`,
       body: {
@@ -260,7 +262,7 @@ describe('Admin API - Create Navbar Item', () => {
       isActive: true
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/navbar/create`,
       body: itemData,
@@ -270,7 +272,7 @@ describe('Admin API - Create Navbar Item', () => {
       if (createResponse.status === 201 && typeof createResponse.body === 'object' && createResponse.body.data) {
         const itemId = createResponse.body.data._id;
 
-        cy.request({
+        cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
           method: 'GET',
           url: `${baseUrl}/navbar/${itemId}`,
           failOnStatusCode: false

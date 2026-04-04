@@ -1,4 +1,6 @@
 describe('Admin - Update Coupon API', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = Cypress.env('apiUrl') || 'http://localhost:5000';
   const endpoint = '/api/admin/coupons/update';
   let testCouponId;
@@ -10,7 +12,7 @@ describe('Admin - Update Coupon API', () => {
     
     // Create a test store first
     const timestamp = Date.now() + Math.random().toString(36).substr(2, 9);
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/api/admin/stores/create`,
       body: {
@@ -31,7 +33,7 @@ describe('Admin - Update Coupon API', () => {
         category: 'Electronics'
       };
       
-      cy.request('POST', `${baseUrl}/api/admin/coupons/create`, couponData)
+      cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, couponData)
         .then((response) => {
           testCouponId = response.body._id;
         });
@@ -51,7 +53,7 @@ describe('Admin - Update Coupon API', () => {
       discount: '25%'
     };
 
-    cy.request('PUT', `${baseUrl}${endpoint}/${testCouponId}`, updateData)
+    cy.authRequest('PUT', `${baseUrl}${endpoint}/${testCouponId}`, updateData)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.be.an('object');
@@ -72,7 +74,7 @@ describe('Admin - Update Coupon API', () => {
       title: 'Updated Coupon'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}${endpoint}/invalid-id`,
       body: updateData,
@@ -90,7 +92,7 @@ describe('Admin - Update Coupon API', () => {
       title: 'Updated Coupon'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}${endpoint}/${nonExistentId}`,
       body: updateData,
@@ -107,7 +109,7 @@ describe('Admin - Update Coupon API', () => {
       title: 'Partially Updated Coupon'
     };
 
-    cy.request('PUT', `${baseUrl}${endpoint}/${testCouponId}`, updateData)
+    cy.authRequest('PUT', `${baseUrl}${endpoint}/${testCouponId}`, updateData)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body.title).to.eq(updateData.title);
@@ -120,7 +122,7 @@ describe('Admin - Update Coupon API', () => {
   it('should handle empty update data', () => {
     const updateData = {};
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}${endpoint}/${testCouponId}`,
       body: updateData,
@@ -141,7 +143,7 @@ describe('Admin - Update Coupon API', () => {
       discount: {}
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}${endpoint}/${testCouponId}`,
       body: invalidData,
@@ -164,13 +166,13 @@ describe('Admin - Update Coupon API', () => {
       category: 'Electronics'
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/coupons/create`, secondCouponData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/coupons/create`, secondCouponData)
       .then(() => {
         const updateData = {
           code: `SECOND${timestamp}` // Try to use existing code
         };
 
-        cy.request({
+        cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
           method: 'PUT',
           url: `${baseUrl}${endpoint}/${testCouponId}`,
           body: updateData,
@@ -193,7 +195,7 @@ describe('Admin - Update Coupon API', () => {
       description: 'Special chars: @#$%^&*()'
     };
 
-    cy.request('PUT', `${baseUrl}${endpoint}/${testCouponId}`, updateData)
+    cy.authRequest('PUT', `${baseUrl}${endpoint}/${testCouponId}`, updateData)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body.title).to.include('Special');
@@ -210,7 +212,7 @@ describe('Admin - Update Coupon API', () => {
       description: 'Unicode update 测试 🛍️'
     };
 
-    cy.request('PUT', `${baseUrl}${endpoint}/${testCouponId}`, updateData)
+    cy.authRequest('PUT', `${baseUrl}${endpoint}/${testCouponId}`, updateData)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body.title).to.include('测试');
@@ -225,7 +227,7 @@ describe('Admin - Update Coupon API', () => {
       description: 'D'.repeat(500)
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}${endpoint}/${testCouponId}`,
       body: updateData,
@@ -245,7 +247,7 @@ describe('Admin - Update Coupon API', () => {
       category: null
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}${endpoint}/${testCouponId}`,
       body: updateData,
@@ -266,7 +268,7 @@ describe('Admin - Update Coupon API', () => {
 
     const startTime = Date.now();
     
-    cy.request('PUT', `${baseUrl}${endpoint}/${testCouponId}`, updateData)
+    cy.authRequest('PUT', `${baseUrl}${endpoint}/${testCouponId}`, updateData)
       .then((response) => {
         const responseTime = Date.now() - startTime;
         expect(response.status).to.eq(200);
@@ -277,21 +279,21 @@ describe('Admin - Update Coupon API', () => {
   // Test Case 13: Concurrent updates to same coupon
   it('should handle concurrent updates to same coupon', () => {
     // Sequential requests to avoid Promise.all timeout
-    cy.request('PUT', `${baseUrl}${endpoint}/${testCouponId}`, {
+    cy.authRequest('PUT', `${baseUrl}${endpoint}/${testCouponId}`, {
       description: 'Concurrent update 1'
     }).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body._id).to.eq(testCouponId);
     });
     
-    cy.request('PUT', `${baseUrl}${endpoint}/${testCouponId}`, {
+    cy.authRequest('PUT', `${baseUrl}${endpoint}/${testCouponId}`, {
       description: 'Concurrent update 2'
     }).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body._id).to.eq(testCouponId);
     });
     
-    cy.request('PUT', `${baseUrl}${endpoint}/${testCouponId}`, {
+    cy.authRequest('PUT', `${baseUrl}${endpoint}/${testCouponId}`, {
       description: 'Concurrent update 3'
     }).then((response) => {
       expect(response.status).to.eq(200);
@@ -302,7 +304,7 @@ describe('Admin - Update Coupon API', () => {
   // Test Case 14: Update timestamp validation
   it('should update the updatedAt timestamp', () => {
     // Get original timestamp
-    cy.request('GET', `${baseUrl}/api/admin/coupons/details/${testCouponId}`)
+    cy.authRequest('GET', `${baseUrl}/api/admin/coupons/details/${testCouponId}`)
       .then((originalResponse) => {
         const originalUpdatedAt = originalResponse.body.updatedAt;
         
@@ -313,7 +315,7 @@ describe('Admin - Update Coupon API', () => {
           title: 'Timestamp Test Coupon'
         };
 
-        cy.request('PUT', `${baseUrl}${endpoint}/${testCouponId}`, updateData)
+        cy.authRequest('PUT', `${baseUrl}${endpoint}/${testCouponId}`, updateData)
           .then((updateResponse) => {
             expect(updateResponse.status).to.eq(200);
             expect(updateResponse.body.updatedAt).to.not.eq(originalUpdatedAt);
@@ -328,7 +330,7 @@ describe('Admin - Update Coupon API', () => {
       discount: 'invalid-discount-format'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}${endpoint}/${testCouponId}`,
       body: updateData,

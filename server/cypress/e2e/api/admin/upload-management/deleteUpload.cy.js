@@ -1,4 +1,6 @@
 describe('Admin API - Delete Upload', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
   let testFilename;
@@ -11,7 +13,7 @@ describe('Admin API - Delete Upload', () => {
     formData.append('logo', blob, `test-${timestamp}.jpg`);
     formData.append('logoType', 'logo');
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/upload/logo`,
       body: formData,
@@ -26,7 +28,7 @@ describe('Admin API - Delete Upload', () => {
   });
 
   it('should delete upload successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/upload/logo/delete/${testFilename}`,
       failOnStatusCode: false
@@ -39,7 +41,7 @@ describe('Admin API - Delete Upload', () => {
   });
 
   it('should return 404 for non-existent filename', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/upload/logo/delete/nonexistent-file.jpg`,
       failOnStatusCode: false
@@ -49,7 +51,7 @@ describe('Admin API - Delete Upload', () => {
   });
 
   it('should return 400 for invalid filename', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/upload/logo/delete/invalid-filename`,
       failOnStatusCode: false
@@ -59,12 +61,12 @@ describe('Admin API - Delete Upload', () => {
   });
 
   it('should verify upload is deleted', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/upload/logo/delete/${testFilename}`,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'DELETE',
         url: `${baseUrl}/upload/logo/delete/${testFilename}`,
         failOnStatusCode: false
@@ -75,12 +77,12 @@ describe('Admin API - Delete Upload', () => {
   });
 
   it('should handle already deleted upload', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/upload/logo/delete/${testFilename}`,
       failOnStatusCode: false
     });
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/upload/logo/delete/${testFilename}`,
       failOnStatusCode: false
@@ -91,7 +93,7 @@ describe('Admin API - Delete Upload', () => {
 
   it('should handle concurrent deletion', () => {
     const requests = Array.from({length: 3}, () => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'DELETE',
         url: `${baseUrl}/upload/logo/delete/${testFilename}`,
         failOnStatusCode: false
@@ -107,7 +109,7 @@ describe('Admin API - Delete Upload', () => {
 
   it('should respond within time limit', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/upload/logo/delete/${testFilename}`,
       failOnStatusCode: false
@@ -119,7 +121,7 @@ describe('Admin API - Delete Upload', () => {
   });
 
   it('should return proper structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/upload/logo/delete/${testFilename}`,
       failOnStatusCode: false
@@ -132,7 +134,7 @@ describe('Admin API - Delete Upload', () => {
   });
 
   it('should handle special characters in filename', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/upload/logo/delete/special!@#$%.jpg`,
       failOnStatusCode: false
@@ -142,7 +144,7 @@ describe('Admin API - Delete Upload', () => {
   });
 
   it('should handle empty filename', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/upload/logo/delete/`,
       failOnStatusCode: false

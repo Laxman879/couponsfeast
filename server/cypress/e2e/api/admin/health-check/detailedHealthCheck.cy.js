@@ -1,8 +1,10 @@
 describe('Admin API - Detailed Health Check', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
 
   it('should return detailed health status', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/health/detailed`,
       failOnStatusCode: false,
       timeout: 5000
@@ -16,7 +18,7 @@ describe('Admin API - Detailed Health Check', () => {
   });
 
   it('should include memory metrics', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/health/detailed`,
       failOnStatusCode: false
     }).then((response) => {
@@ -29,7 +31,7 @@ describe('Admin API - Detailed Health Check', () => {
   });
 
   it('should include CPU metrics', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/health/detailed`,
       failOnStatusCode: false
     }).then((response) => {
@@ -41,7 +43,7 @@ describe('Admin API - Detailed Health Check', () => {
   });
 
   it('should include database metrics', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/health/detailed`,
       failOnStatusCode: false
     }).then((response) => {
@@ -56,7 +58,7 @@ describe('Admin API - Detailed Health Check', () => {
   });
 
   it('should include disk usage', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/health/detailed`,
       failOnStatusCode: false
     }).then((response) => {
@@ -69,7 +71,7 @@ describe('Admin API - Detailed Health Check', () => {
 
   it('should respond within time limit', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/health/detailed`,
       failOnStatusCode: false
     }).then((response) => {
@@ -80,7 +82,7 @@ describe('Admin API - Detailed Health Check', () => {
   });
 
   it('should handle concurrent requests', () => {
-    const requests = Array.from({length: 5}, () => cy.request({
+    const requests = Array.from({length: 5}, () => cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/health/detailed`,
       failOnStatusCode: false
     }));
@@ -92,7 +94,7 @@ describe('Admin API - Detailed Health Check', () => {
   });
 
   it('should include service dependencies', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/health/detailed`,
       failOnStatusCode: false
     }).then((response) => {
@@ -104,7 +106,7 @@ describe('Admin API - Detailed Health Check', () => {
   });
 
   it('should include performance metrics', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/health/detailed`,
       failOnStatusCode: false
     }).then((response) => {
@@ -116,7 +118,7 @@ describe('Admin API - Detailed Health Check', () => {
   });
 
   it('should return proper structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/health/detailed`,
       failOnStatusCode: false
     }).then((response) => {
@@ -130,7 +132,7 @@ describe('Admin API - Detailed Health Check', () => {
   });
 
   it('should include error rates', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/health/detailed`,
       failOnStatusCode: false
     }).then((response) => {
@@ -142,7 +144,7 @@ describe('Admin API - Detailed Health Check', () => {
   });
 
   it('should include request metrics', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/health/detailed`,
       failOnStatusCode: false
     }).then((response) => {
@@ -154,11 +156,11 @@ describe('Admin API - Detailed Health Check', () => {
   });
 
   it('should maintain data consistency', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/health/detailed`,
       failOnStatusCode: false
     }).then((first) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         url: `${baseUrl}/health/detailed`,
         failOnStatusCode: false
       }).then((second) => {
@@ -171,7 +173,7 @@ describe('Admin API - Detailed Health Check', () => {
   });
 
   it('should not expose sensitive information', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/health/detailed`,
       failOnStatusCode: false
     }).then((response) => {
@@ -185,7 +187,7 @@ describe('Admin API - Detailed Health Check', () => {
   });
 
   it('should handle system load metrics', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/health/detailed`,
       failOnStatusCode: false
     }).then((response) => {

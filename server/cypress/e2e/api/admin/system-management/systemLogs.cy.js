@@ -1,4 +1,6 @@
 describe('Admin API - System Logs', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
 
@@ -7,7 +9,7 @@ describe('Admin API - System Logs', () => {
   });
 
   it('should get system error logs successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/system/logs/errors`,
       failOnStatusCode: false
     }).then((response) => {
@@ -22,7 +24,7 @@ describe('Admin API - System Logs', () => {
   });
 
   it('should filter error logs by level', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/system/logs/errors?level=error`,
       failOnStatusCode: false
     }).then((response) => {
@@ -34,7 +36,7 @@ describe('Admin API - System Logs', () => {
   });
 
   it('should handle pagination for error logs', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/system/logs/errors?page=1&limit=10`,
       failOnStatusCode: false
     }).then((response) => {
@@ -47,7 +49,7 @@ describe('Admin API - System Logs', () => {
 
   it('should filter by date range', () => {
     const today = new Date().toISOString().split('T')[0];
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/system/logs/errors?startDate=${today}`,
       failOnStatusCode: false
     }).then((response) => {
@@ -56,7 +58,7 @@ describe('Admin API - System Logs', () => {
   });
 
   it('should search error logs by message', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/system/logs/errors?search=error`,
       failOnStatusCode: false
     }).then((response) => {
@@ -66,7 +68,7 @@ describe('Admin API - System Logs', () => {
 
   it('should respond within time limit', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/system/logs/errors`,
       failOnStatusCode: false
     }).then((response) => {
@@ -77,7 +79,7 @@ describe('Admin API - System Logs', () => {
   });
 
   it('should handle concurrent requests', () => {
-    const requests = Array.from({length: 5}, () => cy.request({
+    const requests = Array.from({length: 5}, () => cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/system/logs/errors`,
       failOnStatusCode: false
     }));
@@ -89,7 +91,7 @@ describe('Admin API - System Logs', () => {
   });
 
   it('should include log metadata', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/system/logs/errors`,
       failOnStatusCode: false
     }).then((response) => {
@@ -102,7 +104,7 @@ describe('Admin API - System Logs', () => {
   });
 
   it('should sort logs by timestamp', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/system/logs/errors?sortBy=timestamp&order=desc`,
       failOnStatusCode: false
     }).then((response) => {
@@ -114,7 +116,7 @@ describe('Admin API - System Logs', () => {
   });
 
   it('should handle invalid parameters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/system/logs/errors?page=-1&limit=0`,
       failOnStatusCode: false
@@ -124,7 +126,7 @@ describe('Admin API - System Logs', () => {
   });
 
   it('should return proper structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/system/logs/errors`,
       failOnStatusCode: false
     }).then((response) => {
@@ -139,7 +141,7 @@ describe('Admin API - System Logs', () => {
   });
 
   it('should handle empty logs', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/system/logs/errors?level=nonexistent`,
       failOnStatusCode: false
     }).then((response) => {
@@ -151,11 +153,11 @@ describe('Admin API - System Logs', () => {
   });
 
   it('should maintain consistency', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/system/logs/errors?limit=5`,
       failOnStatusCode: false
     }).then((first) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         url: `${baseUrl}/system/logs/errors?limit=5`,
         failOnStatusCode: false
       }).then((second) => {

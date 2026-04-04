@@ -1,4 +1,6 @@
 describe('Admin API - List Featured Coupons', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
 
@@ -6,7 +8,7 @@ describe('Admin API - List Featured Coupons', () => {
     cy.task('clearDatabase');
     
     // Create test store first
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/stores/create`,
       body: {
@@ -22,7 +24,7 @@ describe('Admin API - List Featured Coupons', () => {
         
         // Create test coupons with all required fields
         Array.from({length: 5}, (_, i) => {
-          cy.request({
+          cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
             method: 'POST',
             url: `${baseUrl}/coupons/create`,
             body: {
@@ -43,7 +45,7 @@ describe('Admin API - List Featured Coupons', () => {
   });
 
   it('should list featured coupons successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/featured-coupons`,
       failOnStatusCode: false
@@ -57,7 +59,7 @@ describe('Admin API - List Featured Coupons', () => {
   });
 
   it('should return only featured coupons', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/featured-coupons`,
       failOnStatusCode: false
@@ -75,7 +77,7 @@ describe('Admin API - List Featured Coupons', () => {
   });
 
   it('should handle pagination parameters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/featured-coupons?page=1&limit=2`,
       failOnStatusCode: false
@@ -89,7 +91,7 @@ describe('Admin API - List Featured Coupons', () => {
   });
 
   it('should sort coupons by featured metrics', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/featured-coupons?sortBy=clickCount&order=desc`,
       failOnStatusCode: false
@@ -111,7 +113,7 @@ describe('Admin API - List Featured Coupons', () => {
   it('should handle empty featured coupons list', () => {
     cy.task('clearDatabase').then(() => {
       cy.wait(500); // Wait for database clearing to complete
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/featured-coupons`,
         failOnStatusCode: false
@@ -134,7 +136,7 @@ describe('Admin API - List Featured Coupons', () => {
   });
 
   it('should include coupon details and store information', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/featured-coupons`,
       failOnStatusCode: false
@@ -154,7 +156,7 @@ describe('Admin API - List Featured Coupons', () => {
   });
 
   it('should handle invalid pagination parameters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/featured-coupons?page=-1&limit=0`,
       failOnStatusCode: false
@@ -164,7 +166,7 @@ describe('Admin API - List Featured Coupons', () => {
   });
 
   it('should filter by store if provided', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/featured-coupons?store=test-store`,
       failOnStatusCode: false
@@ -175,7 +177,7 @@ describe('Admin API - List Featured Coupons', () => {
 
   it('should respond within acceptable time', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/featured-coupons`,
       failOnStatusCode: false
@@ -188,7 +190,7 @@ describe('Admin API - List Featured Coupons', () => {
 
   it('should handle concurrent requests', () => {
     const requests = Array.from({length: 5}, () => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/featured-coupons`,
         failOnStatusCode: false
@@ -206,7 +208,7 @@ describe('Admin API - List Featured Coupons', () => {
   });
 
   it('should include total count in response', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/featured-coupons`,
       failOnStatusCode: false
@@ -219,7 +221,7 @@ describe('Admin API - List Featured Coupons', () => {
   });
 
   it('should handle search query parameter', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/featured-coupons?search=Featured`,
       failOnStatusCode: false
@@ -235,7 +237,7 @@ describe('Admin API - List Featured Coupons', () => {
   });
 
   it('should return proper response structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/featured-coupons`,
       failOnStatusCode: false
@@ -251,7 +253,7 @@ describe('Admin API - List Featured Coupons', () => {
 
   it('should handle large dataset efficiently', () => {
     // Create many featured coupons
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/stores/create`,
       body: {
@@ -267,7 +269,7 @@ describe('Admin API - List Featured Coupons', () => {
         
         // Create coupons with all required fields
         Array.from({length: 20}, (_, i) => { // Reduced from 50 to 20 for better performance
-          cy.request({
+          cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
             method: 'POST',
             url: `${baseUrl}/coupons/create`,
             body: {
@@ -286,7 +288,7 @@ describe('Admin API - List Featured Coupons', () => {
     });
 
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/featured-coupons?limit=20`,
       failOnStatusCode: false
@@ -298,11 +300,11 @@ describe('Admin API - List Featured Coupons', () => {
   });
 
   it('should maintain data consistency', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       url: `${baseUrl}/featured-coupons`,
       failOnStatusCode: false
     }).then((firstResponse) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         url: `${baseUrl}/featured-coupons`,
         failOnStatusCode: false
       }).then((secondResponse) => {

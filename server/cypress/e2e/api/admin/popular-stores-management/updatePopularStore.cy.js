@@ -1,4 +1,6 @@
 describe('Admin API - Update Popular Store', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
   let testStoreId;
@@ -6,7 +8,7 @@ describe('Admin API - Update Popular Store', () => {
   beforeEach(() => {
     cy.task('clearDatabase');
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/popular-stores/create`,
       body: {
@@ -26,7 +28,7 @@ describe('Admin API - Update Popular Store', () => {
   });
 
   it('should update popular store successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       body: {
@@ -45,7 +47,7 @@ describe('Admin API - Update Popular Store', () => {
   });
 
   it('should return 404 for non-existent store ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/popular-stores/507f1f77bcf86cd799439011`,
       body: {
@@ -61,7 +63,7 @@ describe('Admin API - Update Popular Store', () => {
   });
 
   it('should return 400 for invalid store ID format', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/popular-stores/invalid-id`,
       body: {
@@ -77,7 +79,7 @@ describe('Admin API - Update Popular Store', () => {
   });
 
   it('should update only provided fields', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       body: {
@@ -94,7 +96,7 @@ describe('Admin API - Update Popular Store', () => {
   });
 
   it('should maintain isPopular status', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       body: {
@@ -113,7 +115,7 @@ describe('Admin API - Update Popular Store', () => {
   });
 
   it('should validate updated slug uniqueness', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/popular-stores/create`,
       body: {
@@ -122,7 +124,7 @@ describe('Admin API - Update Popular Store', () => {
       },
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'PUT',
         url: `${baseUrl}/popular-stores/${testStoreId}`,
         body: {
@@ -139,7 +141,7 @@ describe('Admin API - Update Popular Store', () => {
   });
 
   it('should handle unicode characters in updates', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       body: {
@@ -156,7 +158,7 @@ describe('Admin API - Update Popular Store', () => {
   });
 
   it('should validate website URL in updates', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       body: {
@@ -176,7 +178,7 @@ describe('Admin API - Update Popular Store', () => {
   it('should update timestamps correctly', () => {
     const beforeUpdate = new Date();
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       body: {
@@ -196,7 +198,7 @@ describe('Admin API - Update Popular Store', () => {
 
   it('should handle concurrent updates', () => {
     const requests = Array.from({length: 3}, (_, i) => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'PUT',
         url: `${baseUrl}/popular-stores/${testStoreId}`,
         body: {
@@ -215,7 +217,7 @@ describe('Admin API - Update Popular Store', () => {
 
   it('should respond within acceptable time', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       body: {
@@ -230,7 +232,7 @@ describe('Admin API - Update Popular Store', () => {
   });
 
   it('should handle malformed JSON in updates', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       body: 'invalid json',
@@ -242,7 +244,7 @@ describe('Admin API - Update Popular Store', () => {
   });
 
   it('should preserve popularity metrics', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       body: {
@@ -261,7 +263,7 @@ describe('Admin API - Update Popular Store', () => {
   });
 
   it('should return complete updated object', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       body: {
@@ -287,13 +289,13 @@ describe('Admin API - Update Popular Store', () => {
       website: 'https://integrity-updated.com'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'PUT',
       url: `${baseUrl}/popular-stores/${testStoreId}`,
       body: updateData,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/stores/${testStoreId}`,
         failOnStatusCode: false

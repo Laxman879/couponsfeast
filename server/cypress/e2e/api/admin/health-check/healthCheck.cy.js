@@ -1,8 +1,10 @@
 describe('Admin API - Health Check', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
 
   it('should return health status successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/health`,
       failOnStatusCode: false
@@ -16,7 +18,7 @@ describe('Admin API - Health Check', () => {
   });
 
   it('should include database health', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/health`,
       failOnStatusCode: false
@@ -31,7 +33,7 @@ describe('Admin API - Health Check', () => {
   });
 
   it('should include API health', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/health`,
       failOnStatusCode: false
@@ -47,7 +49,7 @@ describe('Admin API - Health Check', () => {
 
   it('should respond within time limit', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/health`,
       failOnStatusCode: false
@@ -59,7 +61,7 @@ describe('Admin API - Health Check', () => {
   });
 
   it('should handle concurrent requests', () => {
-    const requests = Array.from({length: 10}, () => cy.request({
+    const requests = Array.from({length: 10}, () => cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/health`,
       failOnStatusCode: false
@@ -72,7 +74,7 @@ describe('Admin API - Health Check', () => {
   });
 
   it('should include timestamp', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/health`,
       failOnStatusCode: false
@@ -87,7 +89,7 @@ describe('Admin API - Health Check', () => {
   });
 
   it('should return proper structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/health`,
       failOnStatusCode: false
@@ -102,7 +104,7 @@ describe('Admin API - Health Check', () => {
   });
 
   it('should include service checks', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/health`,
       failOnStatusCode: false
@@ -117,7 +119,7 @@ describe('Admin API - Health Check', () => {
   });
 
   it('should handle detailed health check', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/health?detailed=true`,
       failOnStatusCode: false
@@ -127,12 +129,12 @@ describe('Admin API - Health Check', () => {
   });
 
   it('should maintain consistency', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/health`,
       failOnStatusCode: false
     }).then((first) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/health`,
         failOnStatusCode: false
@@ -149,7 +151,7 @@ describe('Admin API - Health Check', () => {
   });
 
   it('should include version info', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/health`,
       failOnStatusCode: false
@@ -164,7 +166,7 @@ describe('Admin API - Health Check', () => {
   });
 
   it('should handle load testing', () => {
-    const requests = Array.from({length: 50}, () => cy.request({
+    const requests = Array.from({length: 50}, () => cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/health`,
       failOnStatusCode: false
@@ -177,7 +179,7 @@ describe('Admin API - Health Check', () => {
   });
 
   it('should not expose sensitive info', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/health`,
       failOnStatusCode: false
@@ -191,7 +193,7 @@ describe('Admin API - Health Check', () => {
   });
 
   it('should include uptime', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/health`,
       failOnStatusCode: false
@@ -206,7 +208,7 @@ describe('Admin API - Health Check', () => {
   });
 
   it('should handle health check failures gracefully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/health?simulate=failure`,
       failOnStatusCode: false

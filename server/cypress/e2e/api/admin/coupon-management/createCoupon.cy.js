@@ -1,4 +1,6 @@
 describe('Admin - Create Coupon API', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = Cypress.env('apiUrl') || 'http://localhost:5000';
   const endpoint = '/api/admin/coupons/create';
   let testStoreId;
@@ -9,7 +11,7 @@ describe('Admin - Create Coupon API', () => {
     
     // Create a test store for coupon tests
     const timestamp = Date.now() + Math.random().toString(36).substr(2, 9);
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/api/admin/stores/create`,
       body: {
@@ -40,7 +42,7 @@ describe('Admin - Create Coupon API', () => {
       category: 'Electronics'
     };
 
-    cy.request('POST', `${baseUrl}${endpoint}`, couponData)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, couponData)
       .then((response) => {
         expect(response.status).to.eq(201);
         expect(response.body).to.be.an('object');
@@ -59,7 +61,7 @@ describe('Admin - Create Coupon API', () => {
       description: 'Missing required fields'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: incompleteData,
@@ -82,7 +84,7 @@ describe('Admin - Create Coupon API', () => {
     };
 
     // Create first coupon
-    cy.request('POST', `${baseUrl}${endpoint}`, couponData)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, couponData)
       .then((response) => {
         expect(response.status).to.eq(201);
 
@@ -95,7 +97,7 @@ describe('Admin - Create Coupon API', () => {
           category: 'Electronics'
         };
 
-        cy.request({
+        cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
           method: 'POST',
           url: `${baseUrl}${endpoint}`,
           body: duplicateCoupon,
@@ -120,7 +122,7 @@ describe('Admin - Create Coupon API', () => {
       store: {} // Should be string
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: invalidData,
@@ -142,7 +144,7 @@ describe('Admin - Create Coupon API', () => {
       category: 'Electronics'
     };
 
-    cy.request('POST', `${baseUrl}${endpoint}`, minimalData)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, minimalData)
       .then((response) => {
         expect(response.status).to.eq(201);
         expect(response.body).to.have.property('title', minimalData.title);
@@ -162,7 +164,7 @@ describe('Admin - Create Coupon API', () => {
       store: 'S'.repeat(100)
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: maxLengthData,
@@ -187,7 +189,7 @@ describe('Admin - Create Coupon API', () => {
       store: ''
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: emptyData,
@@ -212,7 +214,7 @@ describe('Admin - Create Coupon API', () => {
       category: 'Electronics'
     };
 
-    cy.request('POST', `${baseUrl}${endpoint}`, specialCharData)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, specialCharData)
       .then((response) => {
         expect(response.status).to.eq(201);
         expect(response.body.title).to.include('Special');
@@ -232,7 +234,7 @@ describe('Admin - Create Coupon API', () => {
       category: 'Electronics'
     };
 
-    cy.request('POST', `${baseUrl}${endpoint}`, unicodeData)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, unicodeData)
       .then((response) => {
         expect(response.status).to.eq(201);
         expect(response.body.title).to.include('测试');
@@ -250,7 +252,7 @@ describe('Admin - Create Coupon API', () => {
       discount: 'invalid-discount-format'
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: invalidDiscountData,
@@ -276,7 +278,7 @@ describe('Admin - Create Coupon API', () => {
       category: null
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: nullData,
@@ -302,7 +304,7 @@ describe('Admin - Create Coupon API', () => {
 
     const startTime = Date.now();
     
-    cy.request('POST', `${baseUrl}${endpoint}`, couponData)
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, couponData)
       .then((response) => {
         const responseTime = Date.now() - startTime;
         expect(response.status).to.eq(201);
@@ -315,7 +317,7 @@ describe('Admin - Create Coupon API', () => {
     const timestamp = Date.now();
     
     // Sequential requests to avoid Promise.all timeout
-    cy.request('POST', `${baseUrl}${endpoint}`, {
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, {
       title: `Concurrent Coupon 1 ${timestamp}`,
       code: `CONC1${timestamp}`,
       discount: '10%',
@@ -326,7 +328,7 @@ describe('Admin - Create Coupon API', () => {
       expect(response.body.title).to.include('1');
     });
     
-    cy.request('POST', `${baseUrl}${endpoint}`, {
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, {
       title: `Concurrent Coupon 2 ${timestamp}`,
       code: `CONC2${timestamp}`,
       discount: '20%',
@@ -337,7 +339,7 @@ describe('Admin - Create Coupon API', () => {
       expect(response.body.title).to.include('2');
     });
     
-    cy.request('POST', `${baseUrl}${endpoint}`, {
+    cy.authRequest('POST', `${baseUrl}${endpoint}`, {
       title: `Concurrent Coupon 3 ${timestamp}`,
       code: `CONC3${timestamp}`,
       discount: '30%',
@@ -362,7 +364,7 @@ describe('Admin - Create Coupon API', () => {
       extraData: 'E'.repeat(2000) // Large additional field
     };
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: largeData,
@@ -387,7 +389,7 @@ describe('Admin - Create Coupon API', () => {
     };
 
     // Test with wrong Content-Type
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: couponData,
@@ -400,7 +402,7 @@ describe('Admin - Create Coupon API', () => {
     });
 
     // Test with correct Content-Type
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       body: couponData,

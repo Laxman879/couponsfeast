@@ -6,6 +6,7 @@ import connectDB from "./src/config/database.js";
 import Store from "./src/models/Store.js";
 import Coupon from "./src/models/Coupon.js";
 import Category from "./src/models/Category.js";
+import Deal from "./src/models/Deal.js";
 import PopularStore from "./src/models/PopularStore.js";
 import FeaturedCoupon from "./src/models/FeaturedCoupon.js";
 import FooterLink from "./src/models/FooterLink.js";
@@ -23,6 +24,7 @@ await Promise.all([
   Store.deleteMany({}),
   Coupon.deleteMany({}),
   Category.deleteMany({}),
+  Deal.deleteMany({}),
   PopularStore.deleteMany({}),
   FeaturedCoupon.deleteMany({}),
   FooterLink.deleteMany({}),

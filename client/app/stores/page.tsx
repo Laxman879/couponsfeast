@@ -124,7 +124,7 @@ export default function StoresPage() {
                       <div className="flex justify-center mb-3">
                         <div className="w-14 h-14 rounded-full bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors overflow-hidden">
                           {logo ? (
-                            <img src={logo} alt={store.storeName} className="w-10 h-10 object-contain" />
+                            <img src={logo} alt={store.storeName} className="w-full h-full object-cover" />
                           ) : (
                             <Store className="w-7 h-7 text-primary/70" />
                           )}
@@ -222,11 +222,11 @@ export default function StoresPage() {
                 return (
                   <Link key={store._id} href={`/${store.slug}-coupons`} className="text-center cursor-pointer group no-underline block animate-scaleIn" style={{ animationDelay: `${i * 20}ms` }}>
                     <div
-                      className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 flex items-center justify-center hover:border-primary/30 transition-all min-h-[80px]"
+                      className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden flex items-center justify-center hover:border-primary/30 transition-all h-[80px] p-3"
                       style={{ boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px' }}
                     >
                       {logo ? (
-                        <img src={logo} alt={store.storeName} className="h-10 object-contain max-w-[80%]" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                        <img src={logo} alt={store.storeName} className="max-w-full max-h-full object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                       ) : (
                         <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
                           <span className="text-lg font-bold text-primary">{store.storeName?.charAt(0)}</span>

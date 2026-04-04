@@ -94,8 +94,8 @@ export default function CMSAdmin() {
       
       setNavigation(navRes.data);
       setHomePage(pageRes.data);
-      setCategories(categoriesRes.data);
-      setPopularStores(storesRes.data);
+      setCategories(categoriesRes.data?.data ?? categoriesRes.data ?? []);
+      setPopularStores(storesRes.data?.data ?? storesRes.data ?? []);
       setFooterLinks(footerLinksRes.data.data);
       setPages(pagesRes.data?.data || pagesRes.data || []);
       setFaqHeading(cfgRes.data?.faqs?.heading || 'Frequently Asked Questions');

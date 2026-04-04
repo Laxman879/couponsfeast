@@ -1,4 +1,6 @@
 describe('Admin API - Backup Data', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   let testStoreId;
 
@@ -7,7 +9,7 @@ describe('Admin API - Backup Data', () => {
     
     // Create test data
     const timestamp = Date.now() + Math.random().toString(36).substr(2, 9);
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/stores/create`,
       body: {
@@ -23,7 +25,7 @@ describe('Admin API - Backup Data', () => {
 
   it('should handle backup endpoint (may be unimplemented)', () => {
     const timestamp = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/backup`,
       body: {
@@ -37,7 +39,7 @@ describe('Admin API - Backup Data', () => {
   });
 
   it('should handle backup validation (if implemented)', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/backup`,
       body: {},
@@ -48,7 +50,7 @@ describe('Admin API - Backup Data', () => {
   });
 
   it('should handle backup name validation (if implemented)', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/backup`,
       body: {
@@ -63,7 +65,7 @@ describe('Admin API - Backup Data', () => {
 
   it('should handle selective backup (if implemented)', () => {
     const timestamp = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/backup`,
       body: {
@@ -78,7 +80,7 @@ describe('Admin API - Backup Data', () => {
 
   it('should handle compressed backup (if implemented)', () => {
     const timestamp = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/backup`,
       body: {
@@ -93,7 +95,7 @@ describe('Admin API - Backup Data', () => {
 
   it('should handle unicode backup names (if implemented)', () => {
     const timestamp = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/backup`,
       body: {
@@ -108,7 +110,7 @@ describe('Admin API - Backup Data', () => {
 
   it('should handle backup metadata (if implemented)', () => {
     const timestamp = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/backup`,
       body: {
@@ -124,7 +126,7 @@ describe('Admin API - Backup Data', () => {
   it('should respond within time limit', () => {
     const startTime = Date.now();
     const timestamp = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/backup`,
       body: {
@@ -141,7 +143,7 @@ describe('Admin API - Backup Data', () => {
   it('should handle concurrent backup requests', () => {
     const timestamp = Date.now();
     const requests = Array.from({length: 2}, (_, i) => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/data/backup`,
         body: {
@@ -163,7 +165,7 @@ describe('Admin API - Backup Data', () => {
   });
 
   it('should handle malformed JSON', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/backup`,
       body: 'invalid json',
@@ -176,7 +178,7 @@ describe('Admin API - Backup Data', () => {
 
   it('should validate table names', () => {
     const timestamp = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/backup`,
       body: {
@@ -191,7 +193,7 @@ describe('Admin API - Backup Data', () => {
 
   it('should return proper structure', () => {
     const timestamp = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/backup`,
       body: {
@@ -214,7 +216,7 @@ describe('Admin API - Backup Data', () => {
     const timestamp = Date.now();
     // Create more test data
     Array.from({length: 5}, (_, i) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/stores/create`,
         body: {
@@ -226,7 +228,7 @@ describe('Admin API - Backup Data', () => {
       });
     });
 
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/backup`,
       body: {
@@ -241,7 +243,7 @@ describe('Admin API - Backup Data', () => {
 
   it('should validate content-type', () => {
     const timestamp = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/backup`,
       body: {
@@ -256,7 +258,7 @@ describe('Admin API - Backup Data', () => {
 
   it('should maintain data integrity', () => {
     const timestamp = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/data/backup`,
       body: {
@@ -268,7 +270,7 @@ describe('Admin API - Backup Data', () => {
         const backupId = backupResponse.body.data.backupId;
         
         // Verify backup exists
-        cy.request({
+        cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
           method: 'GET',
           url: `${baseUrl}/data/backups`,
           failOnStatusCode: false

@@ -1,4 +1,6 @@
 describe('Admin - List Stores API', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = Cypress.env('apiUrl') || 'http://localhost:5000';
   const endpoint = '/api/admin/stores/list';
 
@@ -20,9 +22,9 @@ describe('Admin - List Stores API', () => {
       slug: `test-store-${timestamp}`
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/stores/create`, storeData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, storeData)
       .then(() => {
-        cy.request('GET', `${baseUrl}${endpoint}`)
+        cy.authRequest('GET', `${baseUrl}${endpoint}`)
           .then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body).to.be.an('array');
@@ -37,7 +39,7 @@ describe('Admin - List Stores API', () => {
   // Test Case 2: Empty database scenario
   it('should return empty array when no stores exist', () => {
     // The database should be cleared by beforeEach, but existing data might remain
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.be.an('array');
@@ -54,9 +56,9 @@ describe('Admin - List Stores API', () => {
       slug: `structure-test-${timestamp}`
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/stores/create`, storeData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, storeData)
       .then(() => {
-        cy.request('GET', `${baseUrl}${endpoint}`)
+        cy.authRequest('GET', `${baseUrl}${endpoint}`)
           .then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body).to.be.an('array');
@@ -80,7 +82,7 @@ describe('Admin - List Stores API', () => {
   it('should respond within acceptable time limit', () => {
     const startTime = Date.now();
     
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         const responseTime = Date.now() - startTime;
         expect(response.status).to.eq(200);
@@ -93,19 +95,19 @@ describe('Admin - List Stores API', () => {
     // Create 3 stores sequentially to avoid Promise.all timeout
     const timestamp = Date.now();
     
-    cy.request('POST', `${baseUrl}/api/admin/stores/create`, {
+    cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, {
       storeName: `Test Store 1 ${timestamp}`,
       slug: `test-store-1-${timestamp}`
     }).then(() => {
-      cy.request('POST', `${baseUrl}/api/admin/stores/create`, {
+      cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, {
         storeName: `Test Store 2 ${timestamp}`,
         slug: `test-store-2-${timestamp}`
       }).then(() => {
-        cy.request('POST', `${baseUrl}/api/admin/stores/create`, {
+        cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, {
           storeName: `Test Store 3 ${timestamp}`,
           slug: `test-store-3-${timestamp}`
         }).then(() => {
-          cy.request('GET', `${baseUrl}${endpoint}`)
+          cy.authRequest('GET', `${baseUrl}${endpoint}`)
             .then((response) => {
               expect(response.status).to.eq(200);
               expect(response.body).to.be.an('array');
@@ -124,20 +126,20 @@ describe('Admin - List Stores API', () => {
       slug: `concurrent-test-${timestamp}`
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/stores/create`, storeData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, storeData)
       .then(() => {
         // Sequential requests to avoid Promise.all timeout
-        cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+        cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.be.an('array');
         });
         
-        cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+        cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.be.an('array');
         });
         
-        cy.request('GET', `${baseUrl}${endpoint}`).then((response) => {
+        cy.authRequest('GET', `${baseUrl}${endpoint}`).then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.be.an('array');
         });
@@ -146,7 +148,7 @@ describe('Admin - List Stores API', () => {
 
   // Test Case 7: Invalid endpoint method
   it('should return 404 for invalid HTTP method', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}${endpoint}`,
       failOnStatusCode: false
@@ -159,7 +161,7 @@ describe('Admin - List Stores API', () => {
   it('should handle server errors gracefully', () => {
     // This would require mocking or server manipulation
     // For now, we'll test the endpoint exists
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.be.oneOf([200, 500]);
       });
@@ -167,7 +169,7 @@ describe('Admin - List Stores API', () => {
 
   // Test Case 9: Content-Type validation
   it('should return JSON content type', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.headers).to.have.property('content-type');
@@ -179,16 +181,16 @@ describe('Admin - List Stores API', () => {
   it('should return stores in consistent order', () => {
     const timestamp = Date.now();
     
-    cy.request('POST', `${baseUrl}/api/admin/stores/create`, {
+    cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, {
       storeName: `Store A ${timestamp}`,
       slug: `store-a-${timestamp}`
     }).then(() => {
       cy.wait(100); // Small delay to ensure different timestamps
-      cy.request('POST', `${baseUrl}/api/admin/stores/create`, {
+      cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, {
         storeName: `Store B ${timestamp}`,
         slug: `store-b-${timestamp}`
       }).then(() => {
-        cy.request('GET', `${baseUrl}${endpoint}`)
+        cy.authRequest('GET', `${baseUrl}${endpoint}`)
           .then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body).to.be.an('array');
@@ -206,7 +208,7 @@ describe('Admin - List Stores API', () => {
 
   // Test Case 11: Database connection validation
   it('should handle database connection issues', () => {
-    cy.request('GET', `${baseUrl}${endpoint}`)
+    cy.authRequest('GET', `${baseUrl}${endpoint}`)
       .then((response) => {
         expect(response.status).to.be.oneOf([200, 500]);
         if (response.status === 200) {
@@ -220,19 +222,19 @@ describe('Admin - List Stores API', () => {
     // Create 3 stores to test memory handling (reduced from 100 to avoid timeout)
     const timestamp = Date.now();
     
-    cy.request('POST', `${baseUrl}/api/admin/stores/create`, {
+    cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, {
       storeName: `Memory Test Store 1 ${timestamp}`,
       slug: `memory-test-1-${timestamp}`
     }).then(() => {
-      cy.request('POST', `${baseUrl}/api/admin/stores/create`, {
+      cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, {
         storeName: `Memory Test Store 2 ${timestamp}`,
         slug: `memory-test-2-${timestamp}`
       }).then(() => {
-        cy.request('POST', `${baseUrl}/api/admin/stores/create`, {
+        cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, {
           storeName: `Memory Test Store 3 ${timestamp}`,
           slug: `memory-test-3-${timestamp}`
         }).then(() => {
-          cy.request('GET', `${baseUrl}${endpoint}`)
+          cy.authRequest('GET', `${baseUrl}${endpoint}`)
             .then((response) => {
               expect(response.status).to.eq(200);
               expect(response.body).to.be.an('array');
@@ -254,11 +256,11 @@ describe('Admin - List Stores API', () => {
   it('should handle stores with special characters', () => {
     const timestamp = Date.now();
     
-    cy.request('POST', `${baseUrl}/api/admin/stores/create`, {
+    cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, {
       storeName: `Store & Co. (Special) ${timestamp}`,
       slug: `store-special-${timestamp}`
     }).then(() => {
-      cy.request('GET', `${baseUrl}${endpoint}`)
+      cy.authRequest('GET', `${baseUrl}${endpoint}`)
         .then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.be.an('array');
@@ -272,11 +274,11 @@ describe('Admin - List Stores API', () => {
   it('should handle stores with unicode characters', () => {
     const timestamp = Date.now();
     
-    cy.request('POST', `${baseUrl}/api/admin/stores/create`, {
+    cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, {
       storeName: `Store 测试 🏪 ${timestamp}`,
       slug: `store-unicode-${timestamp}`
     }).then(() => {
-      cy.request('GET', `${baseUrl}${endpoint}`)
+      cy.authRequest('GET', `${baseUrl}${endpoint}`)
         .then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.be.an('array');
@@ -294,9 +296,9 @@ describe('Admin - List Stores API', () => {
       slug: `compatibility-test-${timestamp}`
     };
     
-    cy.request('POST', `${baseUrl}/api/admin/stores/create`, storeData)
+    cy.authRequest('POST', `${baseUrl}/api/admin/stores/create`, storeData)
       .then(() => {
-        cy.request('GET', `${baseUrl}${endpoint}`)
+        cy.authRequest('GET', `${baseUrl}${endpoint}`)
           .then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body).to.be.an('array');

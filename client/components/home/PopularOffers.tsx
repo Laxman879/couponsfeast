@@ -29,7 +29,9 @@ function OfferCard({ offer, primary, textColor, mutedText, cardBg, borderClr, is
       <div className="px-5 pt-2 pb-4 flex flex-col" style={{ height: offer.logo ? 'calc(100% - 160px + 18px)' : 'calc(100% - 160px)' }}>
         <h3 className="font-bold text-base uppercase tracking-wide mb-1 group-hover:text-sm group-hover:mb-0.5 transition-all duration-300"
           style={{ color: offer.isExclusive ? primary : textColor }}>{offer.badgeText}</h3>
-        <p className="text-sm leading-relaxed line-clamp-2 transition-all duration-300" style={{ color: mutedText }}>{offer.title}</p>
+        <p className="text-sm leading-relaxed line-clamp-2 transition-all duration-300" style={{ color: mutedText }}>
+          {offer.description || offer.title}
+        </p>
         <div className="flex-1" />
         <div className="overflow-hidden max-h-0 group-hover:max-h-24 transition-all duration-300 ease-in-out">
           <div className="border-t border-dashed mb-3" style={{ borderColor: borderClr }} />
@@ -64,7 +66,7 @@ export default function PopularOffers() {
         setOffers((Array.isArray(data) ? data : []).map((d: any) => {
           const storeLogo = d.logo || (d.store?.logo ? (d.store.logo.startsWith('http') ? d.store.logo : `${serverUrl}${d.store.logo}`) : '');
           return {
-            title: d.title || '', badgeText: d.discount || 'DEAL', image: d.image || '',
+            title: d.title || '', description: d.description || '', badgeText: d.discount || 'DEAL', image: d.image || '',
             logo: storeLogo, brandName: d.store?.storeName || '', isExclusive: d.isFeatured || false,
             link: d.link || d.store?.websiteUrl || '', code: d.couponCode || '',
             discount: d.discount || '', storeName: d.store?.storeName || '',

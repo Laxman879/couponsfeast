@@ -1,4 +1,6 @@
 describe('Admin API - Delete Featured Coupon', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
   let testStoreId, testCouponId;
@@ -6,7 +8,7 @@ describe('Admin API - Delete Featured Coupon', () => {
   beforeEach(() => {
     cy.task('clearDatabase');
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'POST',
       url: `${baseUrl}/stores/create`,
       body: {
@@ -23,7 +25,7 @@ describe('Admin API - Delete Featured Coupon', () => {
         testStoreId = 'test-store-id';
       }
       
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/featured-coupons/create`,
         body: {
@@ -45,7 +47,7 @@ describe('Admin API - Delete Featured Coupon', () => {
   });
 
   it('should delete featured coupon successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       failOnStatusCode: false
@@ -59,7 +61,7 @@ describe('Admin API - Delete Featured Coupon', () => {
   });
 
   it('should return 404 for non-existent coupon ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/featured-coupons/507f1f77bcf86cd799439011`,
       failOnStatusCode: false
@@ -72,7 +74,7 @@ describe('Admin API - Delete Featured Coupon', () => {
   });
 
   it('should return 400 for invalid coupon ID format', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/featured-coupons/invalid-id`,
       failOnStatusCode: false
@@ -85,12 +87,12 @@ describe('Admin API - Delete Featured Coupon', () => {
   });
 
   it('should verify coupon is actually deleted', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/coupons/${testCouponId}`,
         failOnStatusCode: false
@@ -101,12 +103,12 @@ describe('Admin API - Delete Featured Coupon', () => {
   });
 
   it('should remove from featured coupons list', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         url: `${baseUrl}/featured-coupons`,
         failOnStatusCode: false
       }).then((response) => {
@@ -120,13 +122,13 @@ describe('Admin API - Delete Featured Coupon', () => {
   });
 
   it('should handle deletion of already deleted coupon', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       failOnStatusCode: false
     });
     
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       failOnStatusCode: false
@@ -140,7 +142,7 @@ describe('Admin API - Delete Featured Coupon', () => {
 
   it('should handle concurrent deletion attempts', () => {
     const requests = Array.from({length: 3}, () => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'DELETE',
         url: `${baseUrl}/featured-coupons/${testCouponId}`,
         failOnStatusCode: false
@@ -165,7 +167,7 @@ describe('Admin API - Delete Featured Coupon', () => {
 
   it('should respond within acceptable time', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       failOnStatusCode: false
@@ -177,7 +179,7 @@ describe('Admin API - Delete Featured Coupon', () => {
   });
 
   it('should return proper response structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       failOnStatusCode: false
@@ -193,7 +195,7 @@ describe('Admin API - Delete Featured Coupon', () => {
 
   it('should handle case-insensitive ObjectId', () => {
     const upperCaseId = testCouponId.toUpperCase();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/featured-coupons/${upperCaseId}`,
       failOnStatusCode: false
@@ -203,12 +205,12 @@ describe('Admin API - Delete Featured Coupon', () => {
   });
 
   it('should clean up related data', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         url: `${baseUrl}/coupons`,
         failOnStatusCode: false
       }).then((response) => {
@@ -222,7 +224,7 @@ describe('Admin API - Delete Featured Coupon', () => {
   });
 
   it('should handle deletion with special characters in ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/featured-coupons/special!@#$%`,
       failOnStatusCode: false
@@ -232,12 +234,12 @@ describe('Admin API - Delete Featured Coupon', () => {
   });
 
   it('should maintain referential integrity', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       failOnStatusCode: false
     }).then(() => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         url: `${baseUrl}/featured-coupons`,
         failOnStatusCode: false
       }).then((response) => {
@@ -251,7 +253,7 @@ describe('Admin API - Delete Featured Coupon', () => {
   });
 
   it('should handle empty coupon ID', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/featured-coupons/`,
       failOnStatusCode: false
@@ -261,7 +263,7 @@ describe('Admin API - Delete Featured Coupon', () => {
   });
 
   it('should log deletion activity', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'DELETE',
       url: `${baseUrl}/featured-coupons/${testCouponId}`,
       failOnStatusCode: false

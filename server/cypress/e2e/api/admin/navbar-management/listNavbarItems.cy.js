@@ -1,4 +1,6 @@
 describe('Admin API - List Navbar Items', () => {
+  before(() => { cy.adminLogin(); });
+
   const baseUrl = 'http://localhost:5000/api/admin';
   const timestamp = Date.now();
 
@@ -7,7 +9,7 @@ describe('Admin API - List Navbar Items', () => {
     
     // Create test navbar items (skip if endpoint not implemented)
     Array.from({length: 5}, (_, i) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/navbar/create`,
         body: {
@@ -22,7 +24,7 @@ describe('Admin API - List Navbar Items', () => {
   });
 
   it('should list navbar items successfully', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/navbar`,
       failOnStatusCode: false
@@ -36,7 +38,7 @@ describe('Admin API - List Navbar Items', () => {
   });
 
   it('should return navbar items in correct order', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/navbar?sortBy=order&order=asc`,
       failOnStatusCode: false
@@ -56,7 +58,7 @@ describe('Admin API - List Navbar Items', () => {
   });
 
   it('should filter active navbar items', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/navbar?active=true`,
       failOnStatusCode: false
@@ -79,7 +81,7 @@ describe('Admin API - List Navbar Items', () => {
     // Clear database and verify it's empty
     cy.task('clearDatabase').then(() => {
       cy.wait(500); // Increased wait time
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/navbar`,
         failOnStatusCode: false
@@ -102,7 +104,7 @@ describe('Admin API - List Navbar Items', () => {
   });
 
   it('should include all navbar item properties', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/navbar`,
       failOnStatusCode: false
@@ -122,7 +124,7 @@ describe('Admin API - List Navbar Items', () => {
   });
 
   it('should handle pagination parameters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/navbar?page=1&limit=3`,
       failOnStatusCode: false
@@ -138,7 +140,7 @@ describe('Admin API - List Navbar Items', () => {
   });
 
   it('should handle invalid pagination parameters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/navbar?page=-1&limit=0`,
       failOnStatusCode: false
@@ -148,7 +150,7 @@ describe('Admin API - List Navbar Items', () => {
   });
 
   it('should search navbar items by title', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/navbar?search=Navbar`,
       failOnStatusCode: false
@@ -167,7 +169,7 @@ describe('Admin API - List Navbar Items', () => {
 
   it('should respond within acceptable time', () => {
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/navbar`,
       failOnStatusCode: false
@@ -180,7 +182,7 @@ describe('Admin API - List Navbar Items', () => {
 
   it('should handle concurrent requests', () => {
     const requests = Array.from({length: 5}, () => 
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/navbar`,
         failOnStatusCode: false
@@ -198,7 +200,7 @@ describe('Admin API - List Navbar Items', () => {
   });
 
   it('should include total count in response', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/navbar`,
       failOnStatusCode: false
@@ -213,7 +215,7 @@ describe('Admin API - List Navbar Items', () => {
   });
 
   it('should return proper response structure', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/navbar`,
       failOnStatusCode: false
@@ -229,7 +231,7 @@ describe('Admin API - List Navbar Items', () => {
 
   it('should handle large dataset efficiently', () => {
     Array.from({length: 50}, (_, i) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'POST',
         url: `${baseUrl}/navbar/create`,
         body: {
@@ -242,7 +244,7 @@ describe('Admin API - List Navbar Items', () => {
     });
 
     const startTime = Date.now();
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/navbar?limit=20`,
       failOnStatusCode: false
@@ -254,12 +256,12 @@ describe('Admin API - List Navbar Items', () => {
   });
 
   it('should maintain data consistency', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/navbar`,
       failOnStatusCode: false
     }).then((firstResponse) => {
-      cy.request({
+      cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
         method: 'GET',
         url: `${baseUrl}/navbar`,
         failOnStatusCode: false
@@ -276,7 +278,7 @@ describe('Admin API - List Navbar Items', () => {
   });
 
   it('should handle special query parameters', () => {
-    cy.request({
+    cy.request({headers:{Authorization:`Bearer ${Cypress.env("authToken")}`},
       method: 'GET',
       url: `${baseUrl}/navbar?includeInactive=true&sortBy=title`,
       failOnStatusCode: false
